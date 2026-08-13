@@ -10,9 +10,9 @@ export default function MetricsOverview({ stats }) {
       value: total,
       sub: `${todo} pending tasks`,
       icon: Layers,
-      color: '#ccff00',
-      borderGlow: 'rgba(204, 255, 0, 0.45)',
-      bgGlow: 'rgba(204, 255, 0, 0.15)'
+      color: '#84cc16',
+      borderGlow: 'rgba(132, 204, 22, 0.3)',
+      bgGlow: 'rgba(132, 204, 22, 0.12)'
     },
     {
       title: 'In Progress',
@@ -20,26 +20,26 @@ export default function MetricsOverview({ stats }) {
       sub: `${inReview} in review`,
       icon: Activity,
       color: '#a3e635',
-      borderGlow: 'rgba(163, 230, 53, 0.45)',
-      bgGlow: 'rgba(163, 230, 53, 0.15)'
+      borderGlow: 'rgba(163, 230, 53, 0.3)',
+      bgGlow: 'rgba(163, 230, 53, 0.12)'
     },
     {
       title: 'Completed',
       value: completed,
       sub: `${completionRate}% velocity score`,
       icon: CheckCircle2,
-      color: '#4ade80',
-      borderGlow: 'rgba(74, 222, 128, 0.45)',
-      bgGlow: 'rgba(74, 222, 128, 0.15)'
+      color: '#10b981',
+      borderGlow: 'rgba(16, 185, 129, 0.3)',
+      bgGlow: 'rgba(16, 185, 129, 0.12)'
     },
     {
       title: 'Action Needed',
       value: inReview + todo,
       sub: 'Tasks requiring focus',
       icon: AlertCircle,
-      color: '#facc15',
-      borderGlow: 'rgba(250, 204, 21, 0.45)',
-      bgGlow: 'rgba(250, 204, 21, 0.15)'
+      color: '#f59e0b',
+      borderGlow: 'rgba(245, 158, 11, 0.3)',
+      bgGlow: 'rgba(245, 158, 11, 0.12)'
     }
   ];
 
@@ -59,7 +59,7 @@ export default function MetricsOverview({ stats }) {
                 position: 'relative',
                 overflow: 'hidden',
                 borderColor: card.borderGlow,
-                boxShadow: `0 10px 30px -10px ${card.bgGlow}, 0 0 15px ${card.bgGlow}`
+                boxShadow: `0 8px 25px -5px ${card.bgGlow}`
               }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -67,7 +67,7 @@ export default function MetricsOverview({ stats }) {
                   <div style={{ fontSize: '0.785rem', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.4rem' }}>
                     {card.title}
                   </div>
-                  <div style={{ fontFamily: 'var(--font-display)', fontSize: '2.3rem', fontWeight: '900', letterSpacing: '-0.04em', color: card.color }}>
+                  <div style={{ fontFamily: 'var(--font-display)', fontSize: '2.3rem', fontWeight: '800', letterSpacing: '-0.03em', color: card.color }}>
                     {card.value}
                   </div>
                   <div style={{ fontSize: '0.785rem', fontWeight: '600', color: 'var(--text-dim)', marginTop: '0.25rem' }}>
@@ -76,18 +76,17 @@ export default function MetricsOverview({ stats }) {
                 </div>
 
                 <div style={{
-                  width: '52px',
-                  height: '52px',
-                  borderRadius: '16px',
+                  width: '50px',
+                  height: '50px',
+                  borderRadius: '14px',
                   background: card.bgGlow,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   color: card.color,
-                  border: `1px solid ${card.color}55`,
-                  boxShadow: `0 0 25px ${card.color}35`
+                  border: `1px solid ${card.color}44`
                 }}>
-                  <Icon size={26} />
+                  <Icon size={24} />
                 </div>
               </div>
 
@@ -99,35 +98,34 @@ export default function MetricsOverview({ stats }) {
       </div>
 
       {/* Interactive Velocity Meter */}
-      <div className="glass-card" style={{ marginTop: '1.25rem', padding: '1.25rem 1.5rem', borderColor: 'rgba(204, 255, 0, 0.35)' }}>
+      <div className="glass-card" style={{ marginTop: '1.25rem', padding: '1.25rem 1.5rem' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem', flexWrap: 'wrap', gap: '0.5rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-            <div style={{ width: '34px', height: '34px', borderRadius: '10px', background: 'rgba(204, 255, 0, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ccff00' }}>
+            <div style={{ width: '34px', height: '34px', borderRadius: '10px', background: 'rgba(132, 204, 22, 0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#84cc16' }}>
               <Activity size={20} />
             </div>
             <div>
-              <span style={{ fontFamily: 'var(--font-display)', fontSize: '0.98rem', fontWeight: '800', color: 'var(--text-main)' }}>Sprint Velocity & Completion Meter</span>
+              <span style={{ fontFamily: 'var(--font-display)', fontSize: '0.98rem', fontWeight: '700', color: 'var(--text-main)' }}>Sprint Velocity & Completion Meter</span>
               <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)', marginLeft: '0.6rem' }}>({completed} of {total} tasks completed)</span>
             </div>
           </div>
           
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', background: 'rgba(204, 255, 0, 0.15)', padding: '0.35rem 0.9rem', borderRadius: '9999px', border: '1px solid rgba(204, 255, 0, 0.4)' }}>
-            <Sparkles size={14} style={{ color: '#ccff00' }} />
-            <span style={{ fontSize: '0.85rem', fontWeight: '800', color: '#ccff00' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', background: 'rgba(132, 204, 22, 0.12)', padding: '0.35rem 0.9rem', borderRadius: '9999px', border: '1px solid rgba(132, 204, 22, 0.3)' }}>
+            <Sparkles size={14} style={{ color: '#84cc16' }} />
+            <span style={{ fontSize: '0.85rem', fontWeight: '700', color: '#a3e635' }}>
               {completionRate}% Velocity Score
             </span>
           </div>
         </div>
 
-        {/* Multi-Gradient Progress Bar */}
-        <div style={{ height: '12px', width: '100%', backgroundColor: 'var(--bg-tertiary)', borderRadius: '9999px', overflow: 'hidden', padding: '2px', border: '1px solid var(--border-color)' }}>
+        {/* Muted Progress Bar */}
+        <div style={{ height: '10px', width: '100%', backgroundColor: 'var(--bg-tertiary)', borderRadius: '9999px', overflow: 'hidden', padding: '2px', border: '1px solid var(--border-color)' }}>
           <div style={{
             height: '100%',
             width: `${completionRate}%`,
-            background: 'linear-gradient(90deg, #ccff00, #a3e635, #4ade80)',
+            background: 'linear-gradient(90deg, #84cc16, #10b981)',
             borderRadius: '9999px',
-            boxShadow: '0 0 20px rgba(204, 255, 0, 0.7)',
-            transition: 'width 0.7s cubic-bezier(0.4, 0, 0.2, 1)'
+            transition: 'width 0.6s cubic-bezier(0.4, 0, 0.2, 1)'
           }} />
         </div>
       </div>

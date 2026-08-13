@@ -1,9 +1,9 @@
-package com.example.taskpulse.service;
+package com.vortiq.service;
 
-import com.example.taskpulse.model.Task;
-import com.example.taskpulse.model.TaskPriority;
-import com.example.taskpulse.model.TaskStatus;
-import com.example.taskpulse.repository.TaskRepository;
+import com.vortiq.model.Task;
+import com.vortiq.model.TaskPriority;
+import com.vortiq.model.TaskStatus;
+import com.vortiq.repository.TaskRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;

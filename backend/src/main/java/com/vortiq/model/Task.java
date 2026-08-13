@@ -1,4 +1,4 @@
-package com.example.taskpulse.model;
+package com.vortiq.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
@@ -26,9 +26,9 @@ public class Task {
     @Column(nullable = false)
     private TaskPriority priority;
 
-    private String category; // e.g. "Frontend", "Backend", "Design", "DevOps"
+    private String category;
 
-    private String assignee; // e.g. "Alex Rivers", "Sarah Chen"
+    private String assignee;
 
     private LocalDate dueDate;
 

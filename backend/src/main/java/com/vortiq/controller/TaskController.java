@@ -1,9 +1,9 @@
-package com.example.taskpulse.controller;
+package com.vortiq.controller;
 
-import com.example.taskpulse.model.Task;
-import com.example.taskpulse.model.TaskPriority;
-import com.example.taskpulse.model.TaskStatus;
-import com.example.taskpulse.service.TaskService;
+import com.vortiq.model.Task;
+import com.vortiq.model.TaskPriority;
+import com.vortiq.model.TaskStatus;
+import com.vortiq.service.TaskService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

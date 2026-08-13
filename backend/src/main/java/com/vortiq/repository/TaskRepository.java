@@ -1,8 +1,8 @@
-package com.example.taskpulse.repository;
+package com.vortiq.repository;
 
-import com.example.taskpulse.model.Task;
-import com.example.taskpulse.model.TaskPriority;
-import com.example.taskpulse.model.TaskStatus;
+import com.vortiq.model.Task;
+import com.vortiq.model.TaskPriority;
+import com.vortiq.model.TaskStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

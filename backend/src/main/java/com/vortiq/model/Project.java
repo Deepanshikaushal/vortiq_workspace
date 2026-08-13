@@ -1,4 +1,4 @@
-package com.example.taskpulse.model;
+package com.vortiq.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
@@ -16,7 +16,7 @@ public class Project {
 
     private String description;
     
-    private String colorCode; // e.g. #6366f1
+    private String colorCode;
 
     private LocalDateTime createdAt;
 

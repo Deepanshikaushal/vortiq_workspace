@@ -1,6 +1,6 @@
-package com.example.taskpulse.repository;
+package com.vortiq.repository;
 
-import com.example.taskpulse.model.Project;
+import com.vortiq.model.Project;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

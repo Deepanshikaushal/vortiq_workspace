@@ -1,4 +1,4 @@
-package com.example.taskpulse.model;
+package com.vortiq.model;
 
 public enum TaskPriority {
     LOW,

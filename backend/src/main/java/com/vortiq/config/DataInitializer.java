@@ -1,11 +1,11 @@
-package com.example.taskpulse.config;
+package com.vortiq.config;
 
-import com.example.taskpulse.model.Project;
-import com.example.taskpulse.model.Task;
-import com.example.taskpulse.model.TaskPriority;
-import com.example.taskpulse.model.TaskStatus;
-import com.example.taskpulse.repository.ProjectRepository;
-import com.example.taskpulse.repository.TaskRepository;
+import com.vortiq.model.Project;
+import com.vortiq.model.Task;
+import com.vortiq.model.TaskPriority;
+import com.vortiq.model.TaskStatus;
+import com.vortiq.repository.ProjectRepository;
+import com.vortiq.repository.TaskRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -106,7 +106,7 @@ public class DataInitializer implements CommandLineRunner {
                     devOps.getId()
             ));
 
-            System.out.println(">>> TaskPulse DataInitializer: Pre-populated sample data successfully!");
+            System.out.println(">>> VortiQ DataInitializer: Pre-populated sample data successfully!");
         }
     }
 }

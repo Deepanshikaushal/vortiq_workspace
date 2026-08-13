@@ -1,0 +1,99 @@
+package com.vortiq.controller;
+
+import com.vortiq.dto.AuthResponse;
+import com.vortiq.dto.LoginRequest;
+import com.vortiq.dto.RegisterRequest;
+import com.vortiq.dto.UserDto;
+import com.vortiq.model.User;
+import com.vortiq.repository.UserRepository;
+import com.vortiq.security.JwtUtils;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
+
+@RestController
+@RequestMapping("/api/auth")
+@CrossOrigin(origins = "*")
+public class AuthController {
+
+    private final AuthenticationManager authenticationManager;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtUtils jwtUtils;
+
+    public AuthController(
+            AuthenticationManager authenticationManager,
+            UserRepository userRepository,
+            PasswordEncoder passwordEncoder,
+            JwtUtils jwtUtils) {
+        this.authenticationManager = authenticationManager;
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtUtils = jwtUtils;
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
+        if (request.getEmail() == null || request.getEmail().trim().isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Email is required"));
+        }
+        if (request.getPassword() == null || request.getPassword().length() < 6) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Password must be at least 6 characters"));
+        }
+        if (userRepository.existsByEmail(request.getEmail().trim().toLowerCase())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("message", "Email is already registered"));
+        }
+
+        String username = request.getUsername() != null && !request.getUsername().trim().isEmpty()
+                ? request.getUsername().trim()
+                : request.getEmail().split("@")[0];
+
+        User user = new User(username, request.getEmail().trim().toLowerCase(), passwordEncoder.encode(request.getPassword()));
+        userRepository.save(user);
+
+        String token = jwtUtils.generateToken(user.getEmail());
+        return ResponseEntity.status(HttpStatus.CREATED).body(new AuthResponse(token, new UserDto(user)));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+        if (request.getEmail() == null || request.getPassword() == null) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Email and password are required"));
+        }
+
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(request.getEmail().trim().toLowerCase(), request.getPassword())
+            );
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            User user = userRepository.findByEmail(request.getEmail().trim().toLowerCase())
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+
+            String token = jwtUtils.generateToken(user.getEmail());
+            return ResponseEntity.ok(new AuthResponse(token, new UserDto(user)));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "Invalid email or password"));
+        }
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<?> getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getPrincipal())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "Not authenticated"));
+        }
+
+        String email = authentication.getName();
+        return userRepository.findByEmail(email)
+                .map(user -> ResponseEntity.ok(new UserDto(user)))
+                .orElse(ResponseEntity.notFound().build());
+    }
+}

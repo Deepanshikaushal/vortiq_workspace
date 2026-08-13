@@ -8,7 +8,8 @@ import java.util.List;
 
 @Entity
 @Table(name = "projects", indexes = {
-    @Index(name = "idx_project_name", columnList = "name")
+    @Index(name = "idx_project_name", columnList = "name"),
+    @Index(name = "idx_project_user_id", columnList = "user_id")
 })
 public class Project {
 
@@ -23,6 +24,11 @@ public class Project {
     private String description;
     
     private String colorCode;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    @JsonIgnore
+    private User user;
 
     private LocalDateTime createdAt;
 
@@ -41,6 +47,14 @@ public class Project {
         this.createdAt = LocalDateTime.now();
     }
 
+    public Project(String name, String description, String colorCode, User user) {
+        this.name = name;
+        this.description = description;
+        this.colorCode = colorCode;
+        this.user = user;
+        this.createdAt = LocalDateTime.now();
+    }
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -52,6 +66,9 @@ public class Project {
 
     public String getColorCode() { return colorCode; }
     public void setColorCode(String colorCode) { this.colorCode = colorCode; }
+
+    public User getUser() { return user; }
+    public void setUser(User user) { this.user = user; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }

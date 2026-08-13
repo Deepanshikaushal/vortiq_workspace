@@ -4,9 +4,12 @@ import com.vortiq.model.Project;
 import com.vortiq.model.Task;
 import com.vortiq.model.TaskPriority;
 import com.vortiq.model.TaskStatus;
+import com.vortiq.model.User;
 import com.vortiq.repository.ProjectRepository;
 import com.vortiq.repository.TaskRepository;
+import com.vortiq.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -16,18 +19,32 @@ public class DataInitializer implements CommandLineRunner {
 
     private final ProjectRepository projectRepository;
     private final TaskRepository taskRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public DataInitializer(ProjectRepository projectRepository, TaskRepository taskRepository) {
+    public DataInitializer(
+            ProjectRepository projectRepository,
+            TaskRepository taskRepository,
+            UserRepository userRepository,
+            PasswordEncoder passwordEncoder) {
         this.projectRepository = projectRepository;
         this.taskRepository = taskRepository;
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     public void run(String... args) {
+        User defaultUser = userRepository.findByEmail("admin@vortiq.com").orElseGet(() -> {
+            User user = new User("Admin", "admin@vortiq.com", passwordEncoder.encode("Password123!"));
+            user.setRole("ROLE_ADMIN");
+            return userRepository.save(user);
+        });
+
         if (projectRepository.count() == 0 && taskRepository.count() == 0) {
-            Project coreApp = projectRepository.save(new Project("Core Application", "Main web app platform development", "#6366f1"));
-            Project mobileApp = projectRepository.save(new Project("Mobile App", "iOS & Android companion app", "#10b981"));
-            Project devOps = projectRepository.save(new Project("Cloud & Infrastructure", "Kubernetes, CI/CD, and AWS deployment", "#f59e0b"));
+            Project coreApp = projectRepository.save(new Project("Core Application", "Main web app platform development", "#6366f1", defaultUser));
+            Project mobileApp = projectRepository.save(new Project("Mobile App", "iOS & Android companion app", "#10b981", defaultUser));
+            Project devOps = projectRepository.save(new Project("Cloud & Infrastructure", "Kubernetes, CI/CD, and AWS deployment", "#f59e0b", defaultUser));
 
             taskRepository.save(new Task(
                     "Design Glassmorphic UI Components",
@@ -37,7 +54,8 @@ public class DataInitializer implements CommandLineRunner {
                     "Frontend",
                     "Deepanshi Kaushal",
                     LocalDate.now().plusDays(2),
-                    coreApp
+                    coreApp,
+                    defaultUser
             ));
 
             taskRepository.save(new Task(
@@ -48,7 +66,8 @@ public class DataInitializer implements CommandLineRunner {
                     "Backend",
                     "Sarah Chen",
                     LocalDate.now().minusDays(1),
-                    coreApp
+                    coreApp,
+                    defaultUser
             ));
 
             taskRepository.save(new Task(
@@ -59,7 +78,8 @@ public class DataInitializer implements CommandLineRunner {
                     "Database",
                     "Sarah Chen",
                     LocalDate.now().minusDays(3),
-                    coreApp
+                    coreApp,
+                    defaultUser
             ));
 
             taskRepository.save(new Task(
@@ -70,7 +90,8 @@ public class DataInitializer implements CommandLineRunner {
                     "Frontend",
                     "Deepanshi Kaushal",
                     LocalDate.now().plusDays(5),
-                    coreApp
+                    coreApp,
+                    defaultUser
             ));
 
             taskRepository.save(new Task(
@@ -81,7 +102,8 @@ public class DataInitializer implements CommandLineRunner {
                     "DevOps",
                     "Marcus Vance",
                     LocalDate.now().plusDays(1),
-                    devOps
+                    devOps,
+                    defaultUser
             ));
 
             taskRepository.save(new Task(
@@ -92,7 +114,8 @@ public class DataInitializer implements CommandLineRunner {
                     "Mobile",
                     "Elena Rostova",
                     LocalDate.now().plusDays(7),
-                    mobileApp
+                    mobileApp,
+                    defaultUser
             ));
 
             taskRepository.save(new Task(
@@ -103,10 +126,11 @@ public class DataInitializer implements CommandLineRunner {
                     "Security",
                     "Marcus Vance",
                     LocalDate.now().plusDays(4),
-                    devOps
+                    devOps,
+                    defaultUser
             ));
 
-            System.out.println(">>> VortiQ DataInitializer: Pre-populated sample data successfully!");
+            System.out.println(">>> VortiQ DataInitializer: Pre-populated sample data with default admin user!");
         }
     }
 }

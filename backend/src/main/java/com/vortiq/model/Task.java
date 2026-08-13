@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
     @Index(name = "idx_task_status", columnList = "status"),
     @Index(name = "idx_task_priority", columnList = "priority"),
     @Index(name = "idx_task_project_id", columnList = "project_id"),
+    @Index(name = "idx_task_user_id", columnList = "user_id"),
     @Index(name = "idx_task_status_priority", columnList = "status, priority")
 })
 public class Task {
@@ -44,6 +45,11 @@ public class Task {
     @JsonIgnore
     private Project project;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    @JsonIgnore
+    private User user;
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -63,6 +69,20 @@ public class Task {
         this.assignee = assignee;
         this.dueDate = dueDate;
         this.project = project;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    public Task(String title, String description, TaskStatus status, TaskPriority priority, String category, String assignee, LocalDate dueDate, Project project, User user) {
+        this.title = title;
+        this.description = description;
+        this.status = status != null ? status : TaskStatus.TODO;
+        this.priority = priority != null ? priority : TaskPriority.MEDIUM;
+        this.category = category;
+        this.assignee = assignee;
+        this.dueDate = dueDate;
+        this.project = project;
+        this.user = user;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
     }
@@ -98,6 +118,9 @@ public class Task {
 
     public Project getProject() { return project; }
     public void setProject(Project project) { this.project = project; }
+
+    public User getUser() { return user; }
+    public void setUser(User user) { this.user = user; }
 
     @JsonProperty("projectId")
     public Long getProjectId() {

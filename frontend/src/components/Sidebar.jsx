@@ -6,8 +6,7 @@ import {
   ShieldCheck,
   Briefcase,
   Users,
-  Settings,
-  Sparkles
+  Settings
 } from 'lucide-react';
 import VortiqLogo from './VortiqLogo';
 
@@ -28,35 +27,32 @@ export default function Sidebar({
   return (
     <aside className="sidebar-container">
       
-      {/* Brand Header with New Quantum VortiQ Logo */}
+      {/* Brand Header with Quantum VortiQ Logo */}
       <div style={{ paddingBottom: '1.25rem', marginBottom: '1.25rem', borderBottom: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
         <div style={{
-          width: '46px',
-          height: '46px',
-          borderRadius: '14px',
-          background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(236, 72, 153, 0.25))',
+          width: '44px',
+          height: '44px',
+          borderRadius: '12px',
+          background: 'rgba(132, 204, 22, 0.12)',
           border: '1px solid var(--border-purple)',
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'center',
-          boxShadow: '0 0 25px rgba(168, 85, 247, 0.45)'
+          justifyContent: 'center'
         }}>
-          <VortiqLogo size={32} />
+          <VortiqLogo size={30} />
         </div>
         <div>
           <h1 style={{
             fontFamily: 'var(--font-display)',
-            fontSize: '1.35rem',
-            fontWeight: '900',
-            letterSpacing: '-0.03em',
-            background: 'linear-gradient(90deg, #ffffff, #00f2fe, #a855f7)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent'
+            fontSize: '1.3rem',
+            fontWeight: '800',
+            letterSpacing: '-0.02em',
+            color: 'var(--text-main)'
           }}>
             VortiQ Studio
           </h1>
-          <p style={{ fontSize: '0.685rem', fontWeight: '800', color: 'var(--cyan)', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-            <Sparkles size={10} /> AI Collaboration
+          <p style={{ fontSize: '0.685rem', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+            Workspace Platform
           </p>
         </div>
       </div>
@@ -69,7 +65,7 @@ export default function Sidebar({
           </span>
           <button
             onClick={onOpenWorkspaceModal}
-            style={{ background: 'none', border: 'none', color: 'var(--cyan)', fontSize: '0.75rem', fontWeight: 700, cursor: 'pointer' }}
+            style={{ background: 'none', border: 'none', color: '#a3e635', fontSize: '0.75rem', fontWeight: 700, cursor: 'pointer' }}
           >
             + Manage
           </button>
@@ -77,7 +73,7 @@ export default function Sidebar({
 
         <div className="glass-card" style={{ padding: '0.55rem 0.75rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', width: '100%' }}>
-            <Briefcase size={16} style={{ color: 'var(--cyan)', flexShrink: 0 }} />
+            <Briefcase size={16} style={{ color: '#84cc16', flexShrink: 0 }} />
             <select
               value={activeWorkspace ? activeWorkspace.id : ''}
               onChange={(e) => {
@@ -97,7 +93,7 @@ export default function Sidebar({
               }}
             >
               {workspaces.map((ws) => (
-                <option key={ws.id} value={ws.id} style={{ background: '#090c1a', color: '#fff' }}>
+                <option key={ws.id} value={ws.id} style={{ background: '#1e293b', color: '#fff' }}>
                   {ws.name} ({ws.currentUserRole || 'MEMBER'})
                 </option>
               ))}
@@ -180,27 +176,18 @@ export default function Sidebar({
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <div style={{
-              width: '36px',
-              height: '36px',
+              width: '34px',
+              height: '34px',
               borderRadius: '50%',
-              background: 'linear-gradient(135deg, #00f2fe, #ff007f)',
-              padding: '2px',
-              boxShadow: '0 0 14px rgba(0, 242, 254, 0.4)'
+              background: 'linear-gradient(135deg, #84cc16, #65a30d)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#fff',
+              fontWeight: '700',
+              fontSize: '0.85rem'
             }}>
-              <div style={{
-                width: '100%',
-                height: '100%',
-                borderRadius: '50%',
-                background: 'var(--bg-secondary)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#fff',
-                fontWeight: '800',
-                fontSize: '0.85rem'
-              }}>
-                {(currentUser.name || currentUser.username || 'U').charAt(0).toUpperCase()}
-              </div>
+              {(currentUser.name || currentUser.username || 'U').charAt(0).toUpperCase()}
             </div>
             <div>
               <div style={{ fontSize: '0.85rem', fontWeight: '700', color: 'var(--text-main)', maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
@@ -210,7 +197,7 @@ export default function Sidebar({
             </div>
           </div>
           
-          <ShieldCheck size={16} style={{ color: 'var(--cyan)' }} title="JWT Secured" />
+          <ShieldCheck size={16} style={{ color: '#84cc16' }} title="JWT Secured" />
         </div>
       )}
 

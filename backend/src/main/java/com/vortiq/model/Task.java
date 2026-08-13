@@ -12,6 +12,8 @@ import java.time.LocalDateTime;
     @Index(name = "idx_task_priority", columnList = "priority"),
     @Index(name = "idx_task_project_id", columnList = "project_id"),
     @Index(name = "idx_task_user_id", columnList = "user_id"),
+    @Index(name = "idx_task_workspace_id", columnList = "workspace_id"),
+    @Index(name = "idx_task_assigned_to", columnList = "assigned_to_id"),
     @Index(name = "idx_task_status_priority", columnList = "status, priority")
 })
 public class Task {
@@ -50,6 +52,21 @@ public class Task {
     @JsonIgnore
     private User user;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "workspace_id")
+    @JsonIgnore
+    private Workspace workspace;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "created_by_id")
+    @JsonIgnore
+    private User createdBy;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "assigned_to_id")
+    @JsonIgnore
+    private User assignedTo;
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -83,6 +100,7 @@ public class Task {
         this.dueDate = dueDate;
         this.project = project;
         this.user = user;
+        this.createdBy = user;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
     }
@@ -110,7 +128,10 @@ public class Task {
     public String getCategory() { return category; }
     public void setCategory(String category) { this.category = category; }
 
-    public String getAssignee() { return assignee; }
+    public String getAssignee() { 
+        if (assignedTo != null) return assignedTo.getName();
+        return assignee; 
+    }
     public void setAssignee(String assignee) { this.assignee = assignee; }
 
     public LocalDate getDueDate() { return dueDate; }
@@ -121,6 +142,20 @@ public class Task {
 
     public User getUser() { return user; }
     public void setUser(User user) { this.user = user; }
+
+    public Workspace getWorkspace() { return workspace; }
+    public void setWorkspace(Workspace workspace) { this.workspace = workspace; }
+
+    public User getCreatedBy() { return createdBy; }
+    public void setCreatedBy(User createdBy) { this.createdBy = createdBy; }
+
+    public User getAssignedTo() { return assignedTo; }
+    public void setAssignedTo(User assignedTo) { 
+        this.assignedTo = assignedTo; 
+        if (assignedTo != null) {
+            this.assignee = assignedTo.getName();
+        }
+    }
 
     @JsonProperty("projectId")
     public Long getProjectId() {
@@ -136,6 +171,43 @@ public class Task {
         } else {
             this.project = null;
         }
+    }
+
+    @JsonProperty("workspaceId")
+    public Long getWorkspaceId() {
+        return workspace != null ? workspace.getId() : null;
+    }
+
+    @JsonProperty("workspaceId")
+    public void setWorkspaceId(Long workspaceId) {
+        if (workspaceId != null) {
+            Workspace dummy = new Workspace();
+            dummy.setId(workspaceId);
+            this.workspace = dummy;
+        } else {
+            this.workspace = null;
+        }
+    }
+
+    @JsonProperty("assignedToId")
+    public Long getAssignedToId() {
+        return assignedTo != null ? assignedTo.getId() : null;
+    }
+
+    @JsonProperty("assignedToId")
+    public void setAssignedToId(Long assignedToId) {
+        if (assignedToId != null) {
+            User dummy = new User();
+            dummy.setId(assignedToId);
+            this.assignedTo = dummy;
+        } else {
+            this.assignedTo = null;
+        }
+    }
+
+    @JsonProperty("createdById")
+    public Long getCreatedById() {
+        return createdBy != null ? createdBy.getId() : (user != null ? user.getId() : null);
     }
 
     public LocalDateTime getCreatedAt() { return createdAt; }

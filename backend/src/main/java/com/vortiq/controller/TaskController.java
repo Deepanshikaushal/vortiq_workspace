@@ -3,9 +3,12 @@ package com.vortiq.controller;
 import com.vortiq.model.Task;
 import com.vortiq.model.TaskPriority;
 import com.vortiq.model.TaskStatus;
+import com.vortiq.model.User;
+import com.vortiq.repository.UserRepository;
 import com.vortiq.service.TaskService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,17 +20,26 @@ import java.util.Map;
 public class TaskController {
 
     private final TaskService taskService;
+    private final UserRepository userRepository;
 
-    public TaskController(TaskService taskService) {
+    public TaskController(TaskService taskService, UserRepository userRepository) {
         this.taskService = taskService;
+        this.userRepository = userRepository;
+    }
+
+    private User getAuthenticatedUser(Authentication authentication) {
+        if (authentication == null) return null;
+        return userRepository.findByEmail(authentication.getName()).orElse(null);
     }
 
     @GetMapping
     public List<Task> getTasks(
+            @RequestParam(required = false) Long workspaceId,
             @RequestParam(required = false) TaskStatus status,
             @RequestParam(required = false) TaskPriority priority,
+            @RequestParam(required = false) Long assignedToId,
             @RequestParam(required = false) String search) {
-        return taskService.getAllTasks(status, priority, search);
+        return taskService.getAllTasks(workspaceId, status, priority, assignedToId, search);
     }
 
     @GetMapping("/{id}")
@@ -38,8 +50,9 @@ public class TaskController {
     }
 
     @PostMapping
-    public ResponseEntity<Task> createTask(@RequestBody Task task) {
-        Task created = taskService.createTask(task);
+    public ResponseEntity<Task> createTask(@RequestBody Task task, Authentication authentication) {
+        User creator = getAuthenticatedUser(authentication);
+        Task created = taskService.createTask(task, creator);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
@@ -50,6 +63,19 @@ public class TaskController {
             return ResponseEntity.ok(updated);
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PatchMapping("/{id}/assign")
+    public ResponseEntity<Task> assignTask(
+            @PathVariable Long id,
+            @RequestBody Map<String, Long> payload) {
+        Long assigneeId = payload.get("assigneeId");
+        try {
+            Task updated = taskService.assignTask(id, assigneeId);
+            return ResponseEntity.ok(updated);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().build();
         }
     }
 
@@ -73,7 +99,7 @@ public class TaskController {
     }
 
     @GetMapping("/stats")
-    public ResponseEntity<Map<String, Object>> getTaskStats() {
-        return ResponseEntity.ok(taskService.getTaskStats());
+    public ResponseEntity<Map<String, Object>> getTaskStats(@RequestParam(required = false) Long workspaceId) {
+        return ResponseEntity.ok(taskService.getTaskStats(workspaceId));
     }
 }

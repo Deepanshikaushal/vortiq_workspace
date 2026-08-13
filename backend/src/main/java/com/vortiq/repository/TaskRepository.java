@@ -19,13 +19,26 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
 
     List<Task> findByProjectId(Long projectId);
 
+    List<Task> findByWorkspaceId(Long workspaceId);
+
     @Query("SELECT t FROM Task t WHERE " +
+           "(:workspaceId IS NULL OR t.workspace.id = :workspaceId) AND " +
            "(:status IS NULL OR t.status = :status) AND " +
            "(:priority IS NULL OR t.priority = :priority) AND " +
+           "(:assignedToId IS NULL OR t.assignedTo.id = :assignedToId) AND " +
            "(:search IS NULL OR LOWER(t.title) LIKE LOWER(CONCAT('%', :search, '%')) OR LOWER(t.description) LIKE LOWER(CONCAT('%', :search, '%')) OR LOWER(t.category) LIKE LOWER(CONCAT('%', :search, '%')))")
-    List<Task> filterTasks(@Param("status") TaskStatus status,
-                           @Param("priority") TaskPriority priority,
-                           @Param("search") String search);
+    List<Task> filterTasks(
+            @Param("workspaceId") Long workspaceId,
+            @Param("status") TaskStatus status,
+            @Param("priority") TaskPriority priority,
+            @Param("assignedToId") Long assignedToId,
+            @Param("search") String search);
 
     long countByStatus(TaskStatus status);
+
+    @Query("SELECT COUNT(t) FROM Task t WHERE (:workspaceId IS NULL OR t.workspace.id = :workspaceId) AND t.status = :status")
+    long countByWorkspaceIdAndStatus(@Param("workspaceId") Long workspaceId, @Param("status") TaskStatus status);
+
+    @Query("SELECT COUNT(t) FROM Task t WHERE (:workspaceId IS NULL OR t.workspace.id = :workspaceId)")
+    long countByWorkspaceId(@Param("workspaceId") Long workspaceId);
 }

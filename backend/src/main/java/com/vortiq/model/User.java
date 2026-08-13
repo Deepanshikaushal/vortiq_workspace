@@ -18,6 +18,8 @@ public class User {
     @Column(nullable = false)
     private String username;
 
+    private String name;
+
     @Column(nullable = false, unique = true)
     private String email;
 
@@ -25,7 +27,11 @@ public class User {
     @JsonIgnore
     private String password;
 
-    private String role; // e.g. "ROLE_USER"
+    private String bio;
+
+    private String avatarUrl;
+
+    private String role;
 
     private LocalDateTime createdAt;
 
@@ -36,6 +42,16 @@ public class User {
 
     public User(String username, String email, String password) {
         this.username = username;
+        this.name = username;
+        this.email = email;
+        this.password = password;
+        this.role = "ROLE_USER";
+        this.createdAt = LocalDateTime.now();
+    }
+
+    public User(String username, String name, String email, String password) {
+        this.username = username;
+        this.name = name != null ? name : username;
         this.email = email;
         this.password = password;
         this.role = "ROLE_USER";
@@ -48,11 +64,20 @@ public class User {
     public String getUsername() { return username; }
     public void setUsername(String username) { this.username = username; }
 
+    public String getName() { return name != null ? name : username; }
+    public void setName(String name) { this.name = name; }
+
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
 
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
+
+    public String getBio() { return bio; }
+    public void setBio(String bio) { this.bio = bio; }
+
+    public String getAvatarUrl() { return avatarUrl; }
+    public void setAvatarUrl(String avatarUrl) { this.avatarUrl = avatarUrl; }
 
     public String getRole() { return role; }
     public void setRole(String role) { this.role = role; }

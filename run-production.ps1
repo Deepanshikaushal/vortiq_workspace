@@ -1,10 +1,10 @@
-# ProjectPulse Production Executable Script
+# VortiQ Studio Production Executable Script
 Write-Host "=========================================" -ForegroundColor Cyan
-Write-Host " Launching ProjectPulse Production Build " -ForegroundColor Green
+Write-Host " Launching VortiQ Studio Production Build " -ForegroundColor Green
 Write-Host " Core Java Spring Boot + Embedded React  " -ForegroundColor Cyan
 Write-Host "=========================================" -ForegroundColor Cyan
 
-$jarPath = "backend\target\taskpulse-backend-0.0.1-SNAPSHOT.jar"
+$jarPath = "backend\target\vortiq-backend-0.0.1-SNAPSHOT.jar"
 
 if (Test-Path $jarPath) {
     Write-Host "Starting JAR server on http://localhost:8080 ..." -ForegroundColor Yellow

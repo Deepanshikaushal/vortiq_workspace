@@ -1,9 +1,11 @@
-const API_BASE_URL = '/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
 
 export async function checkApiHealth() {
   try {
-    const res = await fetch(`${API_BASE_URL}/tasks/stats`, { method: 'GET' });
-    return res.ok;
+    const res = await fetch(`${API_BASE_URL}/health`, { method: 'GET' });
+    if (res.ok) return true;
+    const fallbackRes = await fetch(`${API_BASE_URL}/tasks/stats`, { method: 'GET' });
+    return fallbackRes.ok;
   } catch (err) {
     return false;
   }

@@ -18,6 +18,9 @@ RUN mvn -f backend/pom.xml clean package -DskipTests
 # Stage 3: Lightweight Production Container
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
-COPY --from=backend-builder /app/backend/target/taskpulse-backend-0.0.1-SNAPSHOT.jar app.jar
+ENV PORT=8080
+COPY --from=backend-builder /app/backend/target/vortiq-backend-0.0.1-SNAPSHOT.jar app.jar
 EXPOSE 8080
+HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 CMD wget --no-verbose --tries=1 --spider http://localhost:${PORT}/actuator/health || exit 1
 ENTRYPOINT ["java", "-jar", "app.jar"]
+

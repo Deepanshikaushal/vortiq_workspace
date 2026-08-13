@@ -3,7 +3,7 @@
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.3.4-brightgreen?logo=springboot)
 ![React](https://img.shields.io/badge/React-18-blue?logo=react)
 ![Vite](https://img.shields.io/badge/Vite-5.4-purple?logo=vite)
-![Java](https://img.shields.io/badge/Java-21%2F24-orange?logo=openjdk)
+![Java](https://img.shields.io/badge/Java-21-orange?logo=openjdk)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
 **VortiQ Studio** is a modern full-stack enterprise task management platform engineered with a **Core Java Spring Boot REST API** backend and a **React 18 (Vite)** frontend UI. It features interactive Kanban boards, data matrix tables, real-time velocity metrics, and dynamic workspace categorization.
@@ -27,7 +27,7 @@
 
 ### Backend
 - **Framework**: Spring Boot 3.3.4 (Java Web, Spring Data JPA)
-- **Database**: H2 In-Memory Database (`jdbc:h2:mem:taskpulsedb`)
+- **Database**: H2 In-Memory Database (`jdbc:h2:mem:vortiqdb`)
 - **Build Tool**: Apache Maven 3.9+
 
 ### Frontend
@@ -46,12 +46,12 @@ vortiq-workspace/
 │   ├── pom.xml
 │   └── src/
 │       └── main/
-│           ├── java/com/example/taskpulse/
-│           │   ├── TaskPulseApplication.java
-│           │   ├── controller/           # Task & Project REST Controllers
+│           ├── java/com/vortiq/
+│           │   ├── VortiQApplication.java
+│           │   ├── controller/           # Task, Project & Health REST Controllers
 │           │   ├── model/                # Task & Project JPA Entities & Enums
 │           │   ├── repository/           # Spring Data JPA Interfaces
-│           │   ├── service/                  # Business Logic & Analytics Aggregation
+│           │   ├── service/              # Business Logic & Analytics Aggregation
 │           │   └── config/               # CORS WebConfig & DataInitializer
 │           └── resources/
 │               └── application.properties
@@ -75,7 +75,7 @@ vortiq-workspace/
 ## 🚀 Getting Started
 
 ### Prerequisites
-- **Java Development Kit (JDK 21 or 24)**
+- **Java Development Kit (JDK 21)**
 - **Node.js (v18+)** & **npm (v9+)**
 - **Apache Maven 3.9+**
 

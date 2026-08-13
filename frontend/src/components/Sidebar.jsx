@@ -130,11 +130,11 @@ export default function Sidebar({
             fontWeight: '800',
             fontSize: '0.85rem'
           }}>
-            AR
+            DK
           </div>
           <div>
-            <div style={{ fontSize: '0.85rem', fontWeight: '700', color: 'var(--text-main)' }}>Alex Rivers</div>
-            <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Lead Architect</div>
+            <div style={{ fontSize: '0.85rem', fontWeight: '700', color: 'var(--text-main)' }}>Deepanshi Kaushal</div>
+            <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Lead Full-Stack Engineer</div>
           </div>
         </div>
         

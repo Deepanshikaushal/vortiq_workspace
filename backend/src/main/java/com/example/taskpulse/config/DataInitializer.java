@@ -35,7 +35,7 @@ public class DataInitializer implements CommandLineRunner {
                     TaskStatus.IN_PROGRESS,
                     TaskPriority.HIGH,
                     "Frontend",
-                    "Alex Rivers",
+                    "Deepanshi Kaushal",
                     LocalDate.now().plusDays(2),
                     coreApp.getId()
             ));
@@ -68,7 +68,7 @@ public class DataInitializer implements CommandLineRunner {
                     TaskStatus.TODO,
                     TaskPriority.MEDIUM,
                     "Frontend",
-                    "Alex Rivers",
+                    "Deepanshi Kaushal",
                     LocalDate.now().plusDays(5),
                     coreApp.getId()
             ));

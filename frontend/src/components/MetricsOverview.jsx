@@ -10,36 +10,36 @@ export default function MetricsOverview({ stats }) {
       value: total,
       sub: `${todo} pending tasks`,
       icon: Layers,
-      color: '#00f2fe',
-      borderGlow: 'rgba(0, 242, 254, 0.4)',
-      bgGlow: 'rgba(0, 242, 254, 0.15)'
+      color: '#ccff00',
+      borderGlow: 'rgba(204, 255, 0, 0.45)',
+      bgGlow: 'rgba(204, 255, 0, 0.15)'
     },
     {
       title: 'In Progress',
       value: inProgress,
       sub: `${inReview} in review`,
       icon: Activity,
-      color: '#a855f7',
-      borderGlow: 'rgba(168, 85, 247, 0.4)',
-      bgGlow: 'rgba(168, 85, 247, 0.15)'
+      color: '#a3e635',
+      borderGlow: 'rgba(163, 230, 53, 0.45)',
+      bgGlow: 'rgba(163, 230, 53, 0.15)'
     },
     {
       title: 'Completed',
       value: completed,
       sub: `${completionRate}% velocity score`,
       icon: CheckCircle2,
-      color: '#00f5a0',
-      borderGlow: 'rgba(0, 245, 160, 0.4)',
-      bgGlow: 'rgba(0, 245, 160, 0.15)'
+      color: '#4ade80',
+      borderGlow: 'rgba(74, 222, 128, 0.45)',
+      bgGlow: 'rgba(74, 222, 128, 0.15)'
     },
     {
       title: 'Action Needed',
       value: inReview + todo,
       sub: 'Tasks requiring focus',
       icon: AlertCircle,
-      color: '#ffb703',
-      borderGlow: 'rgba(255, 183, 3, 0.4)',
-      bgGlow: 'rgba(255, 183, 3, 0.15)'
+      color: '#facc15',
+      borderGlow: 'rgba(250, 204, 21, 0.45)',
+      bgGlow: 'rgba(250, 204, 21, 0.15)'
     }
   ];
 
@@ -99,10 +99,10 @@ export default function MetricsOverview({ stats }) {
       </div>
 
       {/* Interactive Velocity Meter */}
-      <div className="glass-card" style={{ marginTop: '1.25rem', padding: '1.25rem 1.5rem', borderColor: 'var(--border-purple)' }}>
+      <div className="glass-card" style={{ marginTop: '1.25rem', padding: '1.25rem 1.5rem', borderColor: 'rgba(204, 255, 0, 0.35)' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem', flexWrap: 'wrap', gap: '0.5rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-            <div style={{ width: '34px', height: '34px', borderRadius: '10px', background: 'rgba(0, 242, 254, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#00f2fe' }}>
+            <div style={{ width: '34px', height: '34px', borderRadius: '10px', background: 'rgba(204, 255, 0, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ccff00' }}>
               <Activity size={20} />
             </div>
             <div>
@@ -111,9 +111,9 @@ export default function MetricsOverview({ stats }) {
             </div>
           </div>
           
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', background: 'rgba(0, 245, 160, 0.15)', padding: '0.35rem 0.9rem', borderRadius: '9999px', border: '1px solid rgba(0, 245, 160, 0.4)' }}>
-            <Sparkles size={14} style={{ color: '#00f5a0' }} />
-            <span style={{ fontSize: '0.85rem', fontWeight: '800', color: '#00f5a0' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', background: 'rgba(204, 255, 0, 0.15)', padding: '0.35rem 0.9rem', borderRadius: '9999px', border: '1px solid rgba(204, 255, 0, 0.4)' }}>
+            <Sparkles size={14} style={{ color: '#ccff00' }} />
+            <span style={{ fontSize: '0.85rem', fontWeight: '800', color: '#ccff00' }}>
               {completionRate}% Velocity Score
             </span>
           </div>
@@ -124,9 +124,9 @@ export default function MetricsOverview({ stats }) {
           <div style={{
             height: '100%',
             width: `${completionRate}%`,
-            background: 'linear-gradient(90deg, #00f2fe, #a855f7, #ff007f, #00f5a0)',
+            background: 'linear-gradient(90deg, #ccff00, #a3e635, #4ade80)',
             borderRadius: '9999px',
-            boxShadow: '0 0 20px rgba(0, 242, 254, 0.7)',
+            boxShadow: '0 0 20px rgba(204, 255, 0, 0.7)',
             transition: 'width 0.7s cubic-bezier(0.4, 0, 0.2, 1)'
           }} />
         </div>

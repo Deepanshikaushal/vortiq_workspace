@@ -17,9 +17,11 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
 
     List<Task> findByPriority(TaskPriority priority);
 
-    List<Task> findByProjectId(Long projectId);
+    @Query("SELECT t FROM Task t WHERE t.project.id = :projectId")
+    List<Task> findByProjectId(@Param("projectId") Long projectId);
 
-    List<Task> findByWorkspaceId(Long workspaceId);
+    @Query("SELECT t FROM Task t WHERE t.workspace.id = :workspaceId")
+    List<Task> findByWorkspaceId(@Param("workspaceId") Long workspaceId);
 
     @Query("SELECT t FROM Task t WHERE " +
            "(:workspaceId IS NULL OR t.workspace.id = :workspaceId) AND " +

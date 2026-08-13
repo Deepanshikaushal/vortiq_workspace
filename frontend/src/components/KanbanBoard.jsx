@@ -2,15 +2,15 @@ import React from 'react';
 import { Calendar, User, Tag, Edit2, Trash2, ArrowRight, ArrowLeft, CheckCircle2, Circle } from 'lucide-react';
 
 const COLUMNS = [
-  { id: 'TODO', title: 'To Do', dot: '#94a3b8' },
-  { id: 'IN_PROGRESS', title: 'In Progress', dot: '#06b6d4' },
-  { id: 'IN_REVIEW', title: 'In Review', dot: '#f59e0b' },
-  { id: 'COMPLETED', title: 'Completed', dot: '#10b981' }
+  { id: 'TODO', title: 'To Do', dot: '#94a3b8', bg: 'rgba(148, 163, 184, 0.1)' },
+  { id: 'IN_PROGRESS', title: 'In Progress', dot: '#06b6d4', bg: 'rgba(6, 182, 212, 0.1)' },
+  { id: 'IN_REVIEW', title: 'In Review', dot: '#f59e0b', bg: 'rgba(245, 158, 11, 0.1)' },
+  { id: 'COMPLETED', title: 'Completed', dot: '#10b981', bg: 'rgba(16, 185, 129, 0.1)' }
 ];
 
 export default function KanbanBoard({ tasks, onStatusChange, onEdit, onDelete }) {
   const getCategoryClass = (cat) => {
-    const known = ['Frontend', 'Backend', 'DevOps', 'Design', 'Database'];
+    const known = ['Frontend', 'Backend', 'DevOps', 'Design', 'Database', 'Security', 'Mobile'];
     return known.includes(cat) ? `tag-category-${cat}` : 'tag-category-Default';
   };
 
@@ -25,17 +25,17 @@ export default function KanbanBoard({ tasks, onStatusChange, onEdit, onDelete })
             {/* Column Header */}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: '0.85rem', marginBottom: '1rem', borderBottom: '1px solid var(--border-color)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-                <span style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: col.dot, boxShadow: `0 0 12px ${col.dot}` }} />
-                <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1rem', fontWeight: '800' }}>{col.title}</h3>
+                <span style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: col.dot, boxShadow: `0 0 14px ${col.dot}` }} />
+                <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1.05rem', fontWeight: '800' }}>{col.title}</h3>
               </div>
               <span style={{
-                background: 'var(--bg-tertiary)',
-                color: 'var(--text-muted)',
+                background: col.bg,
+                color: col.dot,
                 padding: '0.2rem 0.65rem',
                 borderRadius: '9999px',
                 fontSize: '0.75rem',
                 fontWeight: '800',
-                border: '1px solid var(--border-color)'
+                border: `1px solid ${col.dot}44`
               }}>
                 {columnTasks.length}
               </span>
@@ -87,9 +87,22 @@ export default function KanbanBoard({ tasks, onStatusChange, onEdit, onDelete })
                     {/* User & Date Details */}
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.75rem', color: 'var(--text-dim)', paddingTop: '0.5rem', borderTop: '1px solid var(--border-color)' }}>
                       {task.assignee ? (
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                          <User size={12} style={{ color: 'var(--primary)' }} />
-                          <span>{task.assignee}</span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                          <div style={{
+                            width: '22px',
+                            height: '22px',
+                            borderRadius: '50%',
+                            background: 'linear-gradient(135deg, var(--cyan), var(--violet))',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '0.65rem',
+                            fontWeight: 'bold',
+                            color: '#fff'
+                          }}>
+                            {task.assignee.charAt(0).toUpperCase()}
+                          </div>
+                          <span style={{ color: 'var(--text-main)', fontWeight: 600 }}>{task.assignee}</span>
                         </div>
                       ) : <span />}
                       

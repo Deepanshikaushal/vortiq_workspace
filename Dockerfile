@@ -11,7 +11,8 @@ FROM maven:3.9-eclipse-temurin-21 AS backend-builder
 WORKDIR /app
 COPY backend/pom.xml ./backend/
 COPY backend/src ./backend/src
-COPY --from=frontend-builder /app/frontend/dist ./backend/src/main/resources/static
+RUN rm -rf ./backend/src/main/resources/static/*
+COPY --from=frontend-builder /app/frontend/dist/ ./backend/src/main/resources/static/
 RUN mvn -f backend/pom.xml clean package -DskipTests
 
 # Stage 3: Lightweight Production Container

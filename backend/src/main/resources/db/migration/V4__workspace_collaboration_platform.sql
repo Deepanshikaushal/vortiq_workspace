@@ -45,12 +45,12 @@ CREATE INDEX IF NOT EXISTS idx_task_assigned_to ON tasks (assigned_to_id);
 
 -- Seed default "VortiQ Studio Workspace" for existing admin user (id = 1)
 INSERT INTO workspaces (id, name, description, color_code, owner_id, created_at)
-VALUES (1, 'VortiQ Studio Workspace', 'Default enterprise workspace for team collaboration', '#6366f1', 1, CURRENT_TIMESTAMP)
-ON CONFLICT (id) DO NOTHING;
+SELECT 1, 'VortiQ Studio Workspace', 'Default enterprise workspace for team collaboration', '#6366f1', 1, CURRENT_TIMESTAMP
+WHERE NOT EXISTS (SELECT 1 FROM workspaces WHERE id = 1);
 
 INSERT INTO workspace_members (workspace_id, user_id, role, joined_at)
-VALUES (1, 1, 'OWNER', CURRENT_TIMESTAMP)
-ON CONFLICT (workspace_id, user_id) DO NOTHING;
+SELECT 1, 1, 'OWNER', CURRENT_TIMESTAMP
+WHERE NOT EXISTS (SELECT 1 FROM workspace_members WHERE workspace_id = 1 AND user_id = 1);
 
 -- Link existing projects and tasks to default workspace (id = 1)
 UPDATE projects SET workspace_id = 1 WHERE workspace_id IS NULL;

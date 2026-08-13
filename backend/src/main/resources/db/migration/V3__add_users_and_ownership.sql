@@ -22,8 +22,8 @@ CREATE INDEX IF NOT EXISTS idx_task_user_id ON tasks (user_id);
 -- Seed default admin user (email: admin@vortiq.com / password: Password123!)
 -- BCrypt hash for Password123!: $2a$10$8.UnVuG9HHgffUDAlk8qfOuVGkqRzgVymGe07xD0m1bC.I.s36Cg2
 INSERT INTO users (id, username, email, password, role, created_at)
-VALUES (1, 'Admin', 'admin@vortiq.com', '$2a$10$8.UnVuG9HHgffUDAlk8qfOuVGkqRzgVymGe07xD0m1bC.I.s36Cg2', 'ROLE_ADMIN', CURRENT_TIMESTAMP)
-ON CONFLICT (email) DO NOTHING;
+SELECT 1, 'Admin', 'admin@vortiq.com', '$2a$10$8.UnVuG9HHgffUDAlk8qfOuVGkqRzgVymGe07xD0m1bC.I.s36Cg2', 'ROLE_ADMIN', CURRENT_TIMESTAMP
+WHERE NOT EXISTS (SELECT 1 FROM users WHERE id = 1 OR email = 'admin@vortiq.com');
 
 -- Associate initial seeded projects and tasks with default admin user (id = 1)
 UPDATE projects SET user_id = 1 WHERE user_id IS NULL;

@@ -12,7 +12,7 @@ WORKDIR /app
 COPY backend/pom.xml ./backend/
 COPY backend/src ./backend/src
 RUN rm -rf ./backend/src/main/resources/static/*
-COPY --from=frontend-builder /app/backend/src/main/resources/static/ ./backend/src/main/resources/static/
+COPY --from=frontend-builder /app/frontend/dist/ ./backend/src/main/resources/static/
 RUN mvn -f backend/pom.xml clean package -DskipTests
 
 # Stage 3: Lightweight Production Container

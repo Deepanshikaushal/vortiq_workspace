@@ -1,5 +1,5 @@
-import React from 'react';
-import { Search, Moon, Sun, Kanban, Table, X, Sparkles, Bell } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Search, Moon, Sun, Kanban, Table, X, Bell, User, LogIn, LogOut, Settings, Briefcase, ShieldCheck } from 'lucide-react';
 import ApiStatusBadge from './ApiStatusBadge';
 
 export default function Navbar({
@@ -11,19 +11,37 @@ export default function Navbar({
   setTheme,
   isConnected,
   onCheckApi,
-  taskCount
+  currentUser,
+  activeWorkspace,
+  onOpenAuthModal,
+  onOpenProfileModal,
+  onOpenWorkspaceModal,
+  onLogout
 }) {
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const menuRef = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setUserMenuOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   return (
     <header className="glass-panel" style={{ borderRadius: '0', borderLeft: 'none', borderRight: 'none', borderTop: 'none', position: 'sticky', top: 0, zIndex: 50 }}>
       <div style={{ padding: '0.85rem 1.75rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1.5rem', flexWrap: 'wrap' }}>
         
         {/* Search Input Bar */}
-        <div style={{ flex: '1', maxWidth: '460px', position: 'relative' }}>
+        <div style={{ flex: '1', maxWidth: '440px', position: 'relative' }}>
           <Search size={16} style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
           <input
             type="text"
             className="form-input"
-            placeholder="Search tasks, code specs, assignees..."
+            placeholder="Search tasks, specs, assignees..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             style={{ width: '100%', paddingLeft: '2.5rem', paddingRight: searchQuery ? '2.3rem' : '4.5rem', height: '42px' }}
@@ -45,6 +63,29 @@ export default function Navbar({
         {/* Header Right Tools */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
           
+          {activeWorkspace && (
+            <div
+              onClick={onOpenWorkspaceModal}
+              style={{
+                cursor: 'pointer',
+                padding: '0.35rem 0.75rem',
+                borderRadius: '8px',
+                background: 'rgba(99, 102, 241, 0.12)',
+                border: '1px solid rgba(99, 102, 241, 0.25)',
+                color: 'var(--primary-glow)',
+                fontSize: '0.82rem',
+                fontWeight: 600,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.4rem'
+              }}
+              title="Click to manage workspace"
+            >
+              <Briefcase size={14} />
+              <span>{activeWorkspace.name}</span>
+            </div>
+          )}
+
           <ApiStatusBadge isConnected={isConnected} onRetry={onCheckApi} />
 
           {/* View Mode Toggle */}
@@ -65,11 +106,6 @@ export default function Navbar({
             </button>
           </div>
 
-          {/* Notifications Bell */}
-          <button className="btn btn-secondary btn-icon" title="Notifications">
-            <Bell size={18} />
-          </button>
-
           {/* Theme Toggle Button */}
           <button
             className="btn btn-secondary btn-icon"
@@ -78,6 +114,95 @@ export default function Navbar({
           >
             {theme === 'dark' ? <Sun size={18} style={{ color: '#fbbf24' }} /> : <Moon size={18} style={{ color: '#06b6d4' }} />}
           </button>
+
+          {/* User Account / Profile Menu */}
+          {currentUser ? (
+            <div style={{ position: 'relative' }} ref={menuRef}>
+              <button
+                onClick={() => setUserMenuOpen(!userMenuOpen)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  padding: '0.35rem 0.65rem',
+                  borderRadius: '24px',
+                  background: 'var(--bg-secondary)',
+                  border: '1px solid var(--border-color)',
+                  color: 'var(--text-main)',
+                  cursor: 'pointer'
+                }}
+              >
+                <div style={{
+                  width: '28px',
+                  height: '28px',
+                  borderRadius: '50%',
+                  background: 'linear-gradient(135deg, var(--primary-glow), #ec4899)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontWeight: 'bold',
+                  fontSize: '0.8rem',
+                  color: '#fff'
+                }}>
+                  {(currentUser.name || currentUser.username || currentUser.email || 'U').charAt(0).toUpperCase()}
+                </div>
+                <span style={{ fontSize: '0.85rem', fontWeight: 600, maxWidth: '100px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {currentUser.name || currentUser.username}
+                </span>
+              </button>
+
+              {userMenuOpen && (
+                <div style={{
+                  position: 'absolute',
+                  right: 0,
+                  top: '120%',
+                  width: '210px',
+                  background: 'var(--bg-secondary)',
+                  backdropFilter: 'blur(16px)',
+                  border: '1px solid var(--border-color)',
+                  borderRadius: '12px',
+                  boxShadow: '0 10px 25px rgba(0,0,0,0.3)',
+                  padding: '0.5rem',
+                  zIndex: 100
+                }}>
+                  <div style={{ padding: '0.5rem 0.75rem', borderBottom: '1px solid var(--border-color)', marginBottom: '0.35rem' }}>
+                    <div style={{ fontSize: '0.88rem', fontWeight: 600 }}>{currentUser.name || currentUser.username}</div>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis' }}>{currentUser.email}</div>
+                  </div>
+
+                  <button
+                    onClick={() => { setUserMenuOpen(false); onOpenProfileModal(); }}
+                    className="btn btn-ghost"
+                    style={{ width: '100%', justifyContent: 'flex-start', fontSize: '0.85rem', padding: '0.5rem 0.75rem' }}
+                  >
+                    <Settings size={15} /> Profile & Security
+                  </button>
+
+                  <button
+                    onClick={() => { setUserMenuOpen(false); onOpenWorkspaceModal(); }}
+                    className="btn btn-ghost"
+                    style={{ width: '100%', justifyContent: 'flex-start', fontSize: '0.85rem', padding: '0.5rem 0.75rem' }}
+                  >
+                    <Briefcase size={15} /> Workspaces & Team
+                  </button>
+
+                  <div style={{ height: '1px', background: 'var(--border-color)', margin: '0.35rem 0' }} />
+
+                  <button
+                    onClick={() => { setUserMenuOpen(false); onLogout(); }}
+                    className="btn btn-ghost"
+                    style={{ width: '100%', justifyContent: 'flex-start', fontSize: '0.85rem', padding: '0.5rem 0.75rem', color: '#ef4444' }}
+                  >
+                    <LogOut size={15} /> Sign Out
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <button className="btn btn-primary" onClick={onOpenAuthModal} style={{ padding: '0.45rem 1rem', fontSize: '0.88rem' }}>
+              <LogIn size={15} /> Sign In
+            </button>
+          )}
 
         </div>
 

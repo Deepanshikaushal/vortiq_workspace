@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { X, Sparkles, Tag, Calendar, User, AlignLeft } from 'lucide-react';
 
-const CATEGORIES = ['Frontend', 'Backend', 'DevOps', 'Design', 'Database'];
+const CATEGORIES = ['Frontend', 'Backend', 'DevOps', 'Design', 'Database', 'Security', 'Mobile'];
 const PRIORITIES = ['LOW', 'MEDIUM', 'HIGH', 'URGENT'];
 
-export default function TaskModal({ isOpen, onClose, onSave, taskToEdit, projects }) {
+export default function TaskModal({ isOpen, onClose, onSave, taskToEdit, projects, workspaceMembers = [] }) {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -12,6 +12,7 @@ export default function TaskModal({ isOpen, onClose, onSave, taskToEdit, project
     priority: 'MEDIUM',
     category: 'Frontend',
     assignee: '',
+    assignedToId: '',
     dueDate: '',
     projectId: ''
   });
@@ -25,6 +26,7 @@ export default function TaskModal({ isOpen, onClose, onSave, taskToEdit, project
         priority: taskToEdit.priority || 'MEDIUM',
         category: taskToEdit.category || 'Frontend',
         assignee: taskToEdit.assignee || '',
+        assignedToId: taskToEdit.assignedToId || '',
         dueDate: taskToEdit.dueDate || '',
         projectId: taskToEdit.projectId || (projects[0]?.id || '')
       });
@@ -36,6 +38,7 @@ export default function TaskModal({ isOpen, onClose, onSave, taskToEdit, project
         priority: 'MEDIUM',
         category: 'Frontend',
         assignee: '',
+        assignedToId: '',
         dueDate: new Date().toISOString().split('T')[0],
         projectId: projects[0]?.id || ''
       });
@@ -75,7 +78,7 @@ export default function TaskModal({ isOpen, onClose, onSave, taskToEdit, project
                 {taskToEdit ? 'Edit Task' : 'Create New Task'}
               </h2>
               <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                {taskToEdit ? 'Update task details and status' : 'Add a new task to your project workspace'}
+                {taskToEdit ? 'Update task details, status, or assignee' : 'Add a new task to your project workspace'}
               </p>
             </div>
           </div>
@@ -171,14 +174,37 @@ export default function TaskModal({ isOpen, onClose, onSave, taskToEdit, project
             </div>
 
             <div className="form-group">
-              <label className="form-label">Assignee Name</label>
-              <input
-                type="text"
-                className="form-input"
-                placeholder="e.g. Sarah Chen"
-                value={formData.assignee}
-                onChange={(e) => setFormData({ ...formData, assignee: e.target.value })}
-              />
+              <label className="form-label">Assignee (Workspace Member)</label>
+              {workspaceMembers.length > 0 ? (
+                <select
+                  className="form-select"
+                  value={formData.assignedToId}
+                  onChange={(e) => {
+                    const memberId = e.target.value;
+                    const member = workspaceMembers.find(m => String(m.userId) === String(memberId));
+                    setFormData({
+                      ...formData,
+                      assignedToId: memberId,
+                      assignee: member ? (member.name || member.username) : formData.assignee
+                    });
+                  }}
+                >
+                  <option value="">Unassigned</option>
+                  {workspaceMembers.map((m) => (
+                    <option key={m.id || m.userId} value={m.userId}>
+                      {m.name || m.username} ({m.email})
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <input
+                  type="text"
+                  className="form-input"
+                  placeholder="e.g. Sarah Chen"
+                  value={formData.assignee}
+                  onChange={(e) => setFormData({ ...formData, assignee: e.target.value })}
+                />
+              )}
             </div>
           </div>
 

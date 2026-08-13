@@ -5,16 +5,23 @@ import MetricsOverview from './components/MetricsOverview';
 import KanbanBoard from './components/KanbanBoard';
 import TaskTable from './components/TaskTable';
 import TaskModal from './components/TaskModal';
+import AuthModal from './components/AuthModal';
+import ProfileModal from './components/ProfileModal';
+import WorkspaceModal from './components/WorkspaceModal';
 import Toast from './components/Toast';
 import {
   fetchTasks,
   fetchTaskStats,
   fetchProjects,
+  fetchWorkspaces,
+  fetchWorkspaceMembers,
   createTask,
   updateTask,
   updateTaskStatus,
   deleteTask,
-  checkApiHealth
+  checkApiHealth,
+  getCurrentUser,
+  logout
 } from './services/api';
 
 const DEMO_TASKS = [
@@ -31,6 +38,10 @@ const DEMO_PROJECTS = [
   { id: 3, name: 'Cloud Infrastructure', description: 'K8s & deployment pipeline', colorCode: '#f59e0b' }
 ];
 
+const DEMO_WORKSPACES = [
+  { id: 1, name: 'VortiQ Studio Workspace', description: 'Enterprise collaboration workspace', colorCode: '#6366f1', currentUserRole: 'OWNER' }
+];
+
 export default function App() {
   const [activeView, setActiveView] = useState('kanban');
   const [searchQuery, setSearchQuery] = useState('');
@@ -40,14 +51,23 @@ export default function App() {
   const [selectedProject, setSelectedProject] = useState('');
   const [theme, setTheme] = useState('dark');
 
+  const [currentUser, setCurrentUser] = useState(null);
+  const [workspaces, setWorkspaces] = useState(DEMO_WORKSPACES);
+  const [activeWorkspace, setActiveWorkspace] = useState(DEMO_WORKSPACES[0]);
+  const [workspaceMembers, setWorkspaceMembers] = useState([]);
+
   const [tasks, setTasks] = useState([]);
   const [projects, setProjects] = useState([]);
   const [stats, setStats] = useState({ total: 0, todo: 0, inProgress: 0, inReview: 0, completed: 0, completionRate: 0 });
   const [isConnected, setIsConnected] = useState(false);
   const [toasts, setToasts] = useState([]);
 
+  // Modal Control States
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [taskToEdit, setTaskToEdit] = useState(null);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [isWorkspaceModalOpen, setIsWorkspaceModalOpen] = useState(false);
 
   // Sync theme
   useEffect(() => {
@@ -80,6 +100,17 @@ export default function App() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
+  // Initial user authentication check
+  useEffect(() => {
+    async function initUser() {
+      const user = await getCurrentUser();
+      if (user) {
+        setCurrentUser(user);
+      }
+    }
+    initUser();
+  }, []);
+
   const calculateLocalStats = (taskList) => {
     const total = taskList.length;
     const todo = taskList.filter((t) => t.status === 'TODO').length;
@@ -97,13 +128,27 @@ export default function App() {
 
     if (isAlive) {
       try {
+        let wsList = await fetchWorkspaces();
+        if (wsList && wsList.length > 0) {
+          setWorkspaces(wsList);
+          if (!activeWorkspace || !wsList.some(w => w.id === activeWorkspace.id)) {
+            setActiveWorkspace(wsList[0]);
+          }
+        }
+
+        const wsId = activeWorkspace ? activeWorkspace.id : null;
+        if (wsId) {
+          fetchWorkspaceMembers(wsId).then(setWorkspaceMembers).catch(() => {});
+        }
+
         const fetchedTasks = await fetchTasks({
+          workspaceId: wsId,
           status: statusFilter || null,
           priority: priorityFilter || null,
           search: searchQuery || null
         });
-        const fetchedStats = await fetchTaskStats();
-        const fetchedProjects = await fetchProjects();
+        const fetchedStats = await fetchTaskStats(wsId);
+        const fetchedProjects = await fetchProjects(wsId);
 
         let filtered = fetchedTasks;
         if (categoryFilter) filtered = filtered.filter((t) => t.category === categoryFilter);
@@ -134,11 +179,25 @@ export default function App() {
       setProjects(DEMO_PROJECTS);
       setStats(calculateLocalStats(filtered));
     }
-  }, [statusFilter, priorityFilter, categoryFilter, selectedProject, searchQuery]);
+  }, [statusFilter, priorityFilter, categoryFilter, selectedProject, searchQuery, activeWorkspace]);
 
   useEffect(() => {
     loadData();
   }, [loadData]);
+
+  // Auth Handlers
+  const handleAuthSuccess = (user) => {
+    setCurrentUser(user);
+    addToast(`Signed in as ${user.name || user.username}`, 'success');
+    loadData();
+  };
+
+  const handleLogout = () => {
+    logout();
+    setCurrentUser(null);
+    addToast('Signed out successfully', 'info');
+    loadData();
+  };
 
   // Actions
   const handleOpenCreate = () => {
@@ -153,13 +212,18 @@ export default function App() {
 
   const handleSaveTask = async (formData) => {
     setIsModalOpen(false);
+    const payload = {
+      ...formData,
+      workspaceId: activeWorkspace ? activeWorkspace.id : null
+    };
+
     if (isConnected) {
       try {
         if (taskToEdit) {
-          await updateTask(taskToEdit.id, formData);
+          await updateTask(taskToEdit.id, payload);
           addToast(`Updated task "${formData.title}"`, 'success');
         } else {
-          await createTask(formData);
+          await createTask(payload);
           addToast(`Created task "${formData.title}"`, 'success');
         }
         await loadData();
@@ -168,10 +232,10 @@ export default function App() {
       }
     } else {
       if (taskToEdit) {
-        setTasks((prev) => prev.map((t) => (t.id === taskToEdit.id ? { ...t, ...formData } : t)));
+        setTasks((prev) => prev.map((t) => (t.id === taskToEdit.id ? { ...t, ...payload } : t)));
         addToast(`Updated task "${formData.title}"`, 'info');
       } else {
-        const newTask = { ...formData, id: Date.now() };
+        const newTask = { ...payload, id: Date.now() };
         setTasks((prev) => [newTask, ...prev]);
         addToast(`Created task "${formData.title}"`, 'success');
       }
@@ -229,8 +293,13 @@ export default function App() {
         projects={projects}
         selectedProject={selectedProject}
         setSelectedProject={setSelectedProject}
+        workspaces={workspaces}
+        activeWorkspace={activeWorkspace}
+        onSelectWorkspace={setActiveWorkspace}
+        onOpenWorkspaceModal={() => setIsWorkspaceModalOpen(true)}
+        onOpenProfileModal={() => setIsProfileModalOpen(true)}
         onOpenCreateModal={handleOpenCreate}
-        taskCount={tasks.length}
+        currentUser={currentUser}
       />
 
       {/* Main Content Area */}
@@ -246,7 +315,12 @@ export default function App() {
           setTheme={setTheme}
           isConnected={isConnected}
           onCheckApi={loadData}
-          taskCount={tasks.length}
+          currentUser={currentUser}
+          activeWorkspace={activeWorkspace}
+          onOpenAuthModal={() => setIsAuthModalOpen(true)}
+          onOpenProfileModal={() => setIsProfileModalOpen(true)}
+          onOpenWorkspaceModal={() => setIsWorkspaceModalOpen(true)}
+          onLogout={handleLogout}
         />
 
         {/* Page Inner Container */}
@@ -298,6 +372,8 @@ export default function App() {
                 <option value="DevOps">DevOps</option>
                 <option value="Design">Design</option>
                 <option value="Database">Database</option>
+                <option value="Security">Security</option>
+                <option value="Mobile">Mobile</option>
               </select>
 
               {(statusFilter || priorityFilter || categoryFilter || selectedProject || searchQuery) && (
@@ -349,6 +425,49 @@ export default function App() {
         onSave={handleSaveTask}
         taskToEdit={taskToEdit}
         projects={projects}
+        workspaceMembers={workspaceMembers}
+      />
+
+      {/* Authentication Modal */}
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        onAuthSuccess={handleAuthSuccess}
+      />
+
+      {/* Profile Settings Modal */}
+      <ProfileModal
+        isOpen={isProfileModalOpen}
+        onClose={() => setIsProfileModalOpen(false)}
+        currentUser={currentUser}
+        onProfileUpdated={(updated) => {
+          setCurrentUser(updated);
+          addToast('Profile details updated', 'success');
+        }}
+      />
+
+      {/* Workspace Collaboration Modal */}
+      <WorkspaceModal
+        isOpen={isWorkspaceModalOpen}
+        onClose={() => setIsWorkspaceModalOpen(false)}
+        activeWorkspace={activeWorkspace}
+        onWorkspaceCreated={(newWs) => {
+          setWorkspaces((prev) => [...prev, newWs]);
+          setActiveWorkspace(newWs);
+          addToast(`Created workspace "${newWs.name}"`, 'success');
+          loadData();
+        }}
+        onWorkspaceUpdated={(updatedWs) => {
+          setWorkspaces((prev) => prev.map((w) => (w.id === updatedWs.id ? updatedWs : w)));
+          setActiveWorkspace(updatedWs);
+          addToast(`Updated workspace "${updatedWs.name}"`, 'success');
+          loadData();
+        }}
+        onWorkspaceDeleted={(deletedId) => {
+          setWorkspaces((prev) => prev.filter((w) => w.id !== deletedId));
+          addToast('Workspace deleted', 'danger');
+          loadData();
+        }}
       />
     </div>
   );

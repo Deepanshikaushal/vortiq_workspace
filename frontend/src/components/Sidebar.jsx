@@ -1,17 +1,14 @@
 import React from 'react';
 import {
   Zap,
-  LayoutDashboard,
   Kanban,
   Table,
-  BarChart3,
-  Layers,
-  Users,
-  Settings,
-  FolderKanban,
   Plus,
   ShieldCheck,
-  ChevronDown
+  ChevronDown,
+  Briefcase,
+  Users,
+  Settings
 } from 'lucide-react';
 
 export default function Sidebar({
@@ -20,8 +17,13 @@ export default function Sidebar({
   projects,
   selectedProject,
   setSelectedProject,
+  workspaces,
+  activeWorkspace,
+  onSelectWorkspace,
+  onOpenWorkspaceModal,
+  onOpenProfileModal,
   onOpenCreateModal,
-  taskCount
+  currentUser
 }) {
   return (
     <aside className="sidebar-container">
@@ -46,34 +48,74 @@ export default function Sidebar({
             VortiQ Studio
           </h1>
           <p style={{ fontSize: '0.685rem', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-            Enterprise AI Workspace
+            Workspace Collaboration
           </p>
         </div>
       </div>
 
       {/* Workspace Selector */}
-      <div style={{ marginBottom: '1.5rem' }}>
-        <div style={{ fontSize: '0.7rem', fontWeight: '800', color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.4rem', paddingLeft: '0.2rem' }}>
-          Active Workspace
+      <div style={{ marginBottom: '1.25rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.4rem', paddingLeft: '0.2rem' }}>
+          <span style={{ fontSize: '0.7rem', fontWeight: '800', color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+            Workspace
+          </span>
+          <button
+            onClick={onOpenWorkspaceModal}
+            style={{ background: 'none', border: 'none', color: 'var(--primary-glow)', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer' }}
+          >
+            + Manage
+          </button>
         </div>
-        <div className="glass-card" style={{ padding: '0.6rem 0.85rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-            <FolderKanban size={16} style={{ color: 'var(--cyan)' }} />
+
+        <div className="glass-card" style={{ padding: '0.5rem 0.75rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', width: '100%' }}>
+            <Briefcase size={16} style={{ color: 'var(--cyan)', flexShrink: 0 }} />
             <select
-              value={selectedProject}
-              onChange={(e) => setSelectedProject(e.target.value)}
-              style={{ background: 'transparent', border: 'none', color: 'var(--text-main)', fontSize: '0.85rem', fontWeight: '700', outline: 'none', cursor: 'pointer', width: '150px' }}
+              value={activeWorkspace ? activeWorkspace.id : ''}
+              onChange={(e) => {
+                const wsId = Number(e.target.value);
+                const ws = workspaces.find((w) => w.id === wsId);
+                if (ws) onSelectWorkspace(ws);
+              }}
+              style={{
+                background: 'transparent',
+                border: 'none',
+                color: 'var(--text-main)',
+                fontSize: '0.85rem',
+                fontWeight: '700',
+                outline: 'none',
+                cursor: 'pointer',
+                width: '100%'
+              }}
             >
-              <option value="" style={{ background: '#0f1527', color: '#fff' }}>All Projects</option>
-              {projects.map((p) => (
-                <option key={p.id} value={p.id} style={{ background: '#0f1527', color: '#fff' }}>
-                  {p.name}
+              {workspaces.map((ws) => (
+                <option key={ws.id} value={ws.id} style={{ background: '#0f1527', color: '#fff' }}>
+                  {ws.name} ({ws.currentUserRole || 'MEMBER'})
                 </option>
               ))}
             </select>
           </div>
-          <ChevronDown size={14} style={{ color: 'var(--text-dim)' }} />
         </div>
+      </div>
+
+      {/* Filter by Project */}
+      <div style={{ marginBottom: '1.25rem' }}>
+        <div style={{ fontSize: '0.7rem', fontWeight: '800', color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.4rem', paddingLeft: '0.2rem' }}>
+          Project Scope
+        </div>
+        <select
+          className="form-select"
+          value={selectedProject}
+          onChange={(e) => setSelectedProject(e.target.value)}
+          style={{ width: '100%', fontSize: '0.85rem' }}
+        >
+          <option value="">All Workspace Projects</option>
+          {projects.map((p) => (
+            <option key={p.id} value={p.id}>
+              {p.name}
+            </option>
+          ))}
+        </select>
       </div>
 
       {/* Primary Action Button */}
@@ -104,42 +146,56 @@ export default function Sidebar({
           <span>Task Matrix List</span>
         </div>
 
-        <div className="sidebar-link" style={{ opacity: 0.7, pointerEvents: 'none' }}>
-          <BarChart3 size={18} />
-          <span>Analytics & Velocity</span>
+        <div className="sidebar-link" onClick={onOpenWorkspaceModal}>
+          <Users size={18} />
+          <span>Team Members</span>
         </div>
 
-        <div className="sidebar-link" style={{ opacity: 0.7, pointerEvents: 'none' }}>
-          <Users size={18} />
-          <span>Team Assignees</span>
+        <div className="sidebar-link" onClick={onOpenProfileModal}>
+          <Settings size={18} />
+          <span>Profile Settings</span>
         </div>
       </nav>
 
       {/* User Profile Footer */}
-      <div style={{ paddingTop: '1rem', borderTop: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <div style={{
-            width: '36px',
-            height: '36px',
-            borderRadius: '50%',
-            background: 'linear-gradient(135deg, #06b6d4, #10b981)',
+      {currentUser && (
+        <div
+          onClick={onOpenProfileModal}
+          style={{
+            paddingTop: '1rem',
+            borderTop: '1px solid var(--border-color)',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center',
-            color: '#fff',
-            fontWeight: '800',
-            fontSize: '0.85rem'
-          }}>
-            DK
+            justifyContent: 'space-between',
+            cursor: 'pointer'
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <div style={{
+              width: '36px',
+              height: '36px',
+              borderRadius: '50%',
+              background: 'linear-gradient(135deg, #06b6d4, #10b981)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#fff',
+              fontWeight: '800',
+              fontSize: '0.85rem'
+            }}>
+              {(currentUser.name || currentUser.username || 'U').charAt(0).toUpperCase()}
+            </div>
+            <div>
+              <div style={{ fontSize: '0.85rem', fontWeight: '700', color: 'var(--text-main)', maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {currentUser.name || currentUser.username}
+              </div>
+              <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>{currentUser.role || 'ROLE_USER'}</div>
+            </div>
           </div>
-          <div>
-            <div style={{ fontSize: '0.85rem', fontWeight: '700', color: 'var(--text-main)' }}>Deepanshi Kaushal</div>
-            <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Lead Full-Stack Engineer</div>
-          </div>
+          
+          <ShieldCheck size={16} style={{ color: 'var(--cyan)' }} title="JWT Secured" />
         </div>
-        
-        <ShieldCheck size={16} style={{ color: 'var(--cyan)' }} title="Enterprise Secured" />
-      </div>
+      )}
 
     </aside>
   );

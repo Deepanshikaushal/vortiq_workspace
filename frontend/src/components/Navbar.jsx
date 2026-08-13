@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Search, Moon, Sun, Kanban, Table, X, Bell, User, LogIn, LogOut, Settings, Briefcase, ShieldCheck } from 'lucide-react';
+import { Search, Moon, Sun, Kanban, Table, X, Bell, User, LogIn, LogOut, Settings, Briefcase } from 'lucide-react';
 import ApiStatusBadge from './ApiStatusBadge';
+import VortiqLogo from './VortiqLogo';
 
 export default function Navbar({
   activeView,
@@ -68,20 +69,21 @@ export default function Navbar({
               onClick={onOpenWorkspaceModal}
               style={{
                 cursor: 'pointer',
-                padding: '0.35rem 0.75rem',
-                borderRadius: '8px',
-                background: 'rgba(99, 102, 241, 0.12)',
-                border: '1px solid rgba(99, 102, 241, 0.25)',
-                color: 'var(--primary-glow)',
+                padding: '0.35rem 0.85rem',
+                borderRadius: '10px',
+                background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(99, 102, 241, 0.15))',
+                border: '1px solid rgba(6, 182, 212, 0.35)',
+                color: 'var(--cyan)',
                 fontSize: '0.82rem',
-                fontWeight: 600,
+                fontWeight: 700,
                 display: 'flex',
                 alignItems: 'center',
-                gap: '0.4rem'
+                gap: '0.5rem',
+                boxShadow: '0 0 15px rgba(6, 182, 212, 0.2)'
               }}
               title="Click to manage workspace"
             >
-              <Briefcase size={14} />
+              <VortiqLogo size={18} />
               <span>{activeWorkspace.name}</span>
             </div>
           )}
@@ -123,20 +125,21 @@ export default function Navbar({
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '0.5rem',
-                  padding: '0.35rem 0.65rem',
+                  gap: '0.6rem',
+                  padding: '0.35rem 0.75rem',
                   borderRadius: '24px',
                   background: 'var(--bg-secondary)',
-                  border: '1px solid var(--border-color)',
+                  border: '1px solid var(--border-purple)',
                   color: 'var(--text-main)',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
+                  boxShadow: '0 0 15px rgba(168, 85, 247, 0.2)'
                 }}
               >
                 <div style={{
                   width: '28px',
                   height: '28px',
                   borderRadius: '50%',
-                  background: 'linear-gradient(135deg, var(--primary-glow), #ec4899)',
+                  background: 'linear-gradient(135deg, #00f2fe, #ff007f)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -146,7 +149,7 @@ export default function Navbar({
                 }}>
                   {(currentUser.name || currentUser.username || currentUser.email || 'U').charAt(0).toUpperCase()}
                 </div>
-                <span style={{ fontSize: '0.85rem', fontWeight: 600, maxWidth: '100px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                <span style={{ fontSize: '0.85rem', fontWeight: 700, maxWidth: '110px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {currentUser.name || currentUser.username}
                 </span>
               </button>
@@ -156,17 +159,17 @@ export default function Navbar({
                   position: 'absolute',
                   right: 0,
                   top: '120%',
-                  width: '210px',
-                  background: 'var(--bg-secondary)',
-                  backdropFilter: 'blur(16px)',
-                  border: '1px solid var(--border-color)',
-                  borderRadius: '12px',
-                  boxShadow: '0 10px 25px rgba(0,0,0,0.3)',
-                  padding: '0.5rem',
+                  width: '220px',
+                  background: 'var(--bg-glass)',
+                  backdropFilter: 'blur(24px)',
+                  border: '1px solid var(--border-purple)',
+                  borderRadius: '14px',
+                  boxShadow: '0 15px 35px rgba(0,0,0,0.5), 0 0 25px rgba(168, 85, 247, 0.25)',
+                  padding: '0.55rem',
                   zIndex: 100
                 }}>
                   <div style={{ padding: '0.5rem 0.75rem', borderBottom: '1px solid var(--border-color)', marginBottom: '0.35rem' }}>
-                    <div style={{ fontSize: '0.88rem', fontWeight: 600 }}>{currentUser.name || currentUser.username}</div>
+                    <div style={{ fontSize: '0.88rem', fontWeight: 700 }}>{currentUser.name || currentUser.username}</div>
                     <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis' }}>{currentUser.email}</div>
                   </div>
 
@@ -191,7 +194,7 @@ export default function Navbar({
                   <button
                     onClick={() => { setUserMenuOpen(false); onLogout(); }}
                     className="btn btn-ghost"
-                    style={{ width: '100%', justifyContent: 'flex-start', fontSize: '0.85rem', padding: '0.5rem 0.75rem', color: '#ef4444' }}
+                    style={{ width: '100%', justifyContent: 'flex-start', fontSize: '0.85rem', padding: '0.5rem 0.75rem', color: '#ff007f' }}
                   >
                     <LogOut size={15} /> Sign Out
                   </button>
@@ -199,7 +202,7 @@ export default function Navbar({
               )}
             </div>
           ) : (
-            <button className="btn btn-primary" onClick={onOpenAuthModal} style={{ padding: '0.45rem 1rem', fontSize: '0.88rem' }}>
+            <button className="btn btn-gradient" onClick={onOpenAuthModal} style={{ padding: '0.45rem 1.1rem', fontSize: '0.88rem' }}>
               <LogIn size={15} /> Sign In
             </button>
           )}

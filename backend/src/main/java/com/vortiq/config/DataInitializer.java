@@ -24,7 +24,7 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        if (projectRepository.count() == 0) {
+        if (projectRepository.count() == 0 && taskRepository.count() == 0) {
             Project coreApp = projectRepository.save(new Project("Core Application", "Main web app platform development", "#6366f1"));
             Project mobileApp = projectRepository.save(new Project("Mobile App", "iOS & Android companion app", "#10b981"));
             Project devOps = projectRepository.save(new Project("Cloud & Infrastructure", "Kubernetes, CI/CD, and AWS deployment", "#f59e0b"));
@@ -37,7 +37,7 @@ public class DataInitializer implements CommandLineRunner {
                     "Frontend",
                     "Deepanshi Kaushal",
                     LocalDate.now().plusDays(2),
-                    coreApp.getId()
+                    coreApp
             ));
 
             taskRepository.save(new Task(
@@ -48,7 +48,7 @@ public class DataInitializer implements CommandLineRunner {
                     "Backend",
                     "Sarah Chen",
                     LocalDate.now().minusDays(1),
-                    coreApp.getId()
+                    coreApp
             ));
 
             taskRepository.save(new Task(
@@ -59,7 +59,7 @@ public class DataInitializer implements CommandLineRunner {
                     "Database",
                     "Sarah Chen",
                     LocalDate.now().minusDays(3),
-                    coreApp.getId()
+                    coreApp
             ));
 
             taskRepository.save(new Task(
@@ -70,7 +70,7 @@ public class DataInitializer implements CommandLineRunner {
                     "Frontend",
                     "Deepanshi Kaushal",
                     LocalDate.now().plusDays(5),
-                    coreApp.getId()
+                    coreApp
             ));
 
             taskRepository.save(new Task(
@@ -81,7 +81,7 @@ public class DataInitializer implements CommandLineRunner {
                     "DevOps",
                     "Marcus Vance",
                     LocalDate.now().plusDays(1),
-                    devOps.getId()
+                    devOps
             ));
 
             taskRepository.save(new Task(
@@ -92,7 +92,7 @@ public class DataInitializer implements CommandLineRunner {
                     "Mobile",
                     "Elena Rostova",
                     LocalDate.now().plusDays(7),
-                    mobileApp.getId()
+                    mobileApp
             ));
 
             taskRepository.save(new Task(
@@ -103,7 +103,7 @@ public class DataInitializer implements CommandLineRunner {
                     "Security",
                     "Marcus Vance",
                     LocalDate.now().plusDays(4),
-                    devOps.getId()
+                    devOps
             ));
 
             System.out.println(">>> VortiQ DataInitializer: Pre-populated sample data successfully!");

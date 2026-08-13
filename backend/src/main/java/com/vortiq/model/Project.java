@@ -1,10 +1,15 @@
 package com.vortiq.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@Table(name = "projects")
+@Table(name = "projects", indexes = {
+    @Index(name = "idx_project_name", columnList = "name")
+})
 public class Project {
 
     @Id
@@ -14,11 +19,16 @@ public class Project {
     @Column(nullable = false)
     private String name;
 
+    @Column(length = 1000)
     private String description;
     
     private String colorCode;
 
     private LocalDateTime createdAt;
+
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<Task> tasks = new ArrayList<>();
 
     public Project() {
         this.createdAt = LocalDateTime.now();
@@ -45,4 +55,7 @@ public class Project {
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    public List<Task> getTasks() { return tasks; }
+    public void setTasks(List<Task> tasks) { this.tasks = tasks; }
 }

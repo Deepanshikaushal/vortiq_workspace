@@ -1,11 +1,18 @@
 package com.vortiq.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "tasks")
+@Table(name = "tasks", indexes = {
+    @Index(name = "idx_task_status", columnList = "status"),
+    @Index(name = "idx_task_priority", columnList = "priority"),
+    @Index(name = "idx_task_project_id", columnList = "project_id"),
+    @Index(name = "idx_task_status_priority", columnList = "status, priority")
+})
 public class Task {
 
     @Id
@@ -32,7 +39,10 @@ public class Task {
 
     private LocalDate dueDate;
 
-    private Long projectId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "project_id")
+    @JsonIgnore
+    private Project project;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -44,7 +54,7 @@ public class Task {
         this.priority = TaskPriority.MEDIUM;
     }
 
-    public Task(String title, String description, TaskStatus status, TaskPriority priority, String category, String assignee, LocalDate dueDate, Long projectId) {
+    public Task(String title, String description, TaskStatus status, TaskPriority priority, String category, String assignee, LocalDate dueDate, Project project) {
         this.title = title;
         this.description = description;
         this.status = status != null ? status : TaskStatus.TODO;
@@ -52,7 +62,7 @@ public class Task {
         this.category = category;
         this.assignee = assignee;
         this.dueDate = dueDate;
-        this.projectId = projectId;
+        this.project = project;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
     }
@@ -86,8 +96,24 @@ public class Task {
     public LocalDate getDueDate() { return dueDate; }
     public void setDueDate(LocalDate dueDate) { this.dueDate = dueDate; }
 
-    public Long getProjectId() { return projectId; }
-    public void setProjectId(Long projectId) { this.projectId = projectId; }
+    public Project getProject() { return project; }
+    public void setProject(Project project) { this.project = project; }
+
+    @JsonProperty("projectId")
+    public Long getProjectId() {
+        return project != null ? project.getId() : null;
+    }
+
+    @JsonProperty("projectId")
+    public void setProjectId(Long projectId) {
+        if (projectId != null) {
+            Project dummy = new Project();
+            dummy.setId(projectId);
+            this.project = dummy;
+        } else {
+            this.project = null;
+        }
+    }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }

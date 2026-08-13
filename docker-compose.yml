@@ -1,13 +1,41 @@
 version: '3.8'
 
 services:
-  taskpulse-app:
+  postgres:
+    image: postgres:16-alpine
+    container_name: vortiq-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=vortiqdb
+      - POSTGRES_USER=vortiq
+      - POSTGRES_PASSWORD=vortiqpass
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U vortiq -d vortiqdb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  vortiq-app:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: taskpulse-production
+    container_name: vortiq-production
     ports:
       - "8080:8080"
     environment:
-      - SPRING_PROFILES_ACTIVE=prod
+      - PORT=8080
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/vortiqdb
+      - SPRING_DATASOURCE_USERNAME=vortiq
+      - SPRING_DATASOURCE_PASSWORD=vortiqpass
+      - ALLOWED_ORIGINS=*
+    depends_on:
+      postgres:
+        condition: service_healthy
     restart: unless-stopped
+
+volumes:
+  postgres-data:

@@ -10,18 +10,18 @@ export default function MetricsOverview({ stats }) {
       value: total,
       sub: `${todo} pending tasks`,
       icon: Layers,
-      color: '#84cc16',
-      borderGlow: 'rgba(132, 204, 22, 0.3)',
-      bgGlow: 'rgba(132, 204, 22, 0.12)'
+      color: '#e11d48',
+      borderGlow: 'rgba(225, 29, 72, 0.4)',
+      bgGlow: 'rgba(225, 29, 72, 0.18)'
     },
     {
       title: 'In Progress',
       value: inProgress,
       sub: `${inReview} in review`,
       icon: Activity,
-      color: '#a3e635',
-      borderGlow: 'rgba(163, 230, 53, 0.3)',
-      bgGlow: 'rgba(163, 230, 53, 0.12)'
+      color: '#f43f5e',
+      borderGlow: 'rgba(244, 63, 94, 0.4)',
+      bgGlow: 'rgba(244, 63, 94, 0.18)'
     },
     {
       title: 'Completed',
@@ -29,17 +29,17 @@ export default function MetricsOverview({ stats }) {
       sub: `${completionRate}% velocity score`,
       icon: CheckCircle2,
       color: '#10b981',
-      borderGlow: 'rgba(16, 185, 129, 0.3)',
-      bgGlow: 'rgba(16, 185, 129, 0.12)'
+      borderGlow: 'rgba(16, 185, 129, 0.4)',
+      bgGlow: 'rgba(16, 185, 129, 0.18)'
     },
     {
       title: 'Action Needed',
       value: inReview + todo,
       sub: 'Tasks requiring focus',
       icon: AlertCircle,
-      color: '#f59e0b',
-      borderGlow: 'rgba(245, 158, 11, 0.3)',
-      bgGlow: 'rgba(245, 158, 11, 0.12)'
+      color: '#fb7185',
+      borderGlow: 'rgba(251, 113, 133, 0.4)',
+      bgGlow: 'rgba(251, 113, 133, 0.18)'
     }
   ];
 
@@ -47,7 +47,7 @@ export default function MetricsOverview({ stats }) {
     <div style={{ marginBottom: '2rem' }}>
       
       {/* 4 Stat Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.25rem' }}>
+      <div className="metrics-grid">
         {cards.map((card, idx) => {
           const Icon = card.icon;
           return (
@@ -55,38 +55,39 @@ export default function MetricsOverview({ stats }) {
               key={idx}
               className="glass-card animate-fade-in"
               style={{
-                padding: '1.35rem',
+                padding: '1.15rem 1rem',
                 position: 'relative',
                 overflow: 'hidden',
                 borderColor: card.borderGlow,
                 boxShadow: `0 8px 25px -5px ${card.bgGlow}`
               }}
             >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.5rem' }}>
                 <div>
-                  <div style={{ fontSize: '0.785rem', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.4rem' }}>
+                  <div style={{ fontSize: '0.725rem', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.25rem' }}>
                     {card.title}
                   </div>
-                  <div style={{ fontFamily: 'var(--font-display)', fontSize: '2.3rem', fontWeight: '800', letterSpacing: '-0.03em', color: card.color }}>
+                  <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.85rem', fontWeight: '800', letterSpacing: '-0.03em', color: card.color }}>
                     {card.value}
                   </div>
-                  <div style={{ fontSize: '0.785rem', fontWeight: '600', color: 'var(--text-dim)', marginTop: '0.25rem' }}>
+                  <div style={{ fontSize: '0.725rem', fontWeight: '600', color: 'var(--text-dim)', marginTop: '0.15rem' }}>
                     {card.sub}
                   </div>
                 </div>
 
                 <div style={{
-                  width: '50px',
-                  height: '50px',
-                  borderRadius: '14px',
+                  width: '42px',
+                  height: '42px',
+                  borderRadius: '12px',
                   background: card.bgGlow,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   color: card.color,
-                  border: `1px solid ${card.color}44`
+                  border: `1px solid ${card.color}44`,
+                  flexShrink: 0
                 }}>
-                  <Icon size={24} />
+                  <Icon size={20} />
                 </div>
               </div>
 
@@ -98,21 +99,21 @@ export default function MetricsOverview({ stats }) {
       </div>
 
       {/* Interactive Velocity Meter */}
-      <div className="glass-card" style={{ marginTop: '1.25rem', padding: '1.25rem 1.5rem' }}>
+      <div className="glass-card" style={{ marginTop: '1rem', padding: '1rem 1.25rem' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem', flexWrap: 'wrap', gap: '0.5rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-            <div style={{ width: '34px', height: '34px', borderRadius: '10px', background: 'rgba(132, 204, 22, 0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#84cc16' }}>
-              <Activity size={20} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', flexWrap: 'wrap' }}>
+            <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: 'rgba(225, 29, 72, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ff859b' }}>
+              <Activity size={18} />
             </div>
             <div>
-              <span style={{ fontFamily: 'var(--font-display)', fontSize: '0.98rem', fontWeight: '700', color: 'var(--text-main)' }}>Sprint Velocity & Completion Meter</span>
-              <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)', marginLeft: '0.6rem' }}>({completed} of {total} tasks completed)</span>
+              <span style={{ fontFamily: 'var(--font-display)', fontSize: '0.9rem', fontWeight: '700', color: 'var(--text-main)' }}>Sprint Velocity & Completion Meter</span>
+              <span style={{ fontSize: '0.725rem', color: 'var(--text-dim)', display: 'inline-block', marginLeft: '0.5rem' }}>({completed} of {total} tasks)</span>
             </div>
           </div>
           
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', background: 'rgba(132, 204, 22, 0.12)', padding: '0.35rem 0.9rem', borderRadius: '9999px', border: '1px solid rgba(132, 204, 22, 0.3)' }}>
-            <Sparkles size={14} style={{ color: '#84cc16' }} />
-            <span style={{ fontSize: '0.85rem', fontWeight: '700', color: '#a3e635' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', background: 'rgba(225, 29, 72, 0.2)', padding: '0.3rem 0.75rem', borderRadius: '9999px', border: '1px solid rgba(225, 29, 72, 0.4)' }}>
+            <Sparkles size={13} style={{ color: '#ff859b' }} />
+            <span style={{ fontSize: '0.8rem', fontWeight: '700', color: '#ff859b' }}>
               {completionRate}% Velocity Score
             </span>
           </div>
@@ -123,7 +124,7 @@ export default function MetricsOverview({ stats }) {
           <div style={{
             height: '100%',
             width: `${completionRate}%`,
-            background: 'linear-gradient(90deg, #84cc16, #10b981)',
+            background: 'linear-gradient(90deg, #e11d48, #10b981)',
             borderRadius: '9999px',
             transition: 'width 0.6s cubic-bezier(0.4, 0, 0.2, 1)'
           }} />

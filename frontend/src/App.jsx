@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
 import MetricsOverview from './components/MetricsOverview';
@@ -8,7 +8,9 @@ import TaskModal from './components/TaskModal';
 import AuthModal from './components/AuthModal';
 import ProfileModal from './components/ProfileModal';
 import WorkspaceModal from './components/WorkspaceModal';
+import ShortcutsModal from './components/ShortcutsModal';
 import Toast from './components/Toast';
+import { Download, Plus, ArrowUpDown, Keyboard, HelpCircle } from 'lucide-react';
 import {
   fetchTasks,
   fetchTaskStats,
@@ -49,6 +51,7 @@ export default function App() {
   const [priorityFilter, setPriorityFilter] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
   const [selectedProject, setSelectedProject] = useState('');
+  const [sortBy, setSortBy] = useState('default');
   const [theme, setTheme] = useState('dark');
 
   const [currentUser, setCurrentUser] = useState(null);
@@ -68,6 +71,8 @@ export default function App() {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [isWorkspaceModalOpen, setIsWorkspaceModalOpen] = useState(false);
+  const [isShortcutsModalOpen, setIsShortcutsModalOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Sync theme
   useEffect(() => {
@@ -87,18 +92,58 @@ export default function App() {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   };
 
-  // Keyboard shortcut Ctrl + K
+  // Keyboard Shortcuts Listener
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault();
         const input = document.querySelector('input[placeholder*="Search"]');
         if (input) input.focus();
+      } else if (e.key === '?' && !['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) {
+        e.preventDefault();
+        setIsShortcutsModalOpen(prev => !prev);
+      } else if (e.key.toLowerCase() === 'n' && !['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) {
+        e.preventDefault();
+        setTaskToEdit(null);
+        setIsModalOpen(true);
+      } else if (e.key.toLowerCase() === 'v' && !['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) {
+        e.preventDefault();
+        setActiveView(prev => (prev === 'kanban' ? 'table' : 'kanban'));
+      } else if (e.key.toLowerCase() === 'd' && !['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) {
+        e.preventDefault();
+        setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
+
+  // CSV Export Handler
+  const handleExportCSV = () => {
+    if (!tasks || tasks.length === 0) {
+      addToast('No tasks available to export', 'info');
+      return;
+    }
+    const headers = ['ID', 'Title', 'Status', 'Priority', 'Category', 'Assignee', 'Due Date'];
+    const rows = tasks.map(t => [
+      t.id,
+      `"${(t.title || '').replace(/"/g, '""')}"`,
+      t.status,
+      t.priority,
+      t.category || '',
+      `"${(t.assignee || '').replace(/"/g, '""')}"`,
+      t.dueDate || ''
+    ]);
+    const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', `VortiQ_Tasks_Report_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    addToast('Exported tasks to CSV file', 'success');
+  };
 
   // Initial user authentication check
   useEffect(() => {
@@ -281,6 +326,19 @@ export default function App() {
     }
   };
 
+  const sortedTasks = useMemo(() => {
+    let list = [...tasks];
+    if (sortBy === 'dueDate') {
+      list.sort((a, b) => new Date(a.dueDate || '9999-12-31') - new Date(b.dueDate || '9999-12-31'));
+    } else if (sortBy === 'priority') {
+      const pOrder = { URGENT: 1, HIGH: 2, MEDIUM: 3, LOW: 4 };
+      list.sort((a, b) => (pOrder[a.priority] || 5) - (pOrder[b.priority] || 5));
+    } else if (sortBy === 'title') {
+      list.sort((a, b) => (a.title || '').localeCompare(b.title || ''));
+    }
+    return list;
+  }, [tasks, sortBy]);
+
   return (
     <div className="vortiq-layout">
       {/* Toast Alert System */}
@@ -289,17 +347,37 @@ export default function App() {
       {/* Left Sidebar Navigation */}
       <Sidebar
         activeView={activeView}
-        setActiveView={setActiveView}
+        setActiveView={(view) => {
+          setActiveView(view);
+          setIsMobileMenuOpen(false);
+        }}
         projects={projects}
         selectedProject={selectedProject}
-        setSelectedProject={setSelectedProject}
+        setSelectedProject={(pId) => {
+          setSelectedProject(pId);
+          setIsMobileMenuOpen(false);
+        }}
         workspaces={workspaces}
         activeWorkspace={activeWorkspace}
-        onSelectWorkspace={setActiveWorkspace}
-        onOpenWorkspaceModal={() => setIsWorkspaceModalOpen(true)}
-        onOpenProfileModal={() => setIsProfileModalOpen(true)}
-        onOpenCreateModal={handleOpenCreate}
+        onSelectWorkspace={(ws) => {
+          setActiveWorkspace(ws);
+          setIsMobileMenuOpen(false);
+        }}
+        onOpenWorkspaceModal={() => {
+          setIsWorkspaceModalOpen(true);
+          setIsMobileMenuOpen(false);
+        }}
+        onOpenProfileModal={() => {
+          setIsProfileModalOpen(true);
+          setIsMobileMenuOpen(false);
+        }}
+        onOpenCreateModal={() => {
+          handleOpenCreate();
+          setIsMobileMenuOpen(false);
+        }}
         currentUser={currentUser}
+        isMobileMenuOpen={isMobileMenuOpen}
+        onCloseMobileMenu={() => setIsMobileMenuOpen(false)}
       />
 
       {/* Main Content Area */}
@@ -321,6 +399,7 @@ export default function App() {
           onOpenProfileModal={() => setIsProfileModalOpen(true)}
           onOpenWorkspaceModal={() => setIsWorkspaceModalOpen(true)}
           onLogout={handleLogout}
+          onToggleMobileMenu={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         />
 
         {/* Page Inner Container */}
@@ -332,7 +411,7 @@ export default function App() {
           {/* Quick Filter Control Toolbar */}
           <div className="glass-panel" style={{ padding: '0.85rem 1.25rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
-              <span style={{ fontSize: '0.8125rem', fontWeight: '800', color: 'var(--text-muted)' }}>Filter View:</span>
+              <span style={{ fontSize: '0.8125rem', fontWeight: '800', color: 'var(--text-muted)' }}>Filter & Tools:</span>
               
               <select
                 className="form-select"
@@ -376,7 +455,38 @@ export default function App() {
                 <option value="Mobile">Mobile</option>
               </select>
 
-              {(statusFilter || priorityFilter || categoryFilter || selectedProject || searchQuery) && (
+              <select
+                className="form-select"
+                style={{ padding: '0.4rem 0.75rem', fontSize: '0.8125rem' }}
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+              >
+                <option value="default">Sort: Default</option>
+                <option value="dueDate">Sort: Due Date</option>
+                <option value="priority">Sort: Priority</option>
+                <option value="title">Sort: Title (A-Z)</option>
+              </select>
+
+              <button
+                className="btn btn-secondary"
+                style={{ padding: '0.4rem 0.75rem', fontSize: '0.785rem', gap: '0.35rem' }}
+                onClick={handleExportCSV}
+                title="Export tasks to CSV file"
+              >
+                <Download size={14} />
+                <span>Export CSV</span>
+              </button>
+
+              <button
+                className="btn btn-secondary btn-icon"
+                style={{ padding: '0.4rem' }}
+                onClick={() => setIsShortcutsModalOpen(true)}
+                title="Keyboard Shortcuts (?)"
+              >
+                <HelpCircle size={16} />
+              </button>
+
+              {(statusFilter || priorityFilter || categoryFilter || selectedProject || searchQuery || sortBy !== 'default') && (
                 <button
                   className="btn btn-secondary"
                   style={{ padding: '0.4rem 0.75rem', fontSize: '0.785rem' }}
@@ -386,6 +496,7 @@ export default function App() {
                     setCategoryFilter('');
                     setSelectedProject('');
                     setSearchQuery('');
+                    setSortBy('default');
                   }}
                 >
                   Clear Filters
@@ -394,21 +505,21 @@ export default function App() {
             </div>
 
             <div style={{ fontSize: '0.8125rem', color: 'var(--text-dim)', fontWeight: '700' }}>
-              Showing {tasks.length} {tasks.length === 1 ? 'task' : 'tasks'}
+              Showing {sortedTasks.length} {sortedTasks.length === 1 ? 'task' : 'tasks'}
             </div>
           </div>
 
           {/* View Components */}
           {activeView === 'kanban' ? (
             <KanbanBoard
-              tasks={tasks}
+              tasks={sortedTasks}
               onStatusChange={handleStatusChange}
               onEdit={handleOpenEdit}
               onDelete={handleDeleteTask}
             />
           ) : (
             <TaskTable
-              tasks={tasks}
+              tasks={sortedTasks}
               onStatusChange={handleStatusChange}
               onEdit={handleOpenEdit}
               onDelete={handleDeleteTask}
@@ -417,6 +528,34 @@ export default function App() {
 
         </main>
       </div>
+
+      {/* Mobile Floating Action Button */}
+      <button
+        className="btn btn-gradient mobile-only"
+        onClick={handleOpenCreate}
+        style={{
+          position: 'fixed',
+          bottom: '1.75rem',
+          right: '1.5rem',
+          width: '54px',
+          height: '54px',
+          borderRadius: '50%',
+          zIndex: 80,
+          boxShadow: '0 8px 25px rgba(225, 29, 72, 0.6)',
+          padding: 0,
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+        title="Create Task"
+      >
+        <Plus size={24} />
+      </button>
+
+      {/* Keyboard Shortcuts Modal */}
+      <ShortcutsModal
+        isOpen={isShortcutsModalOpen}
+        onClose={() => setIsShortcutsModalOpen(false)}
+      />
 
       {/* Task Modal */}
       <TaskModal

@@ -6,7 +6,8 @@ import {
   ShieldCheck,
   Briefcase,
   Users,
-  Settings
+  Settings,
+  X
 } from 'lucide-react';
 import VortiqLogo from './VortiqLogo';
 
@@ -22,40 +23,61 @@ export default function Sidebar({
   onOpenWorkspaceModal,
   onOpenProfileModal,
   onOpenCreateModal,
-  currentUser
+  currentUser,
+  isMobileMenuOpen,
+  onCloseMobileMenu
 }) {
   return (
-    <aside className="sidebar-container">
-      
-      {/* Brand Header with Quantum VortiQ Logo */}
-      <div style={{ paddingBottom: '1.25rem', marginBottom: '1.25rem', borderBottom: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
-        <div style={{
-          width: '44px',
-          height: '44px',
-          borderRadius: '12px',
-          background: 'rgba(132, 204, 22, 0.12)',
-          border: '1px solid var(--border-purple)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}>
-          <VortiqLogo size={30} />
+    <>
+      {/* Mobile Overlay Backdrop */}
+      <div
+        className={`sidebar-backdrop ${isMobileMenuOpen ? 'active' : ''}`}
+        onClick={onCloseMobileMenu}
+      />
+
+      <aside className={`sidebar-container ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
+        
+        {/* Brand Header with Quantum VortiQ Logo & Mobile Close Button */}
+        <div style={{ paddingBottom: '1.25rem', marginBottom: '1.25rem', borderBottom: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.85rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+            <div style={{
+              width: '44px',
+              height: '44px',
+              borderRadius: '12px',
+              background: 'rgba(225, 29, 72, 0.2)',
+              border: '1px solid var(--border-purple)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+              <VortiqLogo size={30} />
+            </div>
+            <div>
+              <h1 style={{
+                fontFamily: 'var(--font-display)',
+                fontSize: '1.3rem',
+                fontWeight: '800',
+                letterSpacing: '-0.02em',
+                color: 'var(--text-main)'
+              }}>
+                VortiQ Studio
+              </h1>
+              <p style={{ fontSize: '0.685rem', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                Workspace Platform
+              </p>
+            </div>
+          </div>
+
+          {/* Close button visible only on mobile drawer */}
+          <button
+            className="btn btn-ghost btn-icon mobile-only"
+            onClick={onCloseMobileMenu}
+            style={{ padding: '0.4rem' }}
+            title="Close Drawer"
+          >
+            <X size={20} />
+          </button>
         </div>
-        <div>
-          <h1 style={{
-            fontFamily: 'var(--font-display)',
-            fontSize: '1.3rem',
-            fontWeight: '800',
-            letterSpacing: '-0.02em',
-            color: 'var(--text-main)'
-          }}>
-            VortiQ Studio
-          </h1>
-          <p style={{ fontSize: '0.685rem', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-            Workspace Platform
-          </p>
-        </div>
-      </div>
 
       {/* Workspace Selector */}
       <div style={{ marginBottom: '1.25rem' }}>
@@ -65,7 +87,7 @@ export default function Sidebar({
           </span>
           <button
             onClick={onOpenWorkspaceModal}
-            style={{ background: 'none', border: 'none', color: '#a3e635', fontSize: '0.75rem', fontWeight: 700, cursor: 'pointer' }}
+            style={{ background: 'none', border: 'none', color: '#ff859b', fontSize: '0.75rem', fontWeight: 700, cursor: 'pointer' }}
           >
             + Manage
           </button>
@@ -73,7 +95,7 @@ export default function Sidebar({
 
         <div className="glass-card" style={{ padding: '0.55rem 0.75rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', width: '100%' }}>
-            <Briefcase size={16} style={{ color: '#84cc16', flexShrink: 0 }} />
+            <Briefcase size={16} style={{ color: '#e11d48', flexShrink: 0 }} />
             <select
               value={activeWorkspace ? activeWorkspace.id : ''}
               onChange={(e) => {
@@ -93,7 +115,7 @@ export default function Sidebar({
               }}
             >
               {workspaces.map((ws) => (
-                <option key={ws.id} value={ws.id} style={{ background: '#1e293b', color: '#fff' }}>
+                <option key={ws.id} value={ws.id} style={{ background: '#22070a', color: '#fff' }}>
                   {ws.name} ({ws.currentUserRole || 'MEMBER'})
                 </option>
               ))}
@@ -136,7 +158,10 @@ export default function Sidebar({
 
         <div
           className={`sidebar-link ${activeView === 'kanban' ? 'active' : ''}`}
-          onClick={() => setActiveView('kanban')}
+          onClick={() => {
+            setActiveView('kanban');
+            onCloseMobileMenu();
+          }}
         >
           <Kanban size={18} />
           <span>Kanban Board</span>
@@ -144,18 +169,21 @@ export default function Sidebar({
 
         <div
           className={`sidebar-link ${activeView === 'table' ? 'active' : ''}`}
-          onClick={() => setActiveView('table')}
+          onClick={() => {
+            setActiveView('table');
+            onCloseMobileMenu();
+          }}
         >
           <Table size={18} />
           <span>Task Matrix List</span>
         </div>
 
-        <div className="sidebar-link" onClick={onOpenWorkspaceModal}>
+        <div className="sidebar-link" onClick={() => { onOpenWorkspaceModal(); onCloseMobileMenu(); }}>
           <Users size={18} />
           <span>Team Members</span>
         </div>
 
-        <div className="sidebar-link" onClick={onOpenProfileModal}>
+        <div className="sidebar-link" onClick={() => { onOpenProfileModal(); onCloseMobileMenu(); }}>
           <Settings size={18} />
           <span>Profile Settings</span>
         </div>
@@ -179,7 +207,7 @@ export default function Sidebar({
               width: '34px',
               height: '34px',
               borderRadius: '50%',
-              background: 'linear-gradient(135deg, #84cc16, #65a30d)',
+              background: 'linear-gradient(135deg, #e11d48, #9f1239)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -197,10 +225,11 @@ export default function Sidebar({
             </div>
           </div>
           
-          <ShieldCheck size={16} style={{ color: '#84cc16' }} title="JWT Secured" />
+          <ShieldCheck size={16} style={{ color: '#e11d48' }} title="JWT Secured" />
         </div>
       )}
 
     </aside>
+    </>
   );
 }

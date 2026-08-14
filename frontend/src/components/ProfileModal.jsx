@@ -71,7 +71,7 @@ export default function ProfileModal({ isOpen, onClose, currentUser, onProfileUp
       <div className="modal-container" style={{ maxWidth: '520px' }}>
         <div className="modal-header">
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <div style={{ padding: '0.5rem', background: 'rgba(99, 102, 241, 0.15)', borderRadius: '8px', color: 'var(--primary-glow)' }}>
+            <div style={{ padding: '0.5rem', background: 'rgba(225, 29, 72, 0.2)', borderRadius: '8px', color: '#ff859b' }}>
               <User size={20} />
             </div>
             <div>

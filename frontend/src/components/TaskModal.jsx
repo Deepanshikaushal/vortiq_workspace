@@ -70,7 +70,7 @@ export default function TaskModal({ isOpen, onClose, onSave, taskToEdit, project
         {/* Modal Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', paddingBottom: '1rem', borderBottom: '1px solid var(--border-color)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-            <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'linear-gradient(135deg, #6366f1, #a855f7)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>
+            <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'linear-gradient(135deg, #e11d48, #9f1239)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>
               <Sparkles size={18} />
             </div>
             <div>
@@ -148,7 +148,7 @@ export default function TaskModal({ isOpen, onClose, onSave, taskToEdit, project
                     borderRadius: '9999px',
                     cursor: 'pointer',
                     border: formData.category === cat ? '1px solid var(--primary)' : '1px solid var(--border-color)',
-                    background: formData.category === cat ? 'linear-gradient(135deg, #6366f1, #8b5cf6)' : 'var(--bg-tertiary)',
+                    background: formData.category === cat ? 'linear-gradient(135deg, #e11d48, #9f1239)' : 'var(--bg-tertiary)',
                     color: formData.category === cat ? '#ffffff' : 'var(--text-muted)'
                   }}
                 >
@@ -158,7 +158,7 @@ export default function TaskModal({ isOpen, onClose, onSave, taskToEdit, project
             </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+          <div className="grid-responsive">
             <div className="form-group">
               <label className="form-label">Status Stage</label>
               <select
@@ -208,7 +208,7 @@ export default function TaskModal({ isOpen, onClose, onSave, taskToEdit, project
             </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+          <div className="grid-responsive">
             <div className="form-group">
               <label className="form-label">Due Date</label>
               <input

@@ -1,22 +1,73 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Calendar, User, Tag, Edit2, Trash2, ArrowRight, ArrowLeft, CheckCircle2, Circle } from 'lucide-react';
 
 const COLUMNS = [
-  { id: 'TODO', title: 'To Do', dot: '#94a3b8', bg: 'rgba(148, 163, 184, 0.1)' },
-  { id: 'IN_PROGRESS', title: 'In Progress', dot: '#06b6d4', bg: 'rgba(6, 182, 212, 0.1)' },
-  { id: 'IN_REVIEW', title: 'In Review', dot: '#f59e0b', bg: 'rgba(245, 158, 11, 0.1)' },
-  { id: 'COMPLETED', title: 'Completed', dot: '#10b981', bg: 'rgba(16, 185, 129, 0.1)' }
+  { id: 'TODO', title: 'To Do', dot: '#e2a8b3', bg: 'rgba(226, 168, 179, 0.12)' },
+  { id: 'IN_PROGRESS', title: 'In Progress', dot: '#ff859b', bg: 'rgba(225, 29, 72, 0.2)' },
+  { id: 'IN_REVIEW', title: 'In Review', dot: '#fbbf24', bg: 'rgba(245, 158, 11, 0.12)' },
+  { id: 'COMPLETED', title: 'Completed', dot: '#10b981', bg: 'rgba(16, 185, 129, 0.15)' }
 ];
 
 export default function KanbanBoard({ tasks, onStatusChange, onEdit, onDelete }) {
+  const [activeMobileCol, setActiveMobileCol] = useState('ALL');
+
   const getCategoryClass = (cat) => {
     const known = ['Frontend', 'Backend', 'DevOps', 'Design', 'Database', 'Security', 'Mobile'];
     return known.includes(cat) ? `tag-category-${cat}` : 'tag-category-Default';
   };
 
+  const visibleColumns = activeMobileCol === 'ALL'
+    ? COLUMNS
+    : COLUMNS.filter(col => col.id === activeMobileCol);
+
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem', alignItems: 'start' }}>
-      {COLUMNS.map(col => {
+    <div>
+      {/* Mobile Column Selector Bar */}
+      <div className="mobile-only" style={{ overflowX: 'auto', paddingBottom: '0.85rem', marginBottom: '1rem', gap: '0.5rem', width: '100%', scrollbarWidth: 'none' }}>
+        <button
+          onClick={() => setActiveMobileCol('ALL')}
+          style={{
+            padding: '0.45rem 0.85rem',
+            borderRadius: '9999px',
+            fontSize: '0.8rem',
+            fontWeight: '700',
+            border: activeMobileCol === 'ALL' ? '1px solid #e11d48' : '1px solid var(--border-color)',
+            background: activeMobileCol === 'ALL' ? 'rgba(225, 29, 72, 0.3)' : 'var(--bg-tertiary)',
+            color: activeMobileCol === 'ALL' ? '#ff859b' : 'var(--text-muted)',
+            whiteSpace: 'nowrap',
+            cursor: 'pointer'
+          }}
+        >
+          All Stages ({tasks.length})
+        </button>
+
+        {COLUMNS.map((col) => {
+          const count = tasks.filter(t => t.status === col.id).length;
+          const isActive = activeMobileCol === col.id;
+          return (
+            <button
+              key={col.id}
+              onClick={() => setActiveMobileCol(col.id)}
+              style={{
+                padding: '0.45rem 0.85rem',
+                borderRadius: '9999px',
+                fontSize: '0.8rem',
+                fontWeight: '700',
+                border: isActive ? `1px solid ${col.dot}` : '1px solid var(--border-color)',
+                background: isActive ? col.bg : 'var(--bg-tertiary)',
+                color: isActive ? col.dot : 'var(--text-muted)',
+                whiteSpace: 'nowrap',
+                cursor: 'pointer'
+              }}
+            >
+              {col.title} ({count})
+            </button>
+          );
+        })}
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem', alignItems: 'start' }}>
+        {visibleColumns.map(col => {
         const columnTasks = tasks.filter(t => t.status === col.id);
 
         return (
@@ -173,6 +224,7 @@ export default function KanbanBoard({ tasks, onStatusChange, onEdit, onDelete })
           </div>
         );
       })}
+    </div>
     </div>
   );
 }

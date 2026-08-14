@@ -143,7 +143,7 @@ export default function WorkspaceModal({
       <div className="modal-container" style={{ maxWidth: '580px' }}>
         <div className="modal-header">
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <div style={{ padding: '0.5rem', background: 'rgba(99, 102, 241, 0.15)', borderRadius: '8px', color: 'var(--primary-glow)' }}>
+            <div style={{ padding: '0.5rem', background: 'rgba(225, 29, 72, 0.2)', borderRadius: '8px', color: '#ff859b' }}>
               <Briefcase size={20} />
             </div>
             <div>
@@ -210,7 +210,7 @@ export default function WorkspaceModal({
 
           {activeTab === 'members' && activeWorkspace ? (
             <div>
-              <form onSubmit={handleInvite} style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.25rem' }}>
+              <form onSubmit={handleInvite} style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1.25rem' }}>
                 <input
                   type="email"
                   required

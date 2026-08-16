@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: vortiq-workspace
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    region: oregon
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: PORT
+        value: 8080
+      - key: ALLOWED_ORIGINS
+        value: "*"

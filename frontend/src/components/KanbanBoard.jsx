@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar, User, Tag, Edit2, Trash2, ArrowRight, ArrowLeft, CheckCircle2, Circle, Plus } from 'lucide-react';
+import { Calendar, User, Tag, Edit2, Trash2, ArrowRight, ArrowLeft, CheckCircle2, Circle, Plus, AlertTriangle } from 'lucide-react';
 
 const COLUMNS = [
   { id: 'TODO', title: 'To Do', dot: '#e2a8b3', bg: 'rgba(226, 168, 179, 0.12)' },

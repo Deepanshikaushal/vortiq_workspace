@@ -32,6 +32,12 @@ public class UserService {
         if (request.getName() != null && !request.getName().trim().isEmpty()) {
             user.setName(request.getName().trim());
         }
+        if (request.getDepartment() != null) {
+            user.setDepartment(request.getDepartment().trim());
+        }
+        if (request.getPhone() != null) {
+            user.setPhone(request.getPhone().trim());
+        }
         if (request.getBio() != null) {
             user.setBio(request.getBio().trim());
         }
@@ -63,14 +69,15 @@ public class UserService {
 
     public List<UserProfileDto> searchUsers(String query) {
         if (query == null || query.trim().isEmpty()) {
-            return userRepository.findAll().stream().limit(10).map(UserProfileDto::new).collect(Collectors.toList());
+            return userRepository.findAll().stream().limit(15).map(UserProfileDto::new).collect(Collectors.toList());
         }
         String search = query.trim().toLowerCase();
         return userRepository.findAll().stream()
                 .filter(u -> u.getEmail().toLowerCase().contains(search) || 
                              u.getUsername().toLowerCase().contains(search) || 
-                             (u.getName() != null && u.getName().toLowerCase().contains(search)))
-                .limit(10)
+                             (u.getName() != null && u.getName().toLowerCase().contains(search)) ||
+                             (u.getDepartment() != null && u.getDepartment().toLowerCase().contains(search)))
+                .limit(15)
                 .map(UserProfileDto::new)
                 .collect(Collectors.toList());
     }

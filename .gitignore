@@ -22,5 +22,6 @@ target/
 
 # Environment & Logs
 *.log
+*.exe
 .env
 .env.local

@@ -1,7 +1,6 @@
 package com.vortiq.dto;
 
 import com.vortiq.model.User;
-
 import java.time.LocalDateTime;
 
 public class UserProfileDto {
@@ -10,6 +9,8 @@ public class UserProfileDto {
     private String username;
     private String name;
     private String email;
+    private String department;
+    private String phone;
     private String bio;
     private String avatarUrl;
     private String role;
@@ -22,6 +23,8 @@ public class UserProfileDto {
         this.username = user.getUsername();
         this.name = user.getName();
         this.email = user.getEmail();
+        this.department = user.getDepartment();
+        this.phone = user.getPhone();
         this.bio = user.getBio();
         this.avatarUrl = user.getAvatarUrl();
         this.role = user.getRole();
@@ -39,6 +42,12 @@ public class UserProfileDto {
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
+
+    public String getDepartment() { return department; }
+    public void setDepartment(String department) { this.department = department; }
+
+    public String getPhone() { return phone; }
+    public void setPhone(String phone) { this.phone = phone; }
 
     public String getBio() { return bio; }
     public void setBio(String bio) { this.bio = bio; }

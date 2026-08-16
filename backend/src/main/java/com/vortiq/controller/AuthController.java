@@ -55,7 +55,16 @@ public class AuthController {
                 ? request.getUsername().trim()
                 : request.getEmail().split("@")[0];
 
-        User user = new User(username, request.getEmail().trim().toLowerCase(), passwordEncoder.encode(request.getPassword()));
+        String name = request.getName() != null && !request.getName().trim().isEmpty()
+                ? request.getName().trim()
+                : username;
+
+        User user = new User(username, name, request.getEmail().trim().toLowerCase(), passwordEncoder.encode(request.getPassword()));
+        if (request.getDepartment() != null) user.setDepartment(request.getDepartment().trim());
+        if (request.getPhone() != null) user.setPhone(request.getPhone().trim());
+        if (request.getBio() != null) user.setBio(request.getBio().trim());
+        if (request.getAvatarUrl() != null) user.setAvatarUrl(request.getAvatarUrl().trim());
+
         userRepository.save(user);
 
         String token = jwtUtils.generateToken(user.getEmail());

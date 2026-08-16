@@ -79,7 +79,8 @@ public class SecurityConfig {
                     "/*.css",
                     "/*.js"
                 ).permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/tasks/**", "/api/projects/**", "/api/workspaces/**", "/api/users/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/tasks/**", "/api/projects/**", "/api/workspaces/**", "/api/users/**", "/api/messages/**", "/api/discussions/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/messages/**", "/api/discussions/**").permitAll()
                 .anyRequest().authenticated()
             );
 

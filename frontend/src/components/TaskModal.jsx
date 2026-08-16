@@ -1,10 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { X, Sparkles, Tag, Calendar, User, AlignLeft } from 'lucide-react';
+import { X, Sparkles, Tag, Calendar, User, AlignLeft, Plus, Check } from 'lucide-react';
 
 const CATEGORIES = ['Frontend', 'Backend', 'DevOps', 'Design', 'Database', 'Security', 'Mobile'];
 const PRIORITIES = ['LOW', 'MEDIUM', 'HIGH', 'URGENT'];
 
-export default function TaskModal({ isOpen, onClose, onSave, taskToEdit, projects, workspaceMembers = [] }) {
+export default function TaskModal({
+  isOpen,
+  onClose,
+  onSave,
+  taskToEdit,
+  initialStatus = 'TODO',
+  projects = [],
+  workspaceMembers = [],
+  onCreateProject
+}) {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -16,6 +25,9 @@ export default function TaskModal({ isOpen, onClose, onSave, taskToEdit, project
     dueDate: '',
     projectId: ''
   });
+
+  const [isCreatingProject, setIsCreatingProject] = useState(false);
+  const [newProjectName, setNewProjectName] = useState('');
 
   useEffect(() => {
     if (taskToEdit) {
@@ -34,7 +46,7 @@ export default function TaskModal({ isOpen, onClose, onSave, taskToEdit, project
       setFormData({
         title: '',
         description: '',
-        status: 'TODO',
+        status: initialStatus || 'TODO',
         priority: 'MEDIUM',
         category: 'Frontend',
         assignee: '',
@@ -43,7 +55,7 @@ export default function TaskModal({ isOpen, onClose, onSave, taskToEdit, project
         projectId: projects[0]?.id || ''
       });
     }
-  }, [taskToEdit, projects, isOpen]);
+  }, [taskToEdit, projects, isOpen, initialStatus]);
 
   if (!isOpen) return null;
 
@@ -51,6 +63,17 @@ export default function TaskModal({ isOpen, onClose, onSave, taskToEdit, project
     e.preventDefault();
     if (!formData.title.trim()) return;
     onSave(formData);
+  };
+
+  const handleInlineCreateProject = async (e) => {
+    e.preventDefault();
+    if (!newProjectName.trim() || !onCreateProject) return;
+    const created = await onCreateProject(newProjectName.trim());
+    if (created && created.id) {
+      setFormData({ ...formData, projectId: created.id });
+    }
+    setNewProjectName('');
+    setIsCreatingProject(false);
   };
 
   return (
@@ -65,10 +88,10 @@ export default function TaskModal({ isOpen, onClose, onSave, taskToEdit, project
       justifyContent: 'center',
       padding: '1.5rem'
     }}>
-      <div className="glass-panel animate-fade-in" style={{ width: '100%', maxWidth: '580px', padding: '1.85rem', position: 'relative' }}>
-        
+      <div className="glass-panel animate-fade-in" style={{ width: '100%', maxWidth: '580px', padding: '1.75rem', position: 'relative', maxHeight: '90vh', overflowY: 'auto' }}>
+
         {/* Modal Header */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', paddingBottom: '1rem', borderBottom: '1px solid var(--border-color)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', paddingBottom: '1rem', borderBottom: '1px solid var(--border-color)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
             <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'linear-gradient(135deg, #e11d48, #9f1239)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>
               <Sparkles size={18} />
@@ -78,7 +101,7 @@ export default function TaskModal({ isOpen, onClose, onSave, taskToEdit, project
                 {taskToEdit ? 'Edit Task' : 'Create New Task'}
               </h2>
               <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                {taskToEdit ? 'Update task details, status, or assignee' : 'Add a new task to your project workspace'}
+                {taskToEdit ? 'Update task details, stage, or assignment' : 'Add a new work item to your active workspace'}
               </p>
             </div>
           </div>
@@ -89,7 +112,7 @@ export default function TaskModal({ isOpen, onClose, onSave, taskToEdit, project
 
         {/* Modal Form */}
         <form onSubmit={handleSubmit}>
-          
+
           {/* Task Title */}
           <div className="form-group">
             <label className="form-label">Task Title *</label>
@@ -220,23 +243,53 @@ export default function TaskModal({ isOpen, onClose, onSave, taskToEdit, project
             </div>
 
             <div className="form-group">
-              <label className="form-label">Project Workspace</label>
-              <select
-                className="form-select"
-                value={formData.projectId}
-                onChange={(e) => setFormData({ ...formData, projectId: e.target.value })}
-              >
-                {projects.map((proj) => (
-                  <option key={proj.id} value={proj.id}>
-                    {proj.name}
-                  </option>
-                ))}
-              </select>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <label className="form-label">Project Scope</label>
+                {onCreateProject && (
+                  <button
+                    type="button"
+                    onClick={() => setIsCreatingProject(!isCreatingProject)}
+                    style={{ background: 'none', border: 'none', color: '#38bdf8', fontSize: '0.725rem', fontWeight: 700, cursor: 'pointer' }}
+                  >
+                    + New Project
+                  </button>
+                )}
+              </div>
+
+              {isCreatingProject ? (
+                <div style={{ display: 'flex', gap: '0.3rem', marginTop: '0.2rem' }}>
+                  <input
+                    type="text"
+                    className="form-input"
+                    placeholder="Project name..."
+                    value={newProjectName}
+                    onChange={(e) => setNewProjectName(e.target.value)}
+                    style={{ padding: '0.4rem 0.6rem', fontSize: '0.8rem' }}
+                    autoFocus
+                  />
+                  <button type="button" className="btn btn-primary" onClick={handleInlineCreateProject} style={{ padding: '0.4rem 0.75rem' }}>
+                    <Check size={14} />
+                  </button>
+                </div>
+              ) : (
+                <select
+                  className="form-select"
+                  value={formData.projectId}
+                  onChange={(e) => setFormData({ ...formData, projectId: e.target.value })}
+                >
+                  <option value="">No Project</option>
+                  {projects.map((proj) => (
+                    <option key={proj.id} value={proj.id}>
+                      {proj.name}
+                    </option>
+                  ))}
+                </select>
+              )}
             </div>
           </div>
 
           {/* Action Buttons */}
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.85rem', marginTop: '1.5rem', paddingTop: '1rem', borderTop: '1px solid var(--border-color)' }}>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.85rem', marginTop: '1.25rem', paddingTop: '1rem', borderTop: '1px solid var(--border-color)' }}>
             <button type="button" className="btn btn-secondary" onClick={onClose}>
               Cancel
             </button>

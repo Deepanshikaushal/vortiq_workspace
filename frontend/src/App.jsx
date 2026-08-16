@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import HomePage from './components/HomePage';
 import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
 import MetricsOverview from './components/MetricsOverview';
@@ -8,15 +9,19 @@ import TaskModal from './components/TaskModal';
 import AuthModal from './components/AuthModal';
 import ProfileModal from './components/ProfileModal';
 import WorkspaceModal from './components/WorkspaceModal';
+import WorkspaceChatModal from './components/WorkspaceChatModal';
+import TeamLounge from './components/TeamLounge';
 import ShortcutsModal from './components/ShortcutsModal';
 import Toast from './components/Toast';
-import { Download, Plus, ArrowUpDown, Keyboard, HelpCircle } from 'lucide-react';
+import { Download, Plus, ArrowUpDown, Keyboard, HelpCircle, PanelLeftOpen, Maximize2, MessageSquare } from 'lucide-react';
 import {
   fetchTasks,
   fetchTaskStats,
   fetchProjects,
+  createProject,
   fetchWorkspaces,
   fetchWorkspaceMembers,
+  fetchMessages,
   createTask,
   updateTask,
   updateTaskStatus,
@@ -26,25 +31,18 @@ import {
   logout
 } from './services/api';
 
-const DEMO_TASKS = [
-  { id: 1, title: 'Design Glassmorphic UI Components', description: 'Create modern, translucent card components and custom scrollbars.', status: 'IN_PROGRESS', priority: 'HIGH', category: 'Frontend', assignee: 'Deepanshi Kaushal', dueDate: '2026-08-15', projectId: 1 },
-  { id: 2, title: 'Implement Spring Boot REST APIs', description: 'Build Java REST controllers, JPA repositories, and CORS config.', status: 'COMPLETED', priority: 'URGENT', category: 'Backend', assignee: 'Sarah Chen', dueDate: '2026-08-12', projectId: 1 },
-  { id: 3, title: 'Configure H2 Database Auto-schema', description: 'Ensure in-memory entity tables are properly mapped with Hibernate.', status: 'COMPLETED', priority: 'MEDIUM', category: 'Database', assignee: 'Sarah Chen', dueDate: '2026-08-10', projectId: 1 },
-  { id: 4, title: 'Integrate Real-Time Status Filter', description: 'Add debounced search input and status dropdown on React grid.', status: 'TODO', priority: 'MEDIUM', category: 'Frontend', assignee: 'Deepanshi Kaushal', dueDate: '2026-08-18', projectId: 1 },
-  { id: 5, title: 'Setup Docker Pipeline', description: 'Write Dockerfiles for Spring Boot jar and Vite build.', status: 'IN_REVIEW', priority: 'HIGH', category: 'DevOps', assignee: 'Marcus Vance', dueDate: '2026-08-14', projectId: 3 }
-];
-
 const DEMO_PROJECTS = [
-  { id: 1, name: 'Core Platform', description: 'Main web application', colorCode: '#06b6d4' },
-  { id: 2, name: 'Mobile Companion', description: 'iOS & Android app', colorCode: '#10b981' },
-  { id: 3, name: 'Cloud Infrastructure', description: 'K8s & deployment pipeline', colorCode: '#f59e0b' }
+  { id: 1, name: 'Core Platform', description: 'Main web application', colorCode: '#06b6d4', workspaceId: 1 },
+  { id: 2, name: 'Mobile Companion', description: 'iOS & Android app', colorCode: '#10b981', workspaceId: 1 },
+  { id: 3, name: 'Cloud Infrastructure', description: 'K8s & deployment pipeline', colorCode: '#f59e0b', workspaceId: 1 }
 ];
 
 const DEMO_WORKSPACES = [
-  { id: 1, name: 'VortiQ Studio Workspace', description: 'Enterprise collaboration workspace', colorCode: '#6366f1', currentUserRole: 'OWNER' }
+  { id: 1, name: 'VortiQ Studio Workspace', description: 'Enterprise collaboration workspace', colorCode: '#e11d48', currentUserRole: 'OWNER' }
 ];
 
 export default function App() {
+  const [pageView, setPageView] = useState('home'); // 'home' | 'app'
   const [activeView, setActiveView] = useState('kanban');
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
@@ -60,19 +58,31 @@ export default function App() {
   const [workspaceMembers, setWorkspaceMembers] = useState([]);
 
   const [tasks, setTasks] = useState([]);
-  const [projects, setProjects] = useState([]);
+  const [projects, setProjects] = useState(DEMO_PROJECTS);
+  const [messages, setMessages] = useState([]);
+  const [inconvenienceCount, setInconvenienceCount] = useState(0);
   const [stats, setStats] = useState({ total: 0, todo: 0, inProgress: 0, inReview: 0, completed: 0, completionRate: 0 });
   const [isConnected, setIsConnected] = useState(false);
   const [toasts, setToasts] = useState([]);
 
+  // Sidebar & Layout Controls
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
   // Modal Control States
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [taskToEdit, setTaskToEdit] = useState(null);
+  const [taskInitialStatus, setTaskInitialStatus] = useState('TODO');
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [authInitialMode, setAuthInitialMode] = useState('login');
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [isWorkspaceModalOpen, setIsWorkspaceModalOpen] = useState(false);
   const [isShortcutsModalOpen, setIsShortcutsModalOpen] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  // Team & Inconvenience Chat Modal State
+  const [isChatModalOpen, setIsChatModalOpen] = useState(false);
+  const [chatInitialTask, setChatInitialTask] = useState(null);
+  const [chatInitialType, setChatInitialType] = useState('INCONVENIENCE');
 
   // Sync theme
   useEffect(() => {
@@ -105,13 +115,23 @@ export default function App() {
       } else if (e.key.toLowerCase() === 'n' && !['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) {
         e.preventDefault();
         setTaskToEdit(null);
+        setTaskInitialStatus('TODO');
         setIsModalOpen(true);
+      } else if (e.key.toLowerCase() === 'm' && !['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) {
+        e.preventDefault();
+        handleOpenChat(null, 'INCONVENIENCE');
+      } else if (e.key.toLowerCase() === 'w' && !['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) {
+        e.preventDefault();
+        setIsWorkspaceModalOpen(prev => !prev);
       } else if (e.key.toLowerCase() === 'v' && !['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) {
         e.preventDefault();
-        setActiveView(prev => (prev === 'kanban' ? 'table' : 'kanban'));
+        setActiveView(prev => (prev === 'kanban' ? 'table' : prev === 'table' ? 'lounge' : 'kanban'));
       } else if (e.key.toLowerCase() === 'd' && !['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) {
         e.preventDefault();
         setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
+      } else if (e.key.toLowerCase() === 'b' && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault();
+        setIsSidebarCollapsed(prev => !prev);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
@@ -121,7 +141,7 @@ export default function App() {
   // CSV Export Handler
   const handleExportCSV = () => {
     if (!tasks || tasks.length === 0) {
-      addToast('No tasks available to export', 'info');
+      addToast('No tasks available to export in current workspace', 'info');
       return;
     }
     const headers = ['ID', 'Title', 'Status', 'Priority', 'Category', 'Assignee', 'Due Date'];
@@ -138,7 +158,7 @@ export default function App() {
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
     link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `VortiQ_Tasks_Report_${new Date().toISOString().split('T')[0]}.csv`);
+    link.setAttribute('download', `${(activeWorkspace?.name || 'VortiQ').replace(/\s+/g, '_')}_Tasks_${new Date().toISOString().split('T')[0]}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -151,78 +171,54 @@ export default function App() {
       const user = await getCurrentUser();
       if (user) {
         setCurrentUser(user);
+        setPageView('app');
       }
     }
     initUser();
   }, []);
-
-  const calculateLocalStats = (taskList) => {
-    const total = taskList.length;
-    const todo = taskList.filter((t) => t.status === 'TODO').length;
-    const inProgress = taskList.filter((t) => t.status === 'IN_PROGRESS').length;
-    const inReview = taskList.filter((t) => t.status === 'IN_REVIEW').length;
-    const completed = taskList.filter((t) => t.status === 'COMPLETED').length;
-    const completionRate = total > 0 ? Math.round((completed / total) * 100) : 0;
-    return { total, todo, inProgress, inReview, completed, completionRate };
-  };
 
   // Load API Data
   const loadData = useCallback(async () => {
     const isAlive = await checkApiHealth();
     setIsConnected(isAlive);
 
-    if (isAlive) {
-      try {
-        let wsList = await fetchWorkspaces();
-        if (wsList && wsList.length > 0) {
-          setWorkspaces(wsList);
-          if (!activeWorkspace || !wsList.some(w => w.id === activeWorkspace.id)) {
-            setActiveWorkspace(wsList[0]);
-          }
+    try {
+      let wsList = await fetchWorkspaces();
+      if (wsList && wsList.length > 0) {
+        setWorkspaces(wsList);
+        if (!activeWorkspace || !wsList.some(w => w.id === activeWorkspace.id)) {
+          setActiveWorkspace(wsList[0]);
         }
-
-        const wsId = activeWorkspace ? activeWorkspace.id : null;
-        if (wsId) {
-          fetchWorkspaceMembers(wsId).then(setWorkspaceMembers).catch(() => {});
-        }
-
-        const fetchedTasks = await fetchTasks({
-          workspaceId: wsId,
-          status: statusFilter || null,
-          priority: priorityFilter || null,
-          search: searchQuery || null
-        });
-        const fetchedStats = await fetchTaskStats(wsId);
-        const fetchedProjects = await fetchProjects(wsId);
-
-        let filtered = fetchedTasks;
-        if (categoryFilter) filtered = filtered.filter((t) => t.category === categoryFilter);
-        if (selectedProject) filtered = filtered.filter((t) => String(t.projectId) === String(selectedProject));
-
-        setTasks(filtered);
-        setStats(fetchedStats);
-        setProjects(fetchedProjects.length > 0 ? fetchedProjects : DEMO_PROJECTS);
-      } catch (err) {
-        console.warn('API error, falling back to local state:', err);
       }
-    } else {
-      let filtered = [...DEMO_TASKS];
-      if (statusFilter) filtered = filtered.filter((t) => t.status === statusFilter);
-      if (priorityFilter) filtered = filtered.filter((t) => t.priority === priorityFilter);
+
+      const wsId = activeWorkspace ? activeWorkspace.id : 1;
+      if (wsId) {
+        fetchWorkspaceMembers(wsId).then(setWorkspaceMembers).catch(() => {});
+        fetchMessages(wsId).then(msgs => {
+          setMessages(msgs);
+          const incCount = msgs.filter(m => m.messageType === 'INCONVENIENCE' || m.messageType === 'URGENT').length;
+          setInconvenienceCount(incCount);
+        }).catch(() => {});
+      }
+
+      const fetchedTasks = await fetchTasks({
+        workspaceId: wsId,
+        status: statusFilter || null,
+        priority: priorityFilter || null,
+        search: searchQuery || null
+      });
+      const fetchedStats = await fetchTaskStats(wsId);
+      const fetchedProjects = await fetchProjects(wsId);
+
+      let filtered = fetchedTasks;
       if (categoryFilter) filtered = filtered.filter((t) => t.category === categoryFilter);
       if (selectedProject) filtered = filtered.filter((t) => String(t.projectId) === String(selectedProject));
-      if (searchQuery) {
-        const q = searchQuery.toLowerCase();
-        filtered = filtered.filter(
-          (t) =>
-            t.title.toLowerCase().includes(q) ||
-            (t.description && t.description.toLowerCase().includes(q)) ||
-            (t.category && t.category.toLowerCase().includes(q))
-        );
-      }
+
       setTasks(filtered);
-      setProjects(DEMO_PROJECTS);
-      setStats(calculateLocalStats(filtered));
+      setStats(fetchedStats);
+      setProjects(fetchedProjects.length > 0 ? fetchedProjects : DEMO_PROJECTS);
+    } catch (err) {
+      console.warn('Error loading data:', err);
     }
   }, [statusFilter, priorityFilter, categoryFilter, selectedProject, searchQuery, activeWorkspace]);
 
@@ -233,20 +229,23 @@ export default function App() {
   // Auth Handlers
   const handleAuthSuccess = (user) => {
     setCurrentUser(user);
-    addToast(`Signed in as ${user.name || user.username}`, 'success');
+    setPageView('app');
+    addToast(`Signed in successfully as ${user.name || user.username}!`, 'success');
     loadData();
   };
 
   const handleLogout = () => {
     logout();
     setCurrentUser(null);
+    setPageView('home');
     addToast('Signed out successfully', 'info');
     loadData();
   };
 
-  // Actions
-  const handleOpenCreate = () => {
+  // Task & Project Actions
+  const handleOpenCreate = (initialStatus = 'TODO') => {
     setTaskToEdit(null);
+    setTaskInitialStatus(initialStatus);
     setIsModalOpen(true);
   };
 
@@ -255,75 +254,96 @@ export default function App() {
     setIsModalOpen(true);
   };
 
+  const handleOpenChat = (task = null, type = 'INCONVENIENCE') => {
+    setChatInitialTask(task);
+    setChatInitialType(type);
+    setIsChatModalOpen(true);
+  };
+
   const handleSaveTask = async (formData) => {
     setIsModalOpen(false);
     const payload = {
       ...formData,
-      workspaceId: activeWorkspace ? activeWorkspace.id : null
+      workspaceId: activeWorkspace ? activeWorkspace.id : 1
     };
 
-    if (isConnected) {
-      try {
-        if (taskToEdit) {
-          await updateTask(taskToEdit.id, payload);
-          addToast(`Updated task "${formData.title}"`, 'success');
-        } else {
-          await createTask(payload);
-          addToast(`Created task "${formData.title}"`, 'success');
-        }
-        await loadData();
-      } catch (err) {
-        addToast('Failed to save task to Spring Boot API', 'danger');
-      }
-    } else {
+    try {
       if (taskToEdit) {
-        setTasks((prev) => prev.map((t) => (t.id === taskToEdit.id ? { ...t, ...payload } : t)));
-        addToast(`Updated task "${formData.title}"`, 'info');
+        await updateTask(taskToEdit.id, payload);
+        addToast(`Updated task "${formData.title}"`, 'success');
       } else {
-        const newTask = { ...payload, id: Date.now() };
-        setTasks((prev) => [newTask, ...prev]);
+        await createTask(payload);
         addToast(`Created task "${formData.title}"`, 'success');
       }
+      await loadData();
+    } catch (err) {
+      addToast('Failed to save task', 'danger');
+    }
+  };
+
+  const handleCreateProject = async (projectName) => {
+    try {
+      const newProj = await createProject({
+        name: projectName,
+        workspaceId: activeWorkspace ? activeWorkspace.id : 1,
+        colorCode: '#e11d48'
+      });
+      addToast(`Created project "${projectName}"!`, 'success');
+      await loadData();
+      return newProj;
+    } catch (err) {
+      addToast('Failed to create project', 'danger');
+      return null;
     }
   };
 
   const handleStatusChange = async (taskId, newStatus) => {
-    if (isConnected) {
-      try {
-        await updateTaskStatus(taskId, newStatus);
-        addToast(`Task status changed to ${newStatus.replace('_', ' ')}`, 'info');
-        await loadData();
-      } catch (err) {
-        addToast('Failed to update task status', 'danger');
-      }
-    } else {
-      setTasks((prev) => {
-        const updated = prev.map((t) => (t.id === taskId ? { ...t, status: newStatus } : t));
-        setStats(calculateLocalStats(updated));
-        return updated;
-      });
-      addToast(`Status updated`, 'info');
+    try {
+      await updateTaskStatus(taskId, newStatus);
+      addToast(`Task moved to ${newStatus.replace('_', ' ')}`, 'info');
+      await loadData();
+    } catch (err) {
+      addToast('Failed to update task status', 'danger');
     }
   };
 
   const handleDeleteTask = async (taskId) => {
     if (!window.confirm('Are you sure you want to delete this task?')) return;
-    if (isConnected) {
-      try {
-        await deleteTask(taskId);
-        addToast('Task deleted successfully', 'danger');
-        await loadData();
-      } catch (err) {
-        addToast('Failed to delete task', 'danger');
-      }
-    } else {
-      setTasks((prev) => {
-        const updated = prev.filter((t) => t.id !== taskId);
-        setStats(calculateLocalStats(updated));
-        return updated;
-      });
-      addToast('Task deleted', 'danger');
+    try {
+      await deleteTask(taskId);
+      addToast('Task deleted successfully', 'danger');
+      await loadData();
+    } catch (err) {
+      addToast('Failed to delete task', 'danger');
     }
+  };
+
+  // Workspace Actions
+  const handleWorkspaceCreated = (newWs) => {
+    setWorkspaces((prev) => [...prev, newWs]);
+    setActiveWorkspace(newWs);
+    setSelectedProject('');
+    addToast(`Launched workspace "${newWs.name}"!`, 'success');
+    loadData();
+  };
+
+  const handleWorkspaceUpdated = (updatedWs) => {
+    setWorkspaces((prev) => prev.map((w) => (w.id === updatedWs.id ? updatedWs : w)));
+    setActiveWorkspace(updatedWs);
+    addToast(`Updated workspace "${updatedWs.name}"`, 'success');
+    loadData();
+  };
+
+  const handleWorkspaceDeleted = (deletedId) => {
+    setWorkspaces((prev) => {
+      const remaining = prev.filter((w) => w.id !== deletedId);
+      if (remaining.length > 0) {
+        setActiveWorkspace(remaining[0]);
+      }
+      return remaining;
+    });
+    addToast('Workspace deleted', 'danger');
+    loadData();
   };
 
   const sortedTasks = useMemo(() => {
@@ -344,212 +364,299 @@ export default function App() {
       {/* Toast Alert System */}
       <Toast toasts={toasts} onDismiss={handleDismissToast} />
 
-      {/* Left Sidebar Navigation */}
-      <Sidebar
-        activeView={activeView}
-        setActiveView={(view) => {
-          setActiveView(view);
-          setIsMobileMenuOpen(false);
-        }}
-        projects={projects}
-        selectedProject={selectedProject}
-        setSelectedProject={(pId) => {
-          setSelectedProject(pId);
-          setIsMobileMenuOpen(false);
-        }}
-        workspaces={workspaces}
-        activeWorkspace={activeWorkspace}
-        onSelectWorkspace={(ws) => {
-          setActiveWorkspace(ws);
-          setIsMobileMenuOpen(false);
-        }}
-        onOpenWorkspaceModal={() => {
-          setIsWorkspaceModalOpen(true);
-          setIsMobileMenuOpen(false);
-        }}
-        onOpenProfileModal={() => {
-          setIsProfileModalOpen(true);
-          setIsMobileMenuOpen(false);
-        }}
-        onOpenCreateModal={() => {
-          handleOpenCreate();
-          setIsMobileMenuOpen(false);
-        }}
-        currentUser={currentUser}
-        isMobileMenuOpen={isMobileMenuOpen}
-        onCloseMobileMenu={() => setIsMobileMenuOpen(false)}
-      />
-
-      {/* Main Content Area */}
-      <div className="content-wrapper">
-        
-        {/* Top Navbar Header */}
-        <Navbar
-          activeView={activeView}
-          setActiveView={setActiveView}
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          theme={theme}
-          setTheme={setTheme}
-          isConnected={isConnected}
-          onCheckApi={loadData}
+      {/* Conditionally Render Home Landing Page or Main Workspace Dashboard */}
+      {pageView === 'home' ? (
+        <HomePage
+          onOpenAuth={(mode = 'login') => {
+            setAuthInitialMode(mode);
+            setIsAuthModalOpen(true);
+          }}
+          onOpenSignUp={() => {
+            setAuthInitialMode('register');
+            setIsAuthModalOpen(true);
+          }}
+          onEnterApp={() => setPageView('app')}
           currentUser={currentUser}
-          activeWorkspace={activeWorkspace}
-          onOpenAuthModal={() => setIsAuthModalOpen(true)}
-          onOpenProfileModal={() => setIsProfileModalOpen(true)}
-          onOpenWorkspaceModal={() => setIsWorkspaceModalOpen(true)}
-          onLogout={handleLogout}
-          onToggleMobileMenu={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         />
+      ) : (
+        <>
+          {/* Left Sidebar Navigation */}
+          <Sidebar
+            activeView={activeView}
+            setActiveView={(view) => {
+              setActiveView(view);
+              setIsMobileMenuOpen(false);
+            }}
+            projects={projects}
+            selectedProject={selectedProject}
+            setSelectedProject={(pId) => {
+              setSelectedProject(pId);
+              setIsMobileMenuOpen(false);
+            }}
+            workspaces={workspaces}
+            activeWorkspace={activeWorkspace}
+            onSelectWorkspace={(ws) => {
+              setActiveWorkspace(ws);
+              setSelectedProject('');
+              setIsMobileMenuOpen(false);
+            }}
+            onOpenWorkspaceModal={() => {
+              setIsWorkspaceModalOpen(true);
+              setIsMobileMenuOpen(false);
+            }}
+            onOpenProfileModal={() => {
+              setIsProfileModalOpen(true);
+              setIsMobileMenuOpen(false);
+            }}
+            onOpenAuthModal={() => {
+              setAuthInitialMode('login');
+              setIsAuthModalOpen(true);
+              setIsMobileMenuOpen(false);
+            }}
+            onOpenCreateModal={() => {
+              handleOpenCreate('TODO');
+              setIsMobileMenuOpen(false);
+            }}
+            onCreateProject={handleCreateProject}
+            onOpenChatModal={() => {
+              handleOpenChat(null, 'INCONVENIENCE');
+              setIsMobileMenuOpen(false);
+            }}
+            inconvenienceCount={inconvenienceCount}
+            currentUser={currentUser}
+            isMobileMenuOpen={isMobileMenuOpen}
+            onCloseMobileMenu={() => setIsMobileMenuOpen(false)}
+            onGoHome={() => setPageView('home')}
+            onExportCSV={handleExportCSV}
+            onOpenShortcutsModal={() => setIsShortcutsModalOpen(true)}
+            isSidebarCollapsed={isSidebarCollapsed}
+            onToggleSidebarCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+          />
 
-        {/* Page Inner Container */}
-        <main className="main-container">
-          
-          {/* Metrics Overview Top Bar */}
-          <MetricsOverview stats={stats} />
+          {/* Main Content Area (Full Screen Responsive Canvas) */}
+          <div className={`content-wrapper ${isSidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
+            
+            {/* Top Navbar Header */}
+            <Navbar
+              activeView={activeView}
+              setActiveView={setActiveView}
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              theme={theme}
+              setTheme={setTheme}
+              isConnected={isConnected}
+              onCheckApi={loadData}
+              currentUser={currentUser}
+              workspaces={workspaces}
+              activeWorkspace={activeWorkspace}
+              onSelectWorkspace={(ws) => {
+                setActiveWorkspace(ws);
+                setSelectedProject('');
+              }}
+              onOpenAuthModal={() => {
+                setAuthInitialMode('login');
+                setIsAuthModalOpen(true);
+              }}
+              onOpenProfileModal={() => setIsProfileModalOpen(true)}
+              onOpenWorkspaceModal={() => setIsWorkspaceModalOpen(true)}
+              onOpenCreateModal={() => handleOpenCreate('TODO')}
+              onOpenChatModal={() => handleOpenChat(null, 'INCONVENIENCE')}
+              inconvenienceCount={inconvenienceCount}
+              onLogout={handleLogout}
+              onToggleMobileMenu={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              onGoHome={() => setPageView('home')}
+              onExportCSV={handleExportCSV}
+              onOpenShortcutsModal={() => setIsShortcutsModalOpen(true)}
+              isSidebarCollapsed={isSidebarCollapsed}
+              onToggleSidebarCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+            />
 
-          {/* Quick Filter Control Toolbar */}
-          <div className="glass-panel" style={{ padding: '0.85rem 1.25rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
-              <span style={{ fontSize: '0.8125rem', fontWeight: '800', color: 'var(--text-muted)' }}>Filter & Tools:</span>
+            {/* Page Inner Container (100% Full Viewport Width) */}
+            <main className="main-container">
               
-              <select
-                className="form-select"
-                style={{ padding: '0.4rem 0.75rem', fontSize: '0.8125rem' }}
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-              >
-                <option value="">All Statuses</option>
-                <option value="TODO">To Do</option>
-                <option value="IN_PROGRESS">In Progress</option>
-                <option value="IN_REVIEW">In Review</option>
-                <option value="COMPLETED">Completed</option>
-              </select>
+              {/* Metrics Overview Top Bar */}
+              <MetricsOverview stats={stats} />
 
-              <select
-                className="form-select"
-                style={{ padding: '0.4rem 0.75rem', fontSize: '0.8125rem' }}
-                value={priorityFilter}
-                onChange={(e) => setPriorityFilter(e.target.value)}
-              >
-                <option value="">All Priorities</option>
-                <option value="LOW">Low</option>
-                <option value="MEDIUM">Medium</option>
-                <option value="HIGH">High</option>
-                <option value="URGENT">Urgent</option>
-              </select>
+              {/* Quick Filter Control Toolbar (Only for Kanban & Matrix views) */}
+              {activeView !== 'lounge' && (
+                <div className="glass-panel" style={{ padding: '0.85rem 1.25rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', width: '100%' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+                    <span style={{ fontSize: '0.8125rem', fontWeight: '800', color: 'var(--text-muted)' }}>Filters:</span>
+                    
+                    <select
+                      className="form-select"
+                      style={{ padding: '0.4rem 0.75rem', fontSize: '0.8125rem' }}
+                      value={statusFilter}
+                      onChange={(e) => setStatusFilter(e.target.value)}
+                    >
+                      <option value="">All Statuses</option>
+                      <option value="TODO">To Do</option>
+                      <option value="IN_PROGRESS">In Progress</option>
+                      <option value="IN_REVIEW">In Review</option>
+                      <option value="COMPLETED">Completed</option>
+                    </select>
 
-              <select
-                className="form-select"
-                style={{ padding: '0.4rem 0.75rem', fontSize: '0.8125rem' }}
-                value={categoryFilter}
-                onChange={(e) => setCategoryFilter(e.target.value)}
-              >
-                <option value="">All Categories</option>
-                <option value="Frontend">Frontend</option>
-                <option value="Backend">Backend</option>
-                <option value="DevOps">DevOps</option>
-                <option value="Design">Design</option>
-                <option value="Database">Database</option>
-                <option value="Security">Security</option>
-                <option value="Mobile">Mobile</option>
-              </select>
+                    <select
+                      className="form-select"
+                      style={{ padding: '0.4rem 0.75rem', fontSize: '0.8125rem' }}
+                      value={priorityFilter}
+                      onChange={(e) => setPriorityFilter(e.target.value)}
+                    >
+                      <option value="">All Priorities</option>
+                      <option value="LOW">Low</option>
+                      <option value="MEDIUM">Medium</option>
+                      <option value="HIGH">High</option>
+                      <option value="URGENT">Urgent</option>
+                    </select>
 
-              <select
-                className="form-select"
-                style={{ padding: '0.4rem 0.75rem', fontSize: '0.8125rem' }}
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-              >
-                <option value="default">Sort: Default</option>
-                <option value="dueDate">Sort: Due Date</option>
-                <option value="priority">Sort: Priority</option>
-                <option value="title">Sort: Title (A-Z)</option>
-              </select>
+                    <select
+                      className="form-select"
+                      style={{ padding: '0.4rem 0.75rem', fontSize: '0.8125rem' }}
+                      value={categoryFilter}
+                      onChange={(e) => setCategoryFilter(e.target.value)}
+                    >
+                      <option value="">All Categories</option>
+                      <option value="Frontend">Frontend</option>
+                      <option value="Backend">Backend</option>
+                      <option value="DevOps">DevOps</option>
+                      <option value="Design">Design</option>
+                      <option value="Database">Database</option>
+                      <option value="Security">Security</option>
+                      <option value="Mobile">Mobile</option>
+                    </select>
 
-              <button
-                className="btn btn-secondary"
-                style={{ padding: '0.4rem 0.75rem', fontSize: '0.785rem', gap: '0.35rem' }}
-                onClick={handleExportCSV}
-                title="Export tasks to CSV file"
-              >
-                <Download size={14} />
-                <span>Export CSV</span>
-              </button>
+                    <select
+                      className="form-select"
+                      style={{ padding: '0.4rem 0.75rem', fontSize: '0.8125rem' }}
+                      value={selectedProject}
+                      onChange={(e) => setSelectedProject(e.target.value)}
+                    >
+                      <option value="">All Projects</option>
+                      {projects.map((p) => (
+                        <option key={p.id} value={p.id}>{p.name}</option>
+                      ))}
+                    </select>
 
-              <button
-                className="btn btn-secondary btn-icon"
-                style={{ padding: '0.4rem' }}
-                onClick={() => setIsShortcutsModalOpen(true)}
-                title="Keyboard Shortcuts (?)"
-              >
-                <HelpCircle size={16} />
-              </button>
+                    <select
+                      className="form-select"
+                      style={{ padding: '0.4rem 0.75rem', fontSize: '0.8125rem' }}
+                      value={sortBy}
+                      onChange={(e) => setSortBy(e.target.value)}
+                    >
+                      <option value="default">Sort: Default</option>
+                      <option value="dueDate">Sort: Due Date</option>
+                      <option value="priority">Sort: Priority</option>
+                      <option value="title">Sort: Title (A-Z)</option>
+                    </select>
 
-              {(statusFilter || priorityFilter || categoryFilter || selectedProject || searchQuery || sortBy !== 'default') && (
-                <button
-                  className="btn btn-secondary"
-                  style={{ padding: '0.4rem 0.75rem', fontSize: '0.785rem' }}
-                  onClick={() => {
-                    setStatusFilter('');
-                    setPriorityFilter('');
-                    setCategoryFilter('');
-                    setSelectedProject('');
-                    setSearchQuery('');
-                    setSortBy('default');
-                  }}
-                >
-                  Clear Filters
-                </button>
+                    <button
+                      className="btn btn-secondary"
+                      style={{ padding: '0.4rem 0.75rem', fontSize: '0.785rem', gap: '0.35rem' }}
+                      onClick={handleExportCSV}
+                      title="Export tasks to CSV file"
+                    >
+                      <Download size={14} />
+                      <span>Export CSV</span>
+                    </button>
+
+                    {(statusFilter || priorityFilter || categoryFilter || selectedProject || searchQuery || sortBy !== 'default') && (
+                      <button
+                        className="btn btn-secondary"
+                        style={{ padding: '0.4rem 0.75rem', fontSize: '0.785rem' }}
+                        onClick={() => {
+                          setStatusFilter('');
+                          setPriorityFilter('');
+                          setCategoryFilter('');
+                          setSelectedProject('');
+                          setSearchQuery('');
+                          setSortBy('default');
+                        }}
+                      >
+                        Clear Filters
+                      </button>
+                    )}
+                  </div>
+
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+                    <div style={{ fontSize: '0.8125rem', color: 'var(--text-dim)', fontWeight: '700' }}>
+                      Showing {sortedTasks.length} {sortedTasks.length === 1 ? 'task' : 'tasks'}
+                    </div>
+
+                    <button
+                      className="btn btn-secondary"
+                      style={{ padding: '0.4rem 0.75rem', fontSize: '0.8rem', gap: '0.35rem', color: '#f59e0b' }}
+                      onClick={() => handleOpenChat(null, 'INCONVENIENCE')}
+                    >
+                      <MessageSquare size={14} />
+                      <span>Team Chat</span>
+                    </button>
+
+                    <button
+                      className="btn btn-primary"
+                      style={{ padding: '0.4rem 0.85rem', fontSize: '0.8rem', gap: '0.35rem' }}
+                      onClick={() => handleOpenCreate('TODO')}
+                    >
+                      <Plus size={14} />
+                      <span>New Task</span>
+                    </button>
+                  </div>
+                </div>
               )}
-            </div>
 
-            <div style={{ fontSize: '0.8125rem', color: 'var(--text-dim)', fontWeight: '700' }}>
-              Showing {sortedTasks.length} {sortedTasks.length === 1 ? 'task' : 'tasks'}
-            </div>
+              {/* View Components (Kanban / Matrix / Team Lounge) */}
+              {activeView === 'kanban' ? (
+                <KanbanBoard
+                  tasks={sortedTasks}
+                  onStatusChange={handleStatusChange}
+                  onEdit={handleOpenEdit}
+                  onDelete={handleDeleteTask}
+                  onOpenCreate={handleOpenCreate}
+                  onReportInconvenience={(task) => handleOpenChat(task, 'INCONVENIENCE')}
+                  workspaceMembers={workspaceMembers}
+                />
+              ) : activeView === 'table' ? (
+                <TaskTable
+                  tasks={sortedTasks}
+                  onStatusChange={handleStatusChange}
+                  onEdit={handleOpenEdit}
+                  onDelete={handleDeleteTask}
+                  onReportInconvenience={(task) => handleOpenChat(task, 'INCONVENIENCE')}
+                  workspaceMembers={workspaceMembers}
+                />
+              ) : (
+                <TeamLounge
+                  activeWorkspace={activeWorkspace}
+                  currentUser={currentUser}
+                  onAddToast={addToast}
+                />
+              )}
+
+            </main>
           </div>
 
-          {/* View Components */}
-          {activeView === 'kanban' ? (
-            <KanbanBoard
-              tasks={sortedTasks}
-              onStatusChange={handleStatusChange}
-              onEdit={handleOpenEdit}
-              onDelete={handleDeleteTask}
-            />
-          ) : (
-            <TaskTable
-              tasks={sortedTasks}
-              onStatusChange={handleStatusChange}
-              onEdit={handleOpenEdit}
-              onDelete={handleDeleteTask}
-            />
-          )}
-
-        </main>
-      </div>
-
-      {/* Mobile Floating Action Button */}
-      <button
-        className="btn btn-gradient mobile-only"
-        onClick={handleOpenCreate}
-        style={{
-          position: 'fixed',
-          bottom: '1.75rem',
-          right: '1.5rem',
-          width: '54px',
-          height: '54px',
-          borderRadius: '50%',
-          zIndex: 80,
-          boxShadow: '0 8px 25px rgba(225, 29, 72, 0.6)',
-          padding: 0,
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}
-        title="Create Task"
-      >
-        <Plus size={24} />
-      </button>
+          {/* Mobile Floating Action Button */}
+          <button
+            className="btn btn-gradient mobile-only"
+            onClick={() => handleOpenCreate('TODO')}
+            style={{
+              position: 'fixed',
+              bottom: '1.75rem',
+              right: '1.5rem',
+              width: '54px',
+              height: '54px',
+              borderRadius: '50%',
+              zIndex: 80,
+              boxShadow: '0 8px 25px rgba(225, 29, 72, 0.6)',
+              padding: 0,
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+            title="Create Task"
+          >
+            <Plus size={24} />
+          </button>
+        </>
+      )}
 
       {/* Keyboard Shortcuts Modal */}
       <ShortcutsModal
@@ -563,15 +670,33 @@ export default function App() {
         onClose={() => setIsModalOpen(false)}
         onSave={handleSaveTask}
         taskToEdit={taskToEdit}
+        initialStatus={taskInitialStatus}
         projects={projects}
         workspaceMembers={workspaceMembers}
+        onCreateProject={handleCreateProject}
       />
 
-      {/* Authentication Modal */}
+      {/* Team Messaging & Inconvenience Support Modal */}
+      <WorkspaceChatModal
+        isOpen={isChatModalOpen}
+        onClose={() => {
+          setIsChatModalOpen(false);
+          setChatInitialTask(null);
+        }}
+        activeWorkspace={activeWorkspace}
+        currentUser={currentUser}
+        tasks={tasks}
+        workspaceMembers={workspaceMembers}
+        initialTask={chatInitialTask}
+        initialType={chatInitialType}
+      />
+
+      {/* Authentication Modal with OTP Flow */}
       <AuthModal
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
         onAuthSuccess={handleAuthSuccess}
+        initialMode={authInitialMode}
       />
 
       {/* Profile Settings Modal */}
@@ -590,23 +715,15 @@ export default function App() {
         isOpen={isWorkspaceModalOpen}
         onClose={() => setIsWorkspaceModalOpen(false)}
         activeWorkspace={activeWorkspace}
-        onWorkspaceCreated={(newWs) => {
-          setWorkspaces((prev) => [...prev, newWs]);
-          setActiveWorkspace(newWs);
-          addToast(`Created workspace "${newWs.name}"`, 'success');
-          loadData();
+        workspaces={workspaces}
+        onSelectWorkspace={(ws) => {
+          setActiveWorkspace(ws);
+          setSelectedProject('');
+          addToast(`Switched to workspace "${ws.name}"`, 'info');
         }}
-        onWorkspaceUpdated={(updatedWs) => {
-          setWorkspaces((prev) => prev.map((w) => (w.id === updatedWs.id ? updatedWs : w)));
-          setActiveWorkspace(updatedWs);
-          addToast(`Updated workspace "${updatedWs.name}"`, 'success');
-          loadData();
-        }}
-        onWorkspaceDeleted={(deletedId) => {
-          setWorkspaces((prev) => prev.filter((w) => w.id !== deletedId));
-          addToast('Workspace deleted', 'danger');
-          loadData();
-        }}
+        onWorkspaceCreated={handleWorkspaceCreated}
+        onWorkspaceUpdated={handleWorkspaceUpdated}
+        onWorkspaceDeleted={handleWorkspaceDeleted}
       />
     </div>
   );

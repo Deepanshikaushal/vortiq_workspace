@@ -61,6 +61,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess, initialMode 
   const fileInputRef = useRef(null);
 
   const [otpCode, setOtpCode] = useState('');
+  const [generatedOtp, setGeneratedOtp] = useState('');
   const [demoOtpNotice, setDemoOtpNotice] = useState('');
 
   const [error, setError] = useState('');
@@ -72,6 +73,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess, initialMode 
     setError('');
     setDemoOtpNotice('');
     setOtpCode('');
+    setGeneratedOtp('');
     setStep(1);
   };
 
@@ -110,11 +112,28 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess, initialMode 
     try {
       const res = await sendSignUpOTP(email);
       setLoading(false);
-      setDemoOtpNotice(`Verification Code Sent! Demo OTP: ${res.otp} (or use 123456)`);
+      setGeneratedOtp(res.otp);
+      setOtpCode(res.otp); // Pre-fill automatically for effortless registration
+      setDemoOtpNotice(`Verification Code Generated: ${res.otp} (Auto-filled)`);
       setStep(2);
     } catch (err) {
       setLoading(false);
       setError('Failed to send OTP verification code');
+    }
+  };
+
+  const handleResendOTP = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const res = await sendSignUpOTP(email);
+      setGeneratedOtp(res.otp);
+      setOtpCode(res.otp);
+      setDemoOtpNotice(`New Code Generated: ${res.otp}`);
+    } catch (err) {
+      setError('Failed to generate new code');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -518,17 +537,56 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess, initialMode 
             
             /* MODE 2 - STEP 2: OTP VERIFICATION */
             <form onSubmit={handleVerifyAndRegister} className="modal-form">
-              <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
+              <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
                 <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'rgba(225, 29, 72, 0.2)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', color: '#ff859b', marginBottom: '0.75rem' }}>
                   <KeyRound size={24} />
                 </div>
                 <h3 style={{ fontSize: '1.1rem', fontWeight: 700 }}>Enter Verification Code</h3>
                 <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', margin: '0.25rem 0' }}>
-                  We sent a 6-digit verification code to <strong>{email}</strong>
+                  Verification code generated for <strong>{email}</strong>
                 </p>
               </div>
 
+              {/* Real-time Sandbox OTP Display Card */}
+              <div style={{
+                background: 'linear-gradient(135deg, rgba(56, 189, 248, 0.08), rgba(99, 102, 241, 0.08))',
+                border: '1px solid rgba(56, 189, 248, 0.25)',
+                borderRadius: '10px',
+                padding: '0.9rem',
+                marginBottom: '1.25rem',
+                textAlign: 'center'
+              }}>
+                <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.35rem' }}>
+                  ⚡ Sandbox Instant OTP (Demo Environment)
+                </div>
+                <div style={{ fontSize: '1.6rem', fontWeight: 800, letterSpacing: '0.25em', color: '#38bdf8', fontFamily: 'var(--font-mono)' }}>
+                  {generatedOtp || '123456'}
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem', marginTop: '0.5rem' }}>
+                  <button
+                    type="button"
+                    onClick={() => setOtpCode(generatedOtp || '123456')}
+                    className="btn btn-secondary"
+                    style={{ fontSize: '0.75rem', padding: '0.25rem 0.65rem' }}
+                  >
+                    ✓ Auto-Fill Code
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleResendOTP}
+                    className="btn btn-secondary"
+                    style={{ fontSize: '0.75rem', padding: '0.25rem 0.65rem' }}
+                    disabled={loading}
+                  >
+                    🔄 Resend New Code
+                  </button>
+                </div>
+              </div>
+
               <div className="form-group">
+                <label className="form-label" style={{ textAlign: 'center', display: 'block', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                  6-Digit OTP Code
+                </label>
                 <input
                   type="text"
                   maxLength={6}

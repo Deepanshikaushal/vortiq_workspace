@@ -63,14 +63,50 @@ function Start-Backend {
 
 function Start-Tunnel {
     Write-Host "[+] Launching Cloudflare Live Tunnel..." -ForegroundColor Yellow
+    $logFile = "tunnel.log"
+    if (Test-Path $logFile) { Remove-Item $logFile -Force -ErrorAction SilentlyContinue }
+
     $pinfo = New-Object System.Diagnostics.ProcessStartInfo
     $pinfo.FileName = (Resolve-Path $cloudflaredPath).Path
-    $pinfo.Arguments = "tunnel --url http://localhost:8080"
+    $pinfo.Arguments = "tunnel --url http://localhost:8080 --logfile tunnel.log"
     $pinfo.UseShellExecute = $false
-    $pinfo.RedirectStandardOutput = $false
-    $pinfo.RedirectStandardError = $false
-    $pinfo.CreateNoWindow = $false
-    return [System.Diagnostics.Process]::Start($pinfo)
+    $pinfo.CreateNoWindow = $true
+    $proc = [System.Diagnostics.Process]::Start($pinfo)
+
+    # Wait up to 15 seconds to extract the dynamic URL
+    $liveUrl = $null
+    $attempts = 0
+    Write-Host "[+] Generating dynamic live website link..." -ForegroundColor Yellow
+    while (-not $liveUrl -and $attempts -lt 30) {
+        Start-Sleep -Milliseconds 500
+        $attempts++
+        if (Test-Path $logFile) {
+            $content = Get-Content $logFile -Raw -ErrorAction SilentlyContinue
+            if ($content -match '(https:\/\/[a-zA-Z0-9-]+\.trycloudflare\.com)') {
+                $liveUrl = $matches[1]
+            }
+        }
+    }
+
+    if ($liveUrl) {
+        Set-Content -Path "LATEST_LIVE_URL.txt" -Value $liveUrl
+        Write-Host "`n========================================================" -ForegroundColor Green
+        Write-Host " 🌐 DYNAMIC LIVE WEBSITE LINK (Publicly Accessible):" -ForegroundColor Cyan
+        Write-Host " 👉 $liveUrl" -ForegroundColor Yellow
+        Write-Host "========================================================`n" -ForegroundColor Green
+        
+        try {
+            Set-Clipboard -Value $liveUrl -ErrorAction SilentlyContinue
+            Write-Host "[+] Link copied to clipboard!" -ForegroundColor Green
+        } catch {}
+
+        # Auto-open the dynamic URL in default browser
+        Start-Process $liveUrl
+    } else {
+        Write-Host "[!] Cloudflare Tunnel started. Check tunnel.log for URL." -ForegroundColor Yellow
+    }
+
+    return $proc
 }
 
 # Initial checks
@@ -78,7 +114,7 @@ $isPort8080Active = Get-NetTCPConnection -LocalPort 8080 -State Listen -ErrorAct
 
 if (-not $isPort8080Active) {
     $javaProcess = Start-Backend
-    Start-Sleep -Seconds 5
+    Start-Sleep -Seconds 4
 } else {
     Write-Host "[+] Backend is already running on http://localhost:8080" -ForegroundColor Green
 }
@@ -88,6 +124,10 @@ if (-not $isTunnelRunning) {
     $tunnelProcess = Start-Tunnel
 } else {
     Write-Host "[+] Cloudflare Tunnel is already active." -ForegroundColor Green
+    if (Test-Path "LATEST_LIVE_URL.txt") {
+        $existingUrl = Get-Content "LATEST_LIVE_URL.txt" -Raw
+        Write-Host " Current Live URL: $existingUrl" -ForegroundColor Yellow
+    }
 }
 
 Write-Host "`n========================================================" -ForegroundColor Green

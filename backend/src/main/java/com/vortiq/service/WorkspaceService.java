@@ -41,6 +41,12 @@ public class WorkspaceService {
         }).collect(Collectors.toList());
     }
 
+    public List<WorkspaceDto> getAllWorkspaces() {
+        return workspaceRepository.findAll().stream()
+                .map(ws -> new WorkspaceDto(ws, WorkspaceRole.OWNER))
+                .collect(Collectors.toList());
+    }
+
     public Optional<Workspace> getWorkspaceById(Long id) {
         return workspaceRepository.findById(id);
     }

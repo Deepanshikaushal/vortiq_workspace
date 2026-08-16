@@ -146,7 +146,9 @@ export default function TeamLounge({ activeWorkspace, currentUser, onAddToast })
     }
   };
 
-  const filteredDiscussions = discussions.filter(d => {
+  const safeDiscussions = Array.isArray(discussions) ? discussions : [];
+  const filteredDiscussions = safeDiscussions.filter(d => {
+    if (!d) return false;
     if (selectedCategory !== 'ALL' && d.category !== selectedCategory) return false;
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();

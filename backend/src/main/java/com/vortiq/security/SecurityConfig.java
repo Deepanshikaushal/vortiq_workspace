@@ -69,18 +69,50 @@ public class SecurityConfig {
                     "/api/auth/**",
                     "/api/health",
                     "/health",
-                    "/actuator/health",
+                    "/actuator/**",
                     "/h2-console/**",
                     "/",
                     "/index.html",
                     "/assets/**",
                     "/*.ico",
                     "/*.png",
+                    "/*.svg",
                     "/*.css",
                     "/*.js"
                 ).permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/tasks/**", "/api/projects/**", "/api/workspaces/**", "/api/users/**", "/api/messages/**", "/api/discussions/**").permitAll()
-                .requestMatchers(HttpMethod.POST, "/api/messages/**", "/api/discussions/**").permitAll()
+                .requestMatchers(HttpMethod.GET,
+                    "/api/tasks", "/api/tasks/**",
+                    "/api/projects", "/api/projects/**",
+                    "/api/workspaces", "/api/workspaces/**",
+                    "/api/users", "/api/users/**",
+                    "/api/messages", "/api/messages/**",
+                    "/api/discussions", "/api/discussions/**"
+                ).permitAll()
+                .requestMatchers(HttpMethod.POST,
+                    "/api/tasks", "/api/tasks/**",
+                    "/api/projects", "/api/projects/**",
+                    "/api/workspaces", "/api/workspaces/**",
+                    "/api/messages", "/api/messages/**",
+                    "/api/discussions", "/api/discussions/**"
+                ).permitAll()
+                .requestMatchers(HttpMethod.PUT,
+                    "/api/tasks", "/api/tasks/**",
+                    "/api/projects", "/api/projects/**",
+                    "/api/workspaces", "/api/workspaces/**",
+                    "/api/users/**",
+                    "/api/discussions/**"
+                ).permitAll()
+                .requestMatchers(HttpMethod.PATCH,
+                    "/api/tasks/**",
+                    "/api/workspaces/**"
+                ).permitAll()
+                .requestMatchers(HttpMethod.DELETE,
+                    "/api/tasks/**",
+                    "/api/projects/**",
+                    "/api/workspaces/**",
+                    "/api/messages/**",
+                    "/api/discussions/**"
+                ).permitAll()
                 .anyRequest().authenticated()
             );
 

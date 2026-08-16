@@ -184,19 +184,23 @@ export default function App() {
 
     try {
       let wsList = await fetchWorkspaces();
-      if (wsList && wsList.length > 0) {
+      if (Array.isArray(wsList) && wsList.length > 0) {
         setWorkspaces(wsList);
-        if (!activeWorkspace || !wsList.some(w => w.id === activeWorkspace.id)) {
+        if (!activeWorkspace || !wsList.some(w => w?.id === activeWorkspace?.id)) {
           setActiveWorkspace(wsList[0]);
         }
       }
 
-      const wsId = activeWorkspace ? activeWorkspace.id : 1;
+      const wsId = activeWorkspace?.id || 1;
       if (wsId) {
-        fetchWorkspaceMembers(wsId).then(setWorkspaceMembers).catch(() => {});
+        fetchWorkspaceMembers(wsId).then(data => {
+          setWorkspaceMembers(Array.isArray(data) ? data : []);
+        }).catch(() => {});
+
         fetchMessages(wsId).then(msgs => {
-          setMessages(msgs);
-          const incCount = msgs.filter(m => m.messageType === 'INCONVENIENCE' || m.messageType === 'URGENT').length;
+          const safeMsgs = Array.isArray(msgs) ? msgs : [];
+          setMessages(safeMsgs);
+          const incCount = safeMsgs.filter(m => m?.messageType === 'INCONVENIENCE' || m?.messageType === 'URGENT').length;
           setInconvenienceCount(incCount);
         }).catch(() => {});
       }
@@ -207,16 +211,17 @@ export default function App() {
         priority: priorityFilter || null,
         search: searchQuery || null
       });
+      const safeTasks = Array.isArray(fetchedTasks) ? fetchedTasks : [];
       const fetchedStats = await fetchTaskStats(wsId);
       const fetchedProjects = await fetchProjects(wsId);
 
-      let filtered = fetchedTasks;
-      if (categoryFilter) filtered = filtered.filter((t) => t.category === categoryFilter);
-      if (selectedProject) filtered = filtered.filter((t) => String(t.projectId) === String(selectedProject));
+      let filtered = safeTasks;
+      if (categoryFilter) filtered = filtered.filter((t) => t?.category === categoryFilter);
+      if (selectedProject) filtered = filtered.filter((t) => String(t?.projectId) === String(selectedProject));
 
       setTasks(filtered);
-      setStats(fetchedStats);
-      setProjects(fetchedProjects.length > 0 ? fetchedProjects : DEMO_PROJECTS);
+      setStats(fetchedStats && typeof fetchedStats === 'object' ? fetchedStats : { total: 0, todo: 0, inProgress: 0, inReview: 0, completed: 0, completionRate: 0 });
+      setProjects(Array.isArray(fetchedProjects) && fetchedProjects.length > 0 ? fetchedProjects : DEMO_PROJECTS);
     } catch (err) {
       console.warn('Error loading data:', err);
     }

@@ -159,9 +159,9 @@ export default function KanbanBoard({
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.75rem', color: 'var(--text-dim)', paddingTop: '0.5rem', borderTop: '1px solid var(--border-color)' }}>
                         {task.assignee ? (
                           <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                            {workspaceMembers.find(m => (m.name === task.assignee || m.username === task.assignee))?.avatarUrl ? (
+                            {(workspaceMembers || []).find(m => m && (m.name === task.assignee || m.username === task.assignee))?.avatarUrl ? (
                               <img
-                                src={workspaceMembers.find(m => (m.name === task.assignee || m.username === task.assignee)).avatarUrl}
+                                src={(workspaceMembers || []).find(m => m && (m.name === task.assignee || m.username === task.assignee)).avatarUrl}
                                 alt={task.assignee}
                                 style={{ width: '22px', height: '22px', borderRadius: '50%', objectFit: 'cover' }}
                               />
@@ -178,7 +178,7 @@ export default function KanbanBoard({
                                 fontWeight: 'bold',
                                 color: '#fff'
                               }}>
-                                {task.assignee.charAt(0).toUpperCase()}
+                                {(task.assignee || 'U').charAt(0).toUpperCase()}
                               </div>
                             )}
                             <span style={{ color: 'var(--text-main)', fontWeight: 600 }}>{task.assignee}</span>

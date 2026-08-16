@@ -32,7 +32,7 @@ public class DiscussionController {
 
     @GetMapping
     public ResponseEntity<List<Discussion>> getDiscussions(
-            @RequestParam Long workspaceId,
+            @RequestParam(required = false, defaultValue = "1") Long workspaceId,
             @RequestParam(required = false) String category) {
         return ResponseEntity.ok(discussionService.getWorkspaceDiscussions(workspaceId, category));
     }

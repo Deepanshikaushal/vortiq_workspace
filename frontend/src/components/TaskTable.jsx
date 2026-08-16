@@ -35,7 +35,7 @@ export default function TaskTable({
           </thead>
           <tbody>
             {tasks.map((task) => {
-              const member = workspaceMembers.find(m => m.name === task.assignee || m.username === task.assignee);
+              const member = (workspaceMembers || []).find(m => m && (m.name === task.assignee || m.username === task.assignee));
 
               return (
                 <tr

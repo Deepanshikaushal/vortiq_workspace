@@ -341,6 +341,15 @@ export default function Navbar({
               <span className="desktop-only">Matrix</span>
             </button>
             <button
+              className={`tab-btn ${activeView === 'members' ? 'active' : ''}`}
+              onClick={() => setActiveView('members')}
+              style={{ padding: '0.35rem 0.75rem', fontSize: '0.8rem' }}
+              title="Team Members Directory (V)"
+            >
+              <Users size={15} style={{ color: '#818cf8' }} />
+              <span className="desktop-only">Members</span>
+            </button>
+            <button
               className={`tab-btn ${activeView === 'lounge' ? 'active' : ''}`}
               onClick={() => setActiveView('lounge')}
               style={{ padding: '0.35rem 0.75rem', fontSize: '0.8rem' }}

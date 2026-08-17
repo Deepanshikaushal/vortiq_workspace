@@ -4,6 +4,135 @@ const USER_KEY = 'vortiq_current_user';
 const TASKS_KEY = 'vortiq_tasks';
 const PROJECTS_KEY = 'vortiq_projects';
 const WORKSPACES_KEY = 'vortiq_workspaces';
+const ALL_USERS_KEY = 'vortiq_all_registered_users';
+
+const INITIAL_DEMO_USERS = [
+  {
+    id: 1,
+    username: 'deepanshi',
+    name: 'Deepanshi Kaushal',
+    email: 'deepanshi@vortiq.com',
+    phone: '+1 (555) 019-2834',
+    department: 'Engineering & Development',
+    bio: 'Lead Engineer & Workspace Owner. Architecting high-throughput Spring Boot & React platforms.',
+    role: 'ROLE_OWNER',
+    avatarUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=140&auto=format&fit=crop&q=80',
+    joinedDate: '2026-01-10',
+    status: 'ONLINE'
+  },
+  {
+    id: 2,
+    username: 'sarah',
+    name: 'Sarah Chen',
+    email: 'sarah@vortiq.com',
+    phone: '+1 (555) 019-5821',
+    department: 'Product & Strategy',
+    bio: 'Senior Product Manager driving sprint roadmaps and cross-functional feature execution.',
+    role: 'ROLE_ADMIN',
+    avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=140&auto=format&fit=crop&q=80',
+    joinedDate: '2026-02-14',
+    status: 'ONLINE'
+  },
+  {
+    id: 3,
+    username: 'marcus',
+    name: 'Marcus Vance',
+    email: 'marcus@vortiq.com',
+    phone: '+1 (555) 019-7742',
+    department: 'Cloud Infrastructure & DevOps',
+    bio: 'Site Reliability Engineer managing Docker orchestration, K8s clusters, and automated CI/CD.',
+    role: 'ROLE_MEMBER',
+    avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=140&auto=format&fit=crop&q=80',
+    joinedDate: '2026-03-01',
+    status: 'ONLINE'
+  },
+  {
+    id: 4,
+    username: 'alex',
+    name: 'Alex Rivera',
+    email: 'alex@vortiq.com',
+    phone: '+1 (555) 019-3319',
+    department: 'UI/UX & Design',
+    bio: 'Principal UI/UX Designer crafting cyber glassmorphic design systems and micro-interactions.',
+    role: 'ROLE_MEMBER',
+    avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=140&auto=format&fit=crop&q=80',
+    joinedDate: '2026-03-18',
+    status: 'ONLINE'
+  },
+  {
+    id: 5,
+    username: 'david',
+    name: 'David Kim',
+    email: 'david@vortiq.com',
+    phone: '+1 (555) 019-4488',
+    department: 'QA & Test Automation',
+    bio: 'QA Engineer specializing in end-to-end automation, API contract tests, and performance benchmarks.',
+    role: 'ROLE_MEMBER',
+    avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=140&auto=format&fit=crop&q=80',
+    joinedDate: '2026-04-05',
+    status: 'OFFLINE'
+  },
+  {
+    id: 6,
+    username: 'elena',
+    name: 'Elena Rostova',
+    email: 'elena@vortiq.com',
+    phone: '+1 (555) 019-9921',
+    department: 'Cybersecurity & Compliance',
+    bio: 'Security Architect focused on JWT auth, zero-trust token flows, and SAIF cloud safety.',
+    role: 'ROLE_MEMBER',
+    avatarUrl: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=140&auto=format&fit=crop&q=80',
+    joinedDate: '2026-04-20',
+    status: 'ONLINE'
+  }
+];
+
+export function getStoredAllUsers() {
+  try {
+    const data = localStorage.getItem(ALL_USERS_KEY);
+    if (!data) {
+      localStorage.setItem(ALL_USERS_KEY, JSON.stringify(INITIAL_DEMO_USERS));
+      return INITIAL_DEMO_USERS;
+    }
+    return JSON.parse(data);
+  } catch (e) {
+    return INITIAL_DEMO_USERS;
+  }
+}
+
+export function saveStoredAllUsers(users) {
+  try {
+    localStorage.setItem(ALL_USERS_KEY, JSON.stringify(users));
+  } catch (e) {
+    console.error('Failed to save all users to localStorage', e);
+  }
+}
+
+export function appendRegisteredUser(user) {
+  try {
+    const current = getStoredAllUsers();
+    const cleanEmail = (user.email || '').toLowerCase().trim();
+    const existingIdx = current.findIndex(u => (u.email && u.email.toLowerCase() === cleanEmail) || String(u.id) === String(user.id));
+    if (existingIdx >= 0) {
+      current[existingIdx] = { ...current[existingIdx], ...user };
+    } else {
+      current.push({
+        id: user.id || Date.now(),
+        username: user.username || cleanEmail.split('@')[0] || 'user',
+        name: user.name || user.username || cleanEmail.split('@')[0] || 'User',
+        email: cleanEmail,
+        phone: user.phone || '',
+        department: user.department || 'Engineering & Development',
+        bio: user.bio || `${user.department || 'Workspace'} member`,
+        role: user.role || 'ROLE_USER',
+        avatarUrl: user.avatarUrl || 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=140&auto=format&fit=crop&q=80',
+        joinedDate: new Date().toISOString().split('T')[0],
+        status: 'ONLINE'
+      });
+    }
+    saveStoredAllUsers(current);
+  } catch (e) {}
+}
 
 const INITIAL_DEMO_TASKS = [
   { id: 1, title: 'Design Glassmorphic UI Components', description: 'Create modern, translucent card components and custom scrollbars.', status: 'IN_PROGRESS', priority: 'HIGH', category: 'Frontend', assignee: 'Deepanshi Kaushal', dueDate: '2026-08-15', projectId: 1, workspaceId: 1 },
@@ -136,7 +265,10 @@ export async function login(email, password) {
     const data = await res.json();
     if (!res.ok) throw new Error(data.message || 'Login failed');
     setAuthToken(data.token);
-    if (data.user) setStoredUser(data.user);
+    if (data.user) {
+      setStoredUser(data.user);
+      appendRegisteredUser(data.user);
+    }
     return data;
   } catch (err) {
     // Offline fallback: create simulated token & user
@@ -145,6 +277,7 @@ export async function login(email, password) {
     const fakeToken = 'mock_jwt_token_' + Date.now();
     setAuthToken(fakeToken);
     setStoredUser(user);
+    appendRegisteredUser(user);
     return { token: fakeToken, user };
   }
 }
@@ -166,7 +299,10 @@ export async function register(userData, optionalEmail, optionalPassword) {
     const data = await res.json();
     if (!res.ok) throw new Error(data.message || 'Registration failed');
     setAuthToken(data.token);
-    if (data.user) setStoredUser(data.user);
+    if (data.user) {
+      setStoredUser(data.user);
+      appendRegisteredUser(data.user);
+    }
     return data;
   } catch (err) {
     // Offline fallback
@@ -184,6 +320,7 @@ export async function register(userData, optionalEmail, optionalPassword) {
     const fakeToken = 'mock_jwt_token_' + Date.now();
     setAuthToken(fakeToken);
     setStoredUser(user);
+    appendRegisteredUser(user);
     return { token: fakeToken, user };
   }
 }
@@ -350,20 +487,50 @@ export async function changePassword(currentPassword, newPassword) {
   }
 }
 
-export async function searchUsers(query = '') {
+export async function fetchAllUsers(filters = {}) {
   try {
-    const res = await fetch(`${API_BASE_URL}/users/search?query=${encodeURIComponent(query)}`, {
+    const res = await fetch(`${API_BASE_URL}/users`, {
       headers: getAuthHeaders(),
     });
-    if (!res.ok) throw new Error('Failed to search users');
-    return res.json();
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data) && data.length > 0) {
+        saveStoredAllUsers(data);
+        return filterUsersList(data, filters);
+      }
+    }
   } catch (err) {
-    return [
-      { id: 1, username: 'deepanshi', name: 'Deepanshi Kaushal', email: 'deepanshi@vortiq.com' },
-      { id: 2, username: 'sarah', name: 'Sarah Chen', email: 'sarah@vortiq.com' },
-      { id: 3, username: 'marcus', name: 'Marcus Vance', email: 'marcus@vortiq.com' }
-    ];
+    // Offline fallback
   }
+
+  const stored = getStoredAllUsers();
+  return filterUsersList(stored, filters);
+}
+
+function filterUsersList(list, filters = {}) {
+  let result = Array.isArray(list) ? list : [];
+  if (filters.query) {
+    const q = filters.query.toLowerCase().trim();
+    result = result.filter(u =>
+      (u.name && u.name.toLowerCase().includes(q)) ||
+      (u.username && u.username.toLowerCase().includes(q)) ||
+      (u.email && u.email.toLowerCase().includes(q)) ||
+      (u.phone && u.phone.toLowerCase().includes(q)) ||
+      (u.department && u.department.toLowerCase().includes(q)) ||
+      (u.bio && u.bio.toLowerCase().includes(q))
+    );
+  }
+  if (filters.department && filters.department !== 'ALL') {
+    result = result.filter(u => u.department === filters.department);
+  }
+  if (filters.role && filters.role !== 'ALL') {
+    result = result.filter(u => u.role === filters.role || (filters.role === 'OWNER' && (u.role === 'ROLE_OWNER' || u.role === 'OWNER')));
+  }
+  return result;
+}
+
+export async function searchUsers(query = '') {
+  return fetchAllUsers({ query });
 }
 
 // --- Workspace APIs ---
@@ -1199,6 +1366,15 @@ If the user asks to create or generate tasks, format the recommendations with ti
       modelUsed: 'VortiQ Neural Action Engine',
       action: { type: 'SET_VIEW', view: 'kanban' },
       suggestions: ['Switch to Matrix Table', 'Open Team Lounge', 'Generate tasks']
+    };
+  }
+
+  if (lower.includes('member') || lower.includes('team directory') || lower.includes('who is in') || lower.includes('team list')) {
+    return {
+      response: `👥 Switched view to **Team Members & Registered Directory**!\n\nYou can explore all registered platform members, view departments, contact details, and assign tasks.`,
+      modelUsed: 'VortiQ Neural Action Engine',
+      action: { type: 'SET_VIEW', view: 'members' },
+      suggestions: ['Invite new member', 'Switch to Kanban', 'Switch to Matrix Table']
     };
   }
 

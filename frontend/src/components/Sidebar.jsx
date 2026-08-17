@@ -256,6 +256,17 @@ export default function Sidebar({
           </div>
 
           <div
+            className={`sidebar-link ${activeView === 'members' ? 'active' : ''}`}
+            onClick={() => {
+              setActiveView('members');
+              onCloseMobileMenu();
+            }}
+          >
+            <Users size={18} style={{ color: '#818cf8' }} />
+            <span>Members Directory</span>
+          </div>
+
+          <div
             className={`sidebar-link ${activeView === 'lounge' ? 'active' : ''}`}
             onClick={() => {
               setActiveView('lounge');

@@ -67,17 +67,23 @@ public class UserService {
         userRepository.save(user);
     }
 
+    public List<UserProfileDto> getAllUsers() {
+        return userRepository.findAll().stream()
+                .map(UserProfileDto::new)
+                .collect(Collectors.toList());
+    }
+
     public List<UserProfileDto> searchUsers(String query) {
         if (query == null || query.trim().isEmpty()) {
-            return userRepository.findAll().stream().limit(15).map(UserProfileDto::new).collect(Collectors.toList());
+            return getAllUsers();
         }
         String search = query.trim().toLowerCase();
         return userRepository.findAll().stream()
                 .filter(u -> u.getEmail().toLowerCase().contains(search) || 
                              u.getUsername().toLowerCase().contains(search) || 
                              (u.getName() != null && u.getName().toLowerCase().contains(search)) ||
-                             (u.getDepartment() != null && u.getDepartment().toLowerCase().contains(search)))
-                .limit(15)
+                             (u.getDepartment() != null && u.getDepartment().toLowerCase().contains(search)) ||
+                             (u.getPhone() != null && u.getPhone().toLowerCase().contains(search)))
                 .map(UserProfileDto::new)
                 .collect(Collectors.toList());
     }

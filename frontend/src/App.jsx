@@ -11,6 +11,7 @@ import ProfileModal from './components/ProfileModal';
 import WorkspaceModal from './components/WorkspaceModal';
 import WorkspaceChatModal from './components/WorkspaceChatModal';
 import TeamLounge from './components/TeamLounge';
+import MembersDirectory from './components/MembersDirectory';
 import ShortcutsModal from './components/ShortcutsModal';
 import AiAssistantModal from './components/AiAssistantModal';
 import AiBotWidget from './components/AiBotWidget';
@@ -265,6 +266,28 @@ export default function App() {
   const handleOpenChat = (task = null, type = 'INCONVENIENCE') => {
     setChatInitialTask(task);
     setChatInitialType(type);
+    setIsChatModalOpen(true);
+  };
+
+  const handleOpenCreateWithAssignee = (assigneeName) => {
+    setTaskToEdit({
+      title: '',
+      description: '',
+      status: 'TODO',
+      priority: 'MEDIUM',
+      category: 'Engineering & Development',
+      assignee: assigneeName,
+      dueDate: new Date().toISOString().split('T')[0]
+    });
+    setIsModalOpen(true);
+  };
+
+  const handleOpenChatWithMember = (member) => {
+    setChatInitialTask({
+      title: `Team sync with ${member.name || member.username} (${member.department || 'Workspace'})`,
+      assignee: member.name || member.username
+    });
+    setChatInitialType('GENERAL');
     setIsChatModalOpen(true);
   };
 
@@ -633,7 +656,7 @@ export default function App() {
                 </div>
               )}
 
-              {/* View Components (Kanban / Matrix / Team Lounge) */}
+              {/* View Components (Kanban / Matrix / Members / Team Lounge) */}
               {activeView === 'kanban' ? (
                 <KanbanBoard
                   tasks={sortedTasks}
@@ -652,6 +675,15 @@ export default function App() {
                   onDelete={handleDeleteTask}
                   onReportInconvenience={(task) => handleOpenChat(task, 'INCONVENIENCE')}
                   workspaceMembers={workspaceMembers}
+                />
+              ) : activeView === 'members' ? (
+                <MembersDirectory
+                  activeWorkspace={activeWorkspace}
+                  tasks={tasks}
+                  currentUser={currentUser}
+                  onOpenCreateTaskWithAssignee={handleOpenCreateWithAssignee}
+                  onOpenChatWithMember={handleOpenChatWithMember}
+                  addToast={addToast}
                 />
               ) : (
                 <TeamLounge

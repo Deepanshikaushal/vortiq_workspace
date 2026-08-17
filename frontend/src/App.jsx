@@ -12,8 +12,10 @@ import WorkspaceModal from './components/WorkspaceModal';
 import WorkspaceChatModal from './components/WorkspaceChatModal';
 import TeamLounge from './components/TeamLounge';
 import ShortcutsModal from './components/ShortcutsModal';
+import AiAssistantModal from './components/AiAssistantModal';
+import AiBotWidget from './components/AiBotWidget';
 import Toast from './components/Toast';
-import { Download, Plus, ArrowUpDown, Keyboard, HelpCircle, PanelLeftOpen, Maximize2, MessageSquare } from 'lucide-react';
+import { Download, Plus, ArrowUpDown, Keyboard, HelpCircle, PanelLeftOpen, Maximize2, MessageSquare, Sparkles } from 'lucide-react';
 import {
   fetchTasks,
   fetchTaskStats,
@@ -78,6 +80,7 @@ export default function App() {
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [isWorkspaceModalOpen, setIsWorkspaceModalOpen] = useState(false);
   const [isShortcutsModalOpen, setIsShortcutsModalOpen] = useState(false);
+  const [isAiModalOpen, setIsAiModalOpen] = useState(false);
 
   // Team & Inconvenience Chat Modal State
   const [isChatModalOpen, setIsChatModalOpen] = useState(false);
@@ -302,6 +305,27 @@ export default function App() {
     }
   };
 
+  const handleAddTasksBatch = async (batchTasks) => {
+    try {
+      for (const item of batchTasks) {
+        const payload = {
+          title: item.title,
+          description: item.description || '',
+          status: item.status || 'TODO',
+          priority: item.priority || 'MEDIUM',
+          category: item.category || 'Frontend',
+          dueDate: item.dueDate || new Date().toISOString().split('T')[0],
+          projectId: selectedProject || (projects[0]?.id || 1),
+          workspaceId: activeWorkspace ? activeWorkspace.id : 1
+        };
+        await createTask(payload);
+      }
+      await loadData();
+    } catch (e) {
+      addToast('Error adding generated tasks', 'danger');
+    }
+  };
+
   const handleStatusChange = async (taskId, newStatus) => {
     try {
       await updateTaskStatus(taskId, newStatus);
@@ -466,6 +490,7 @@ export default function App() {
               onOpenWorkspaceModal={() => setIsWorkspaceModalOpen(true)}
               onOpenCreateModal={() => handleOpenCreate('TODO')}
               onOpenChatModal={() => handleOpenChat(null, 'INCONVENIENCE')}
+              onOpenAiModal={() => setIsAiModalOpen(true)}
               inconvenienceCount={inconvenienceCount}
               onLogout={handleLogout}
               onToggleMobileMenu={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -639,6 +664,35 @@ export default function App() {
             </main>
           </div>
 
+          {/* Floating AI Copilot Trigger Button */}
+          <button
+            className="btn animate-pulse"
+            onClick={() => setIsAiModalOpen(true)}
+            style={{
+              position: 'fixed',
+              bottom: '1.75rem',
+              right: '5.5rem',
+              height: '46px',
+              padding: '0 1.1rem',
+              borderRadius: '9999px',
+              zIndex: 80,
+              background: 'linear-gradient(135deg, #e11d48, #9333ea)',
+              color: '#ffffff',
+              boxShadow: '0 8px 25px rgba(225, 29, 72, 0.45)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.45rem',
+              fontWeight: '800',
+              fontSize: '0.85rem',
+              border: '1px solid rgba(255, 255, 255, 0.25)',
+              cursor: 'pointer'
+            }}
+            title="Open VortiQ AI Assistant & Sprint Architect"
+          >
+            <Sparkles size={17} color="#ffffff" />
+            <span className="desktop-only">VortiQ AI ✨</span>
+          </button>
+
           {/* Mobile Floating Action Button */}
           <button
             className="btn btn-gradient mobile-only"
@@ -663,6 +717,17 @@ export default function App() {
         </>
       )}
 
+      {/* VortiQ AI Neural Assistant Modal */}
+      <AiAssistantModal
+        isOpen={isAiModalOpen}
+        onClose={() => setIsAiModalOpen(false)}
+        activeWorkspace={activeWorkspace}
+        activeProject={projects.find((p) => String(p.id) === String(selectedProject)) || projects[0]}
+        tasks={tasks}
+        onAddTasksBatch={handleAddTasksBatch}
+        addToast={addToast}
+      />
+
       {/* Keyboard Shortcuts Modal */}
       <ShortcutsModal
         isOpen={isShortcutsModalOpen}
@@ -679,6 +744,7 @@ export default function App() {
         projects={projects}
         workspaceMembers={workspaceMembers}
         onCreateProject={handleCreateProject}
+        addToast={addToast}
       />
 
       {/* Team Messaging & Inconvenience Support Modal */}
@@ -729,6 +795,24 @@ export default function App() {
         onWorkspaceCreated={handleWorkspaceCreated}
         onWorkspaceUpdated={handleWorkspaceUpdated}
         onWorkspaceDeleted={handleWorkspaceDeleted}
+      />
+
+      {/* Omnipresent Floating VortiQ AI Assistant Bot */}
+      <AiBotWidget
+        activeWorkspace={activeWorkspace}
+        activeProject={projects.find((p) => String(p.id) === String(selectedProject)) || projects[0]}
+        tasks={tasks}
+        currentUser={currentUser}
+        pageView={pageView}
+        onAddTask={(taskData) => handleSaveTask(taskData)}
+        onAddTasksBatch={handleAddTasksBatch}
+        onSetStatusFilter={setStatusFilter}
+        onSetPriorityFilter={setPriorityFilter}
+        onSetSearchQuery={setSearchQuery}
+        onSetTheme={setTheme}
+        onNavigateView={setActiveView}
+        onEnterApp={() => setPageView('app')}
+        addToast={addToast}
       />
     </div>
   );

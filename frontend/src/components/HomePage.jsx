@@ -49,6 +49,10 @@ export default function HomePage({ onOpenAuth, onOpenSignUp, onEnterApp, current
         {/* Center Nav Links */}
         <nav style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }} className="desktop-only">
           <a href="#features" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '0.85rem', fontWeight: 600, transition: 'color 0.2s' }}>Features</a>
+          <a href="#ai-bot" style={{ color: '#ff6b87', textDecoration: 'none', fontSize: '0.85rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+            <Sparkles size={13} />
+            <span>AI Bot</span>
+          </a>
           <a href="#security" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '0.85rem', fontWeight: 600, transition: 'color 0.2s' }}>OTP Security</a>
           <a href="#workspaces" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '0.85rem', fontWeight: 600, transition: 'color 0.2s' }}>Workspaces</a>
           <a href="#analytics" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '0.85rem', fontWeight: 600, transition: 'color 0.2s' }}>Analytics</a>
@@ -241,6 +245,25 @@ export default function HomePage({ onOpenAuth, onOpenSignUp, onEnterApp, current
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
           
+          {/* Feature 0: Omnipresent VortiQ AI Bot */}
+          <div id="ai-bot" className="glass-panel" style={{ padding: '1.75rem', borderRadius: '14px', border: '1px solid rgba(225, 29, 72, 0.4)', background: 'linear-gradient(135deg, rgba(42, 9, 14, 0.8), rgba(99, 102, 241, 0.1))', transition: 'transform 0.2s', cursor: 'default' }}>
+            <div style={{ width: '44px', height: '44px', borderRadius: '10px', background: 'linear-gradient(135deg, #e11d48, #6366f1)', color: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.25rem', boxShadow: '0 4px 15px rgba(225, 29, 72, 0.4)' }}>
+              <Sparkles size={22} />
+            </div>
+            <h3 style={{ fontSize: '1.15rem', fontWeight: 800, marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+              <span>VortiQ AI Copilot & Bot</span>
+              <span className="badge badge-urgent" style={{ fontSize: '0.65rem', padding: '0.1rem 0.4rem' }}>NEW</span>
+            </h3>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', lineHeight: 1.6, marginBottom: '1rem' }}>
+              Embedded AI assistant with voice input, Google Gemini integration, 1-click Kanban task creation, sprint velocity audits, and four specialized personas.
+            </p>
+            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+              <span className="badge badge-high" style={{ fontSize: '0.725rem' }}>Voice Speech</span>
+              <span className="badge" style={{ background: 'rgba(99, 102, 241, 0.2)', color: '#a5b4fc', fontSize: '0.725rem' }}>Gemini 1.5</span>
+              <span className="badge" style={{ background: 'var(--bg-tertiary)', color: 'var(--text-muted)', fontSize: '0.725rem' }}>1-Click Tasks</span>
+            </div>
+          </div>
+
           {/* Option 1: Kanban & Table Views */}
           <div className="glass-panel" style={{ padding: '1.75rem', borderRadius: '14px', border: '1px solid var(--border-color)', transition: 'transform 0.2s', cursor: 'default' }}>
             <div style={{ width: '44px', height: '44px', borderRadius: '10px', background: 'rgba(225, 29, 72, 0.15)', color: '#ff6b87', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.25rem' }}>

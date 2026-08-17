@@ -49,6 +49,7 @@ export default function Navbar({
   onOpenAuthModal,
   onOpenCreateModal,
   onOpenChatModal,
+  onOpenAiModal,
   inconvenienceCount = 0,
   onLogout,
   onToggleMobileMenu,
@@ -281,6 +282,28 @@ export default function Navbar({
                   {inconvenienceCount}
                 </span>
               )}
+            </button>
+          )}
+
+          {/* VortiQ AI Copilot Button */}
+          {onOpenAiModal && (
+            <button
+              className="btn btn-secondary"
+              onClick={onOpenAiModal}
+              style={{
+                padding: '0.4rem 0.85rem',
+                fontSize: '0.825rem',
+                gap: '0.35rem',
+                height: '36px',
+                border: '1px solid rgba(225, 29, 72, 0.4)',
+                background: 'linear-gradient(135deg, rgba(225, 29, 72, 0.15), rgba(147, 51, 234, 0.15))',
+                color: 'var(--primary-glow)',
+                fontWeight: 700
+              }}
+              title="Open VortiQ AI Copilot & Sprint Architect"
+            >
+              <Sparkles size={15} style={{ color: 'var(--primary)' }} />
+              <span className="desktop-only">AI Copilot</span>
             </button>
           )}
           

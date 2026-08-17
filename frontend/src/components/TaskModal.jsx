@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { X, Sparkles, Tag, Calendar, User, AlignLeft, Plus, Check } from 'lucide-react';
+import { X, Sparkles, Tag, Calendar, User, AlignLeft, Plus, Check, Loader2, Wand2 } from 'lucide-react';
+import { enhanceTaskWithAi } from '../services/api';
 
 const CATEGORIES = ['Frontend', 'Backend', 'DevOps', 'Design', 'Database', 'Security', 'Mobile'];
 const PRIORITIES = ['LOW', 'MEDIUM', 'HIGH', 'URGENT'];
@@ -12,7 +13,8 @@ export default function TaskModal({
   initialStatus = 'TODO',
   projects = [],
   workspaceMembers = [],
-  onCreateProject
+  onCreateProject,
+  addToast
 }) {
   const [formData, setFormData] = useState({
     title: '',
@@ -28,6 +30,7 @@ export default function TaskModal({
 
   const [isCreatingProject, setIsCreatingProject] = useState(false);
   const [newProjectName, setNewProjectName] = useState('');
+  const [isEnhancing, setIsEnhancing] = useState(false);
 
   useEffect(() => {
     if (taskToEdit) {
@@ -58,6 +61,28 @@ export default function TaskModal({
   }, [taskToEdit, projects, isOpen, initialStatus]);
 
   if (!isOpen) return null;
+
+  const handleAiEnhance = async () => {
+    if (!formData.title.trim()) {
+      if (addToast) addToast('Please enter a task title first to enhance with AI.', 'error');
+      return;
+    }
+    setIsEnhancing(true);
+    try {
+      const result = await enhanceTaskWithAi(formData);
+      setFormData((prev) => ({
+        ...prev,
+        description: result.enhancedDescription || prev.description,
+        category: result.suggestedCategory || prev.category,
+        priority: result.suggestedPriority || prev.priority
+      }));
+      if (addToast) addToast('✨ AI enhanced description & acceptance criteria!', 'success');
+    } catch (err) {
+      if (addToast) addToast('Could not enhance task. Try again.', 'error');
+    } finally {
+      setIsEnhancing(false);
+    }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -126,13 +151,36 @@ export default function TaskModal({
             />
           </div>
 
-          {/* Description */}
+          {/* Description + AI Polish Button */}
           <div className="form-group">
-            <label className="form-label">Description</label>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.35rem' }}>
+              <label className="form-label" style={{ marginBottom: 0 }}>Description</label>
+              <button
+                type="button"
+                onClick={handleAiEnhance}
+                disabled={isEnhancing || !formData.title.trim()}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.35rem',
+                  fontSize: '0.75rem',
+                  fontWeight: '700',
+                  padding: '0.2rem 0.6rem',
+                  borderRadius: '6px',
+                  border: '1px solid rgba(225, 29, 72, 0.4)',
+                  background: 'linear-gradient(135deg, rgba(225, 29, 72, 0.15), rgba(147, 51, 234, 0.15))',
+                  color: 'var(--primary)',
+                  cursor: 'pointer'
+                }}
+              >
+                {isEnhancing ? <Loader2 size={12} className="animate-spin" /> : <Wand2 size={12} />}
+                <span>{isEnhancing ? 'Enhancing...' : '✨ AI Polish & Criteria'}</span>
+              </button>
+            </div>
             <textarea
               className="form-textarea"
-              rows={3}
-              placeholder="Provide context, acceptance criteria, or design notes..."
+              rows={4}
+              placeholder="Provide context, acceptance criteria, or click '✨ AI Polish & Criteria' above..."
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
             />

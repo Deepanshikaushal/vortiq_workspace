@@ -21,5 +21,4 @@ WORKDIR /app
 ENV PORT=8080
 COPY --from=backend-builder /app/backend/target/vortiq-backend-0.0.1-SNAPSHOT.jar app.jar
 EXPOSE 8080
-HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 CMD wget --no-verbose --tries=1 --spider http://localhost:${PORT}/actuator/health || exit 1
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-XX:+UseContainerSupport", "-XX:MaxRAMPercentage=75.0", "-Xss512k", "-jar", "app.jar"]

@@ -147,58 +147,69 @@ export default function Navbar({
                   gap: '0.45rem',
                   padding: '0.35rem 0.75rem',
                   borderRadius: '8px',
-                  background: 'rgba(225, 29, 72, 0.18)',
-                  border: '1px solid rgba(225, 29, 72, 0.4)',
+                  background: 'var(--bg-tertiary)',
+                  border: '1px solid var(--border-color)',
                   color: 'var(--text-main)',
                   cursor: 'pointer',
                   fontSize: '0.825rem',
-                  fontWeight: 700
+                  fontWeight: 600
                 }}
                 title="Switch or manage active workspace"
               >
-                <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: activeWorkspace.colorCode || '#e11d48', boxShadow: `0 0 6px ${activeWorkspace.colorCode || '#e11d48'}` }} />
-                <span style={{ maxWidth: '140px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{activeWorkspace.name}</span>
-                <ChevronDown size={13} style={{ transform: workspaceMenuOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
+                <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: activeWorkspace.colorCode || '#64748b', boxShadow: `0 0 6px ${activeWorkspace.colorCode || '#64748b'}` }} />
+                <span style={{ fontSize: '0.825rem', fontWeight: '700', maxWidth: '140px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {activeWorkspace.name}
+                </span>
+                <ChevronDown size={14} style={{ color: 'var(--text-muted)' }} />
               </button>
 
               {workspaceMenuOpen && (
                 <div style={{
                   position: 'absolute',
+                  top: 'calc(100% + 6px)',
                   left: 0,
-                  top: '125%',
-                  width: '240px',
+                  width: '230px',
                   background: 'var(--bg-glass)',
-                  backdropFilter: 'blur(24px)',
-                  border: '1px solid var(--border-purple)',
-                  borderRadius: '12px',
-                  boxShadow: '0 15px 35px rgba(0,0,0,0.6), 0 0 25px rgba(225, 29, 72, 0.25)',
+                  backdropFilter: 'blur(20px)',
+                  border: '1px solid var(--border-color)',
+                  borderRadius: 'var(--radius-md)',
+                  boxShadow: 'var(--shadow-card)',
                   padding: '0.5rem',
-                  zIndex: 100
+                  zIndex: 100,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '0.25rem'
                 }}>
-                  <div style={{ padding: '0.35rem 0.6rem', fontSize: '0.7rem', fontWeight: 800, color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '0.06em', borderBottom: '1px solid var(--border-color)', marginBottom: '0.35rem' }}>
+                  <div style={{ padding: '0.35rem 0.5rem', fontSize: '0.7rem', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                     Switch Workspace
                   </div>
-
                   {workspaces.map((ws) => (
                     <button
                       key={ws.id}
                       onClick={() => {
-                        if (onSelectWorkspace) onSelectWorkspace(ws);
+                        onSelectWorkspace(ws);
                         setWorkspaceMenuOpen(false);
                       }}
-                      className="btn btn-ghost"
                       style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
                         width: '100%',
-                        justifyContent: 'flex-start',
-                        fontSize: '0.825rem',
                         padding: '0.45rem 0.6rem',
-                        gap: '0.5rem',
-                        background: ws.id === activeWorkspace.id ? 'rgba(225, 29, 72, 0.2)' : 'transparent',
-                        fontWeight: ws.id === activeWorkspace.id ? 800 : 600
+                        borderRadius: 'var(--radius-sm)',
+                        background: activeWorkspace?.id === ws.id ? 'var(--bg-tertiary)' : 'transparent',
+                        border: 'none',
+                        color: 'var(--text-main)',
+                        fontSize: '0.8125rem',
+                        fontWeight: activeWorkspace?.id === ws.id ? '700' : '500',
+                        cursor: 'pointer',
+                        textAlign: 'left'
                       }}
                     >
-                      <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: ws.colorCode || '#e11d48' }} />
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', overflow: 'hidden' }}>
+                        <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: ws.colorCode || '#64748b' }} />
                       <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{ws.name}</span>
+                      </div>
                     </button>
                   ))}
 
@@ -295,14 +306,14 @@ export default function Navbar({
                 fontSize: '0.825rem',
                 gap: '0.35rem',
                 height: '36px',
-                border: '1px solid rgba(225, 29, 72, 0.4)',
-                background: 'linear-gradient(135deg, rgba(225, 29, 72, 0.15), rgba(147, 51, 234, 0.15))',
-                color: 'var(--primary-glow)',
-                fontWeight: 700
+                border: '1px solid var(--border-color)',
+                background: 'var(--bg-tertiary)',
+                color: 'var(--text-main)',
+                fontWeight: 600
               }}
               title="Open VortiQ AI Copilot & Sprint Architect"
             >
-              <Sparkles size={15} style={{ color: 'var(--primary)' }} />
+              <Sparkles size={15} style={{ color: '#94a3b8' }} />
               <span className="desktop-only">AI Copilot</span>
             </button>
           )}
@@ -310,7 +321,7 @@ export default function Navbar({
           {/* Quick Create Task Button */}
           {onOpenCreateModal && (
             <button
-              className="btn btn-gradient"
+              className="btn btn-primary"
               onClick={onOpenCreateModal}
               style={{ padding: '0.4rem 0.85rem', fontSize: '0.825rem', gap: '0.35rem', height: '36px' }}
               title="Create new task (N)"
@@ -346,7 +357,7 @@ export default function Navbar({
               style={{ padding: '0.35rem 0.75rem', fontSize: '0.8rem' }}
               title="Team Members Directory (V)"
             >
-              <Users size={15} style={{ color: '#818cf8' }} />
+              <Users size={15} style={{ color: '#a5b4fc' }} />
               <span className="desktop-only">Members</span>
             </button>
             <button
@@ -355,7 +366,7 @@ export default function Navbar({
               style={{ padding: '0.35rem 0.75rem', fontSize: '0.8rem' }}
               title="Team Lounge & Opinions Hub (V)"
             >
-              <MessageSquare size={15} style={{ color: '#ec4899' }} />
+              <MessageSquare size={15} style={{ color: '#fde68a' }} />
               <span className="desktop-only">Opinions</span>
             </button>
           </div>
@@ -383,12 +394,12 @@ export default function Navbar({
                 fontSize: '0.8rem',
                 gap: '0.3rem',
                 height: '36px',
-                border: '1px solid var(--border-purple)',
-                background: optionsMenuOpen ? 'rgba(225, 29, 72, 0.2)' : 'var(--bg-secondary)'
+                border: '1px solid var(--border-color)',
+                background: optionsMenuOpen ? 'var(--bg-tertiary)' : 'var(--bg-secondary)'
               }}
               title="Application options"
             >
-              <SlidersHorizontal size={14} style={{ color: 'var(--primary-glow)' }} />
+              <SlidersHorizontal size={14} style={{ color: 'var(--text-muted)' }} />
               <ChevronDown size={13} style={{ transform: optionsMenuOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
             </button>
 
@@ -399,10 +410,10 @@ export default function Navbar({
                 top: '125%',
                 width: 'min(260px, 88vw)',
                 background: 'var(--bg-glass)',
-                backdropFilter: 'blur(24px)',
-                border: '1px solid var(--border-purple)',
-                borderRadius: '14px',
-                boxShadow: '0 15px 35px rgba(0,0,0,0.5), 0 0 25px rgba(225, 29, 72, 0.25)',
+                backdropFilter: 'blur(20px)',
+                border: '1px solid var(--border-color)',
+                borderRadius: '12px',
+                boxShadow: '0 12px 30px rgba(0,0,0,0.6)',
                 padding: '0.55rem',
                 zIndex: 100
               }}>
@@ -500,13 +511,14 @@ export default function Navbar({
                     width: '26px',
                     height: '26px',
                     borderRadius: '50%',
-                    background: 'linear-gradient(135deg, #e11d48, #be123c)',
+                    background: 'linear-gradient(135deg, #334155, #1e293b)',
+                    border: '1px solid var(--border-color)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     fontWeight: 'bold',
                     fontSize: '0.75rem',
-                    color: '#fff'
+                    color: '#f8fafc'
                   }}>
                     {(currentUser.name || currentUser.username || currentUser.email || 'U').charAt(0).toUpperCase()}
                   </div>

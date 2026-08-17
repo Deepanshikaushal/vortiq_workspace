@@ -298,8 +298,8 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess, initialMode 
         {/* Modal Header */}
         <div className="modal-header">
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <div style={{ padding: '0.5rem', background: 'rgba(225, 29, 72, 0.2)', borderRadius: '8px', color: '#ff859b' }}>
-              {mode === 'forgot' ? <KeyRound size={20} /> : <Shield size={20} />}
+            <div style={{ padding: '0.45rem', background: '#334155', borderRadius: '8px', color: '#f8fafc' }}>
+              {mode === 'forgot' ? <KeyRound size={18} /> : <Shield size={18} />}
             </div>
             <div>
               <h2 className="modal-title">
@@ -479,7 +479,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess, initialMode 
                     <img
                       src={avatarUrl || AVATAR_PRESETS[0].url}
                       alt="Selected Avatar"
-                      style={{ width: '60px', height: '60px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #e11d48', boxShadow: '0 0 16px rgba(225, 29, 72, 0.4)' }}
+                      style={{ width: '56px', height: '56px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #64748b' }}
                     />
                     
                     <div style={{ flex: 1 }}>
@@ -538,13 +538,13 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess, initialMode 
                             setIsCustomUploaded(false);
                           }}
                           style={{
-                            width: '38px',
-                            height: '38px',
+                            width: '36px',
+                            height: '36px',
                             borderRadius: '50%',
                             objectFit: 'cover',
                             cursor: 'pointer',
-                            border: avatarUrl === preset.url ? '2px solid #e11d48' : '1px solid var(--border-color)',
-                            transform: avatarUrl === preset.url ? 'scale(1.1)' : 'scale(1)',
+                            border: avatarUrl === preset.url ? '2px solid #94a3b8' : '1px solid var(--border-color)',
+                            transform: avatarUrl === preset.url ? 'scale(1.08)' : 'scale(1)',
                             transition: 'all 0.2s'
                           }}
                           title={preset.name}
@@ -683,8 +683,8 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess, initialMode 
               /* STEP 2: REGISTER OTP VERIFICATION */
               <form onSubmit={handleVerifyAndRegister} className="modal-form">
                 <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
-                  <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'rgba(225, 29, 72, 0.2)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', color: '#ff859b', marginBottom: '0.75rem' }}>
-                    <KeyRound size={24} />
+                  <div style={{ width: '44px', height: '44px', borderRadius: '50%', background: '#334155', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', color: '#f8fafc', marginBottom: '0.75rem' }}>
+                    <KeyRound size={20} />
                   </div>
                   <h3 style={{ fontSize: '1.1rem', fontWeight: 700 }}>Enter Verification Code</h3>
                   <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', margin: '0.25rem 0' }}>
@@ -846,7 +846,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess, initialMode 
                   <button
                     type="submit"
                     className="btn btn-primary"
-                    style={{ flex: 2, background: 'linear-gradient(135deg, #6366f1, #e11d48)' }}
+                    style={{ flex: 2 }}
                     disabled={loading}
                   >
                     {loading ? 'Sending Code...' : 'Send Reset Code →'}
@@ -869,8 +869,8 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess, initialMode 
 
                 {/* Sandbox OTP Card */}
                 <div style={{
-                  background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(225, 29, 72, 0.08))',
-                  border: '1px solid rgba(99, 102, 241, 0.3)',
+                  background: 'var(--bg-tertiary)',
+                  border: '1px solid var(--border-color)',
                   borderRadius: '10px',
                   padding: '0.9rem',
                   marginBottom: '1.25rem',

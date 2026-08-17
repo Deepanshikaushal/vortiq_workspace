@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { Calendar, User, Tag, Edit2, Trash2, ArrowRight, ArrowLeft, CheckCircle2, Circle, Plus, AlertTriangle } from 'lucide-react';
 
 const COLUMNS = [
-  { id: 'TODO', title: 'To Do', dot: '#e2a8b3', bg: 'rgba(226, 168, 179, 0.12)' },
-  { id: 'IN_PROGRESS', title: 'In Progress', dot: '#ff859b', bg: 'rgba(225, 29, 72, 0.2)' },
-  { id: 'IN_REVIEW', title: 'In Review', dot: '#fbbf24', bg: 'rgba(245, 158, 11, 0.12)' },
-  { id: 'COMPLETED', title: 'Completed', dot: '#10b981', bg: 'rgba(16, 185, 129, 0.15)' }
+  { id: 'TODO', title: 'To Do', dot: '#94a3b8', bg: 'rgba(100, 116, 139, 0.12)' },
+  { id: 'IN_PROGRESS', title: 'In Progress', dot: '#93c5fd', bg: 'rgba(99, 102, 241, 0.12)' },
+  { id: 'IN_REVIEW', title: 'In Review', dot: '#fcd34d', bg: 'rgba(245, 158, 11, 0.12)' },
+  { id: 'COMPLETED', title: 'Completed', dot: '#86efac', bg: 'rgba(16, 185, 129, 0.12)' }
 ];
 
 export default function KanbanBoard({
@@ -39,9 +39,9 @@ export default function KanbanBoard({
             borderRadius: '9999px',
             fontSize: '0.8rem',
             fontWeight: '700',
-            border: activeMobileCol === 'ALL' ? '1px solid #e11d48' : '1px solid var(--border-color)',
-            background: activeMobileCol === 'ALL' ? 'rgba(225, 29, 72, 0.3)' : 'var(--bg-tertiary)',
-            color: activeMobileCol === 'ALL' ? '#ff859b' : 'var(--text-muted)',
+            border: activeMobileCol === 'ALL' ? '1px solid var(--primary)' : '1px solid var(--border-color)',
+            background: activeMobileCol === 'ALL' ? 'var(--primary)' : 'var(--bg-tertiary)',
+            color: activeMobileCol === 'ALL' ? '#f8fafc' : 'var(--text-muted)',
             whiteSpace: 'nowrap',
             cursor: 'pointer'
           }}
@@ -166,18 +166,19 @@ export default function KanbanBoard({
                                 style={{ width: '22px', height: '22px', borderRadius: '50%', objectFit: 'cover' }}
                               />
                             ) : (
-                              <div style={{
-                                width: '22px',
-                                height: '22px',
-                                borderRadius: '50%',
-                                background: 'linear-gradient(135deg, #e11d48, #9f1239)',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                fontSize: '0.65rem',
-                                fontWeight: 'bold',
-                                color: '#fff'
-                              }}>
+                                <div style={{
+                                  width: '22px',
+                                  height: '22px',
+                                  borderRadius: '50%',
+                                  background: 'linear-gradient(135deg, #334155, #1e293b)',
+                                  border: '1px solid var(--border-color)',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  fontSize: '0.65rem',
+                                  fontWeight: 'bold',
+                                  color: '#f8fafc'
+                                }}>
                                 {(task.assignee || 'U').charAt(0).toUpperCase()}
                               </div>
                             )}

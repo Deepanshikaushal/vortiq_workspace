@@ -137,23 +137,23 @@ export default function WorkspaceChatModal({
         <div className="modal-header" style={{ padding: '1rem 1.5rem', background: 'var(--bg-secondary)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <div style={{
-              width: '38px',
-              height: '38px',
-              borderRadius: '10px',
-              background: 'linear-gradient(135deg, #e11d48, #9f1239)',
+              width: '36px',
+              height: '36px',
+              borderRadius: '8px',
+              background: '#334155',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: '#fff'
+              color: '#f8fafc'
             }}>
-              <MessageSquare size={20} />
+              <MessageSquare size={18} />
             </div>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                 <h2 className="modal-title" style={{ fontSize: '1.15rem' }}>
                   Workspace Team & Inconvenience Channel
                 </h2>
-                <span style={{ fontSize: '0.725rem', fontWeight: 800, padding: '0.15rem 0.5rem', borderRadius: '4px', background: 'rgba(225, 29, 72, 0.25)', color: '#ff859b' }}>
+                <span style={{ fontSize: '0.725rem', fontWeight: 600, padding: '0.12rem 0.45rem', borderRadius: '4px', background: 'rgba(100, 116, 139, 0.2)', color: 'var(--text-main)', border: '1px solid var(--border-color)' }}>
                   {activeWorkspace?.name || 'Workspace'}
                 </span>
               </div>
@@ -239,11 +239,12 @@ export default function WorkspaceChatModal({
                           width: '32px',
                           height: '32px',
                           borderRadius: '50%',
-                          background: 'linear-gradient(135deg, #e11d48, #be123c)',
+                          background: 'linear-gradient(135deg, #334155, #1e293b)',
+                          border: '1px solid var(--border-color)',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          color: '#fff',
+                          color: '#f8fafc',
                           fontWeight: 'bold',
                           fontSize: '0.8rem'
                         }}>

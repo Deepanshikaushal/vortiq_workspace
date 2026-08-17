@@ -40,8 +40,8 @@ export default function HomePage({ onOpenAuth, onOpenSignUp, onEnterApp, current
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', cursor: 'pointer' }} onClick={onEnterApp}>
           <VortiqLogo size={28} />
           <div>
-            <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.1rem', fontWeight: 800, background: 'linear-gradient(135deg, #ffffff, #94a3b8)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-              TaskPulse <span style={{ fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--primary-glow)', WebkitTextFillColor: 'initial', padding: '0.15rem 0.4rem', borderRadius: '4px', background: 'rgba(225, 29, 72, 0.15)', border: '1px solid rgba(225, 29, 72, 0.3)' }}>VortiQ</span>
+            <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.1rem', fontWeight: 800, color: 'var(--text-main)' }}>
+              TaskPulse <span style={{ fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--text-muted)', padding: '0.15rem 0.4rem', borderRadius: '4px', background: 'rgba(255, 255, 255, 0.06)', border: '1px solid var(--border-color)' }}>VortiQ</span>
             </div>
           </div>
         </div>
@@ -49,8 +49,8 @@ export default function HomePage({ onOpenAuth, onOpenSignUp, onEnterApp, current
         {/* Center Nav Links */}
         <nav style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }} className="desktop-only">
           <a href="#features" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '0.85rem', fontWeight: 600, transition: 'color 0.2s' }}>Features</a>
-          <a href="#ai-bot" style={{ color: '#ff6b87', textDecoration: 'none', fontSize: '0.85rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-            <Sparkles size={13} />
+          <a href="#ai-bot" style={{ color: 'var(--text-main)', textDecoration: 'none', fontSize: '0.85rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+            <Sparkles size={13} style={{ color: '#94a3b8' }} />
             <span>AI Bot</span>
           </a>
           <a href="#security" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '0.85rem', fontWeight: 600, transition: 'color 0.2s' }}>OTP Security</a>
@@ -70,7 +70,7 @@ export default function HomePage({ onOpenAuth, onOpenSignUp, onEnterApp, current
               <button className="btn btn-secondary" onClick={() => onOpenAuth('login')} style={{ padding: '0.45rem 0.85rem', fontSize: '0.825rem' }}>
                 Sign In
               </button>
-              <button className="btn btn-gradient" onClick={() => onOpenSignUp()} style={{ padding: '0.45rem 0.95rem', fontSize: '0.825rem', gap: '0.35rem' }}>
+              <button className="btn btn-primary" onClick={() => onOpenSignUp()} style={{ padding: '0.45rem 0.95rem', fontSize: '0.825rem', gap: '0.35rem' }}>
                 <Sparkles size={14} />
                 <span>Get Started</span>
               </button>
@@ -87,7 +87,7 @@ export default function HomePage({ onOpenAuth, onOpenSignUp, onEnterApp, current
         margin: '0 auto',
         textAlign: 'center'
       }}>
-        {/* Glowing Background Orbs */}
+        {/* Subtle Background Orb */}
         <div style={{
           position: 'absolute',
           top: '-10%',
@@ -95,7 +95,7 @@ export default function HomePage({ onOpenAuth, onOpenSignUp, onEnterApp, current
           transform: 'translateX(-50%)',
           width: '500px',
           height: '500px',
-          background: 'radial-gradient(circle, rgba(225, 29, 72, 0.2) 0%, rgba(99, 102, 241, 0.1) 50%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(100, 116, 139, 0.08) 0%, transparent 70%)',
           filter: 'blur(70px)',
           pointerEvents: 'none',
           zIndex: 0
@@ -107,59 +107,55 @@ export default function HomePage({ onOpenAuth, onOpenSignUp, onEnterApp, current
             display: 'inline-flex',
             alignItems: 'center',
             gap: '0.5rem',
-            padding: '0.4rem 1rem',
+            padding: '0.35rem 0.9rem',
             borderRadius: '9999px',
-            background: 'rgba(225, 29, 72, 0.12)',
-            border: '1px solid rgba(225, 29, 72, 0.3)',
-            color: '#ff6b87',
+            background: 'rgba(255, 255, 255, 0.05)',
+            border: '1px solid var(--border-color)',
+            color: 'var(--text-muted)',
             fontSize: '0.8125rem',
-            fontWeight: 700,
+            fontWeight: 600,
             marginBottom: '1.75rem'
           }}>
-            <ShieldCheck size={16} />
-            <span>New: OTP-Verified Account Registration & Cloud/Local Sync</span>
+            <ShieldCheck size={15} style={{ color: '#94a3b8' }} />
+            <span>OTP-Verified Account Security & Instant Workspace Sync</span>
           </div>
 
           {/* Hero Heading */}
           <h1 style={{
             fontFamily: 'var(--font-display)',
             fontSize: 'clamp(2.4rem, 5vw, 4.2rem)',
-            fontWeight: 900,
+            fontWeight: 800,
             lineHeight: 1.15,
             letterSpacing: '-1px',
             marginBottom: '1.25rem',
-            background: 'linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #94a3b8 100%)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent'
+            color: 'var(--text-main)'
           }}>
             Master Your Projects with <br />
             <span style={{
-              background: 'linear-gradient(135deg, #e11d48 0%, #f43f5e 50%, #6366f1 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent'
+              color: '#94a3b8'
             }}>
-              Speed, Clarity & Security
+              Speed, Clarity & Focus
             </span>
           </h1>
 
           <p style={{
-            fontSize: '1.125rem',
+            fontSize: '1.05rem',
             color: 'var(--text-muted)',
-            maxWidth: '680px',
+            maxWidth: '640px',
             margin: '0 auto 2.5rem',
             lineHeight: 1.6
           }}>
-            TaskPulse combines high-performance Kanban boards, team workspace management, OTP sign-up verification, and instant offline/cloud persistence.
+            TaskPulse combines high-performance Kanban boards, team directory, AI co-pilot assistance, OTP security, and offline/cloud persistence.
           </p>
 
           {/* CTA Group */}
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
-            <button className="btn btn-gradient" onClick={() => (currentUser ? onEnterApp() : onOpenSignUp())} style={{ padding: '0.85rem 2rem', fontSize: '1rem', gap: '0.6rem', boxShadow: '0 8px 30px rgba(225, 29, 72, 0.4)' }}>
-              <Sparkles size={18} />
-              <span>{currentUser ? 'Go to Main Dashboard' : 'Create Free Account (OTP Sign Up)'}</span>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '0.85rem', flexWrap: 'wrap' }}>
+            <button className="btn btn-primary" onClick={() => (currentUser ? onEnterApp() : onOpenSignUp())} style={{ padding: '0.75rem 1.75rem', fontSize: '0.95rem', gap: '0.5rem' }}>
+              <Sparkles size={16} />
+              <span>{currentUser ? 'Go to Main Dashboard' : 'Create Account (OTP Sign Up)'}</span>
             </button>
-            <button className="btn btn-secondary" onClick={onEnterApp} style={{ padding: '0.85rem 1.75rem', fontSize: '1rem', gap: '0.5rem' }}>
-              <Kanban size={18} />
+            <button className="btn btn-secondary" onClick={onEnterApp} style={{ padding: '0.75rem 1.5rem', fontSize: '0.95rem', gap: '0.5rem' }}>
+              <Kanban size={16} />
               <span>Try Live Dashboard</span>
             </button>
           </div>
@@ -246,28 +242,28 @@ export default function HomePage({ onOpenAuth, onOpenSignUp, onEnterApp, current
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
           
           {/* Feature 0: Omnipresent VortiQ AI Bot */}
-          <div id="ai-bot" className="glass-panel" style={{ padding: '1.75rem', borderRadius: '14px', border: '1px solid rgba(225, 29, 72, 0.4)', background: 'linear-gradient(135deg, rgba(42, 9, 14, 0.8), rgba(99, 102, 241, 0.1))', transition: 'transform 0.2s', cursor: 'default' }}>
-            <div style={{ width: '44px', height: '44px', borderRadius: '10px', background: 'linear-gradient(135deg, #e11d48, #6366f1)', color: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.25rem', boxShadow: '0 4px 15px rgba(225, 29, 72, 0.4)' }}>
-              <Sparkles size={22} />
+          <div id="ai-bot" className="glass-panel" style={{ padding: '1.75rem', borderRadius: '14px', border: '1px solid var(--border-color)', background: 'var(--bg-card)', transition: 'transform 0.2s', cursor: 'default' }}>
+            <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'rgba(100, 116, 139, 0.2)', color: '#94a3b8', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.25rem' }}>
+              <Sparkles size={20} />
             </div>
-            <h3 style={{ fontSize: '1.15rem', fontWeight: 800, marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+            <h3 style={{ fontSize: '1.15rem', fontWeight: 700, marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
               <span>VortiQ AI Copilot & Bot</span>
-              <span className="badge badge-urgent" style={{ fontSize: '0.65rem', padding: '0.1rem 0.4rem' }}>NEW</span>
+              <span className="badge" style={{ background: 'rgba(100, 116, 139, 0.15)', color: '#94a3b8', fontSize: '0.65rem', padding: '0.1rem 0.4rem' }}>NEW</span>
             </h3>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', lineHeight: 1.6, marginBottom: '1rem' }}>
               Embedded AI assistant with voice input, Google Gemini integration, 1-click Kanban task creation, sprint velocity audits, and four specialized personas.
             </p>
             <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-              <span className="badge badge-high" style={{ fontSize: '0.725rem' }}>Voice Speech</span>
-              <span className="badge" style={{ background: 'rgba(99, 102, 241, 0.2)', color: '#a5b4fc', fontSize: '0.725rem' }}>Gemini 1.5</span>
+              <span className="badge" style={{ background: 'var(--bg-tertiary)', color: 'var(--text-muted)', fontSize: '0.725rem' }}>Voice Speech</span>
+              <span className="badge" style={{ background: 'var(--bg-tertiary)', color: 'var(--text-muted)', fontSize: '0.725rem' }}>Gemini 1.5</span>
               <span className="badge" style={{ background: 'var(--bg-tertiary)', color: 'var(--text-muted)', fontSize: '0.725rem' }}>1-Click Tasks</span>
             </div>
           </div>
 
           {/* Option 1: Kanban & Table Views */}
           <div className="glass-panel" style={{ padding: '1.75rem', borderRadius: '14px', border: '1px solid var(--border-color)', transition: 'transform 0.2s', cursor: 'default' }}>
-            <div style={{ width: '44px', height: '44px', borderRadius: '10px', background: 'rgba(225, 29, 72, 0.15)', color: '#ff6b87', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.25rem' }}>
-              <Kanban size={22} />
+            <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'rgba(100, 116, 139, 0.15)', color: '#94a3b8', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.25rem' }}>
+              <Kanban size={20} />
             </div>
             <h3 style={{ fontSize: '1.15rem', fontWeight: 700, marginBottom: '0.5rem' }}>Kanban & Table Views</h3>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', lineHeight: 1.6, marginBottom: '1rem' }}>
@@ -281,8 +277,8 @@ export default function HomePage({ onOpenAuth, onOpenSignUp, onEnterApp, current
 
           {/* Option 2: OTP Verified Authentication */}
           <div id="security" className="glass-panel" style={{ padding: '1.75rem', borderRadius: '14px', border: '1px solid var(--border-color)', transition: 'transform 0.2s', cursor: 'default' }}>
-            <div style={{ width: '44px', height: '44px', borderRadius: '10px', background: 'rgba(99, 102, 241, 0.15)', color: '#818cf8', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.25rem' }}>
-              <Lock size={22} />
+            <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'rgba(100, 116, 139, 0.15)', color: '#94a3b8', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.25rem' }}>
+              <Lock size={20} />
             </div>
             <h3 style={{ fontSize: '1.15rem', fontWeight: 700, marginBottom: '0.5rem' }}>OTP Sign-Up Verification</h3>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', lineHeight: 1.6, marginBottom: '1rem' }}>
@@ -296,8 +292,8 @@ export default function HomePage({ onOpenAuth, onOpenSignUp, onEnterApp, current
 
           {/* Option 3: Workspace Collaboration */}
           <div id="workspaces" className="glass-panel" style={{ padding: '1.75rem', borderRadius: '14px', border: '1px solid var(--border-color)', transition: 'transform 0.2s', cursor: 'default' }}>
-            <div style={{ width: '44px', height: '44px', borderRadius: '10px', background: 'rgba(16, 185, 129, 0.15)', color: '#34d399', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.25rem' }}>
-              <Users size={22} />
+            <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'rgba(100, 116, 139, 0.15)', color: '#94a3b8', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.25rem' }}>
+              <Users size={20} />
             </div>
             <h3 style={{ fontSize: '1.15rem', fontWeight: 700, marginBottom: '0.5rem' }}>Workspace Collaboration</h3>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', lineHeight: 1.6, marginBottom: '1rem' }}>
@@ -311,8 +307,8 @@ export default function HomePage({ onOpenAuth, onOpenSignUp, onEnterApp, current
 
           {/* Option 4: Hybrid Local & Cloud Persistence */}
           <div className="glass-panel" style={{ padding: '1.75rem', borderRadius: '14px', border: '1px solid var(--border-color)', transition: 'transform 0.2s', cursor: 'default' }}>
-            <div style={{ width: '44px', height: '44px', borderRadius: '10px', background: 'rgba(245, 158, 11, 0.15)', color: '#fbbf24', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.25rem' }}>
-              <Zap size={22} />
+            <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'rgba(100, 116, 139, 0.15)', color: '#94a3b8', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.25rem' }}>
+              <Zap size={20} />
             </div>
             <h3 style={{ fontSize: '1.15rem', fontWeight: 700, marginBottom: '0.5rem' }}>Offline & Cloud Persistence</h3>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', lineHeight: 1.6, marginBottom: '1rem' }}>
@@ -326,8 +322,8 @@ export default function HomePage({ onOpenAuth, onOpenSignUp, onEnterApp, current
 
           {/* Option 5: Analytics & Reporting */}
           <div id="analytics" className="glass-panel" style={{ padding: '1.75rem', borderRadius: '14px', border: '1px solid var(--border-color)', transition: 'transform 0.2s', cursor: 'default' }}>
-            <div style={{ width: '44px', height: '44px', borderRadius: '10px', background: 'rgba(14, 165, 233, 0.15)', color: '#38bdf8', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.25rem' }}>
-              <BarChart3 size={22} />
+            <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'rgba(100, 116, 139, 0.15)', color: '#94a3b8', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.25rem' }}>
+              <BarChart3 size={20} />
             </div>
             <h3 style={{ fontSize: '1.15rem', fontWeight: 700, marginBottom: '0.5rem' }}>Analytics & CSV Export</h3>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', lineHeight: 1.6, marginBottom: '1rem' }}>
@@ -341,8 +337,8 @@ export default function HomePage({ onOpenAuth, onOpenSignUp, onEnterApp, current
 
           {/* Option 6: Keyboard Shortcuts & Quick Search */}
           <div className="glass-panel" style={{ padding: '1.75rem', borderRadius: '14px', border: '1px solid var(--border-color)', transition: 'transform 0.2s', cursor: 'default' }}>
-            <div style={{ width: '44px', height: '44px', borderRadius: '10px', background: 'rgba(236, 72, 153, 0.15)', color: '#f472b6', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.25rem' }}>
-              <Clock size={22} />
+            <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'rgba(100, 116, 139, 0.15)', color: '#94a3b8', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.25rem' }}>
+              <Clock size={20} />
             </div>
             <h3 style={{ fontSize: '1.15rem', fontWeight: 700, marginBottom: '0.5rem' }}>Fast Keyboard Shortcuts</h3>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', lineHeight: 1.6, marginBottom: '1rem' }}>
@@ -359,15 +355,15 @@ export default function HomePage({ onOpenAuth, onOpenSignUp, onEnterApp, current
 
       {/* CTA Bottom Banner */}
       <section style={{ padding: '4rem 1.5rem', maxWidth: '1000px', margin: '0 auto', textAlign: 'center' }}>
-        <div className="glass-panel" style={{ padding: '3rem 2rem', borderRadius: '20px', background: 'linear-gradient(135deg, rgba(225, 29, 72, 0.15), rgba(99, 102, 241, 0.15))', border: '1px solid rgba(225, 29, 72, 0.3)' }}>
-          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '2.2rem', fontWeight: 800, marginBottom: '1rem' }}>
+        <div className="glass-panel" style={{ padding: '3rem 2rem', borderRadius: '16px', border: '1px solid var(--border-color)', background: 'var(--bg-card)' }}>
+          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '2rem', fontWeight: 800, marginBottom: '1rem' }}>
             Ready to Organize Your Tasks?
           </h2>
-          <p style={{ color: 'var(--text-muted)', fontSize: '1.05rem', maxWidth: '540px', margin: '0 auto 2rem' }}>
+          <p style={{ color: 'var(--text-muted)', fontSize: '1rem', maxWidth: '520px', margin: '0 auto 2rem' }}>
             Join TaskPulse today and experience seamless project management with OTP registration and instant data saving.
           </p>
-          <button className="btn btn-gradient" onClick={() => (currentUser ? onEnterApp() : onOpenSignUp())} style={{ padding: '0.85rem 2.25rem', fontSize: '1rem', gap: '0.6rem' }}>
-            <Sparkles size={18} />
+          <button className="btn btn-primary" onClick={() => (currentUser ? onEnterApp() : onOpenSignUp())} style={{ padding: '0.75rem 2rem', fontSize: '0.95rem', gap: '0.5rem' }}>
+            <Sparkles size={16} />
             <span>{currentUser ? 'Open Workspace Dashboard' : 'Sign Up with OTP Verification'}</span>
           </button>
         </div>

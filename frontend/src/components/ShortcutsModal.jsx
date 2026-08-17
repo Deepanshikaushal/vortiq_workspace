@@ -29,8 +29,8 @@ export default function ShortcutsModal({ isOpen, onClose }) {
         
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', paddingBottom: '0.85rem', borderBottom: '1px solid var(--border-color)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-            <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'rgba(225, 29, 72, 0.25)', border: '1px solid var(--border-purple)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ff859b' }}>
-              <Keyboard size={20} />
+            <div style={{ width: '34px', height: '34px', borderRadius: '8px', background: '#334155', border: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#f8fafc' }}>
+              <Keyboard size={18} />
             </div>
             <div>
               <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.2rem', fontWeight: '800' }}>

@@ -43,28 +43,28 @@ const PERSONAS = [
     id: 'sprint-architect',
     name: 'Sprint Architect',
     icon: Zap,
-    color: '#e11d48',
+    color: '#94a3b8',
     description: 'Sprint breakdown, user stories & task planning'
   },
   {
     id: 'code-auditor',
     name: 'Code & Security',
     icon: Shield,
-    color: '#6366f1',
+    color: '#a5b4fc',
     description: 'Architecture review, security audits & JPA logic'
   },
   {
     id: 'velocity-analyst',
     name: 'Velocity Analyst',
     icon: BarChart3,
-    color: '#10b981',
+    color: '#86efac',
     description: 'Sprint health, velocity metrics & bottleneck audit'
   },
   {
     id: 'site-guide',
     name: 'Platform Guide',
     icon: HelpCircle,
-    color: '#f59e0b',
+    color: '#fde68a',
     description: 'TaskPulse navigation, shortcuts & feature help'
   }
 ];
@@ -453,34 +453,33 @@ export default function AiBotWidget({
             className="ai-bot-launcher-btn"
             title="Open VortiQ AI Assistant"
             style={{
-              height: '52px',
-              padding: '0 1.25rem',
+              height: '48px',
+              padding: '0 1.15rem',
               borderRadius: '9999px',
-              background: 'linear-gradient(135deg, #e11d48 0%, #be123c 50%, #6366f1 100%)',
-              color: '#ffffff',
-              border: '1px solid rgba(255, 255, 255, 0.35)',
-              boxShadow: '0 10px 30px rgba(225, 29, 72, 0.45), 0 0 20px rgba(99, 102, 241, 0.35)',
+              background: 'linear-gradient(135deg, #334155 0%, #1e293b 100%)',
+              color: '#f8fafc',
+              border: '1px solid rgba(255, 255, 255, 0.15)',
+              boxShadow: '0 8px 24px rgba(0, 0, 0, 0.5)',
               display: 'flex',
               alignItems: 'center',
-              gap: '0.65rem',
+              gap: '0.6rem',
               cursor: 'pointer',
-              fontWeight: 800,
-              fontSize: '0.9rem',
+              fontWeight: 700,
+              fontSize: '0.85rem',
               transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)'
             }}
           >
             <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-              <Sparkles size={20} className="animate-spin-slow" />
+              <Sparkles size={18} className="animate-spin-slow" style={{ color: '#94a3b8' }} />
               <span
                 style={{
                   position: 'absolute',
                   top: '-2px',
                   right: '-4px',
-                  width: '8px',
-                  height: '8px',
+                  width: '7px',
+                  height: '7px',
                   borderRadius: '50%',
-                  background: '#10b981',
-                  boxShadow: '0 0 8px #10b981'
+                  background: '#10b981'
                 }}
               />
             </div>
@@ -509,15 +508,15 @@ export default function AiBotWidget({
             position: 'fixed',
             bottom: isMinimized ? '1.75rem' : '1.5rem',
             right: '1.5rem',
-            width: isMinimized ? '320px' : '440px',
+            width: isMinimized ? '300px' : '420px',
             maxWidth: 'calc(100vw - 2rem)',
-            height: isMinimized ? '60px' : '620px',
+            height: isMinimized ? '56px' : '600px',
             maxHeight: 'calc(100vh - 3rem)',
             background: 'var(--bg-glass)',
-            backdropFilter: 'blur(25px)',
-            border: '1px solid rgba(225, 29, 72, 0.4)',
-            borderRadius: '20px',
-            boxShadow: '0 20px 60px rgba(0, 0, 0, 0.8), 0 0 35px rgba(225, 29, 72, 0.25)',
+            backdropFilter: 'blur(20px)',
+            border: '1px solid var(--border-color)',
+            borderRadius: '16px',
+            boxShadow: '0 16px 40px rgba(0, 0, 0, 0.7)',
             zIndex: 1000,
             display: 'flex',
             flexDirection: 'column',
@@ -528,8 +527,8 @@ export default function AiBotWidget({
           {/* Header Bar */}
           <div
             style={{
-              padding: '0.85rem 1.15rem',
-              background: 'linear-gradient(135deg, rgba(225, 29, 72, 0.15), rgba(99, 102, 241, 0.15))',
+              padding: '0.75rem 1rem',
+              background: 'var(--bg-secondary)',
               borderBottom: '1px solid var(--border-color)',
               display: 'flex',
               alignItems: 'center',
@@ -545,26 +544,25 @@ export default function AiBotWidget({
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
               <div
                 style={{
-                  width: '36px',
-                  height: '36px',
-                  borderRadius: '10px',
-                  background: 'linear-gradient(135deg, #e11d48, #6366f1)',
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: '8px',
+                  background: '#334155',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  color: '#ffffff',
-                  boxShadow: '0 4px 15px rgba(225, 29, 72, 0.4)',
+                  color: '#f8fafc',
                   position: 'relative'
                 }}
               >
-                <Bot size={20} />
+                <Bot size={18} />
                 <span
                   style={{
                     position: 'absolute',
                     bottom: '-2px',
                     right: '-2px',
-                    width: '10px',
-                    height: '10px',
+                    width: '8px',
+                    height: '8px',
                     borderRadius: '50%',
                     background: '#10b981',
                     border: '2px solid var(--bg-primary)'
@@ -607,8 +605,8 @@ export default function AiBotWidget({
                   width: '30px',
                   height: '30px',
                   padding: 0,
-                  color: showSettings ? 'var(--primary)' : 'var(--text-muted)',
-                  background: showSettings ? 'rgba(225, 29, 72, 0.15)' : 'transparent'
+                  color: showSettings ? 'var(--text-main)' : 'var(--text-muted)',
+                  background: showSettings ? 'var(--bg-tertiary)' : 'transparent'
                 }}
               >
                 <Settings size={15} />
@@ -819,13 +817,13 @@ export default function AiBotWidget({
                         style={{
                           maxWidth: '92%',
                           padding: '0.75rem 1rem',
-                          borderRadius: isAi ? '4px 16px 16px 16px' : '16px 4px 16px 16px',
+                          borderRadius: isAi ? '4px 14px 14px 14px' : '14px 4px 14px 14px',
                           background: isAi
-                            ? 'linear-gradient(135deg, rgba(42, 9, 14, 0.95), rgba(20, 5, 7, 0.95))'
-                            : 'linear-gradient(135deg, #e11d48, #be123c)',
-                          color: '#ffffff',
-                          border: isAi ? '1px solid rgba(225, 29, 72, 0.25)' : '1px solid rgba(255, 255, 255, 0.2)',
-                          boxShadow: isAi ? '0 4px 15px rgba(0, 0, 0, 0.4)' : '0 4px 15px rgba(225, 29, 72, 0.3)',
+                            ? 'var(--bg-card)'
+                            : 'linear-gradient(135deg, #334155, #1e293b)',
+                          color: '#f8fafc',
+                          border: isAi ? '1px solid var(--border-color)' : '1px solid rgba(255, 255, 255, 0.12)',
+                          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.25)',
                           fontSize: '0.85rem',
                           lineHeight: 1.55,
                           wordBreak: 'break-word',
@@ -932,10 +930,10 @@ export default function AiBotWidget({
                                         padding: '0.2rem 0.5rem',
                                         borderRadius: '4px',
                                         fontSize: '0.7rem',
-                                        fontWeight: 700,
-                                        background: isAdded ? '#10b98125' : 'rgba(225, 29, 72, 0.25)',
-                                        border: isAdded ? '1px solid #10b981' : '1px solid rgba(225, 29, 72, 0.5)',
-                                        color: isAdded ? '#10b981' : '#ff6b87',
+                                        fontWeight: 600,
+                                        background: isAdded ? 'rgba(16, 185, 129, 0.15)' : 'rgba(100, 116, 139, 0.2)',
+                                        border: isAdded ? '1px solid #10b981' : '1px solid var(--border-color)',
+                                        color: isAdded ? '#86efac' : 'var(--text-main)',
                                         cursor: isAdded ? 'default' : 'pointer',
                                         display: 'flex',
                                         alignItems: 'center',
@@ -971,8 +969,8 @@ export default function AiBotWidget({
                               style={{
                                 padding: '0.25rem 0.6rem',
                                 borderRadius: '9999px',
-                                background: 'rgba(255, 255, 255, 0.06)',
-                                border: '1px solid rgba(225, 29, 72, 0.3)',
+                                background: 'rgba(255, 255, 255, 0.05)',
+                                border: '1px solid var(--border-color)',
                                 color: 'var(--text-main)',
                                 fontSize: '0.725rem',
                                 cursor: 'pointer',
@@ -983,7 +981,7 @@ export default function AiBotWidget({
                               }}
                             >
                               <span>{sug}</span>
-                              <ArrowRight size={10} color="var(--primary)" />
+                              <ArrowRight size={10} color="var(--text-muted)" />
                             </button>
                           ))}
                         </div>

@@ -143,8 +143,8 @@ export default function ProfileModal({ isOpen, onClose, currentUser, onProfileUp
         {/* Modal Header */}
         <div className="modal-header">
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <div style={{ padding: '0.5rem', background: 'rgba(225, 29, 72, 0.2)', borderRadius: '8px', color: '#ff859b' }}>
-              <User size={20} />
+            <div style={{ padding: '0.45rem', background: '#334155', borderRadius: '8px', color: '#f8fafc' }}>
+              <User size={18} />
             </div>
             <div>
               <h2 className="modal-title">Account & Profile Settings</h2>
@@ -215,7 +215,7 @@ export default function ProfileModal({ isOpen, onClose, currentUser, onProfileUp
                   <img
                     src={avatarUrl || AVATAR_PRESETS[0].url}
                     alt="Profile Avatar"
-                    style={{ width: '64px', height: '64px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #e11d48', boxShadow: '0 0 16px rgba(225, 29, 72, 0.4)' }}
+                    style={{ width: '60px', height: '60px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #64748b' }}
                   />
 
                   <div style={{ flex: 1 }}>
@@ -274,13 +274,13 @@ export default function ProfileModal({ isOpen, onClose, currentUser, onProfileUp
                           setIsCustomUploaded(false);
                         }}
                         style={{
-                          width: '40px',
-                          height: '40px',
+                          width: '38px',
+                          height: '38px',
                           borderRadius: '50%',
                           objectFit: 'cover',
                           cursor: 'pointer',
-                          border: avatarUrl === preset.url ? '2px solid #e11d48' : '1px solid var(--border-color)',
-                          transform: avatarUrl === preset.url ? 'scale(1.1)' : 'scale(1)',
+                          border: avatarUrl === preset.url ? '2px solid #94a3b8' : '1px solid var(--border-color)',
+                          transform: avatarUrl === preset.url ? 'scale(1.08)' : 'scale(1)',
                           transition: 'all 0.2s'
                         }}
                         title={preset.name}

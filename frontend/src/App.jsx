@@ -41,7 +41,7 @@ const DEMO_PROJECTS = [
 ];
 
 const DEMO_WORKSPACES = [
-  { id: 1, name: 'VortiQ Studio Workspace', description: 'Enterprise collaboration workspace', colorCode: '#e11d48', currentUserRole: 'OWNER' }
+  { id: 1, name: 'VortiQ Studio Workspace', description: 'Enterprise collaboration workspace', colorCode: '#64748b', currentUserRole: 'OWNER' }
 ];
 
 export default function App() {
@@ -317,7 +317,7 @@ export default function App() {
       const newProj = await createProject({
         name: projectName,
         workspaceId: activeWorkspace ? activeWorkspace.id : 1,
-        colorCode: '#e11d48'
+        colorCode: '#64748b'
       });
       addToast(`Created project "${projectName}"!`, 'success');
       await loadData();
@@ -696,55 +696,26 @@ export default function App() {
             </main>
           </div>
 
-          {/* Floating AI Copilot Trigger Button */}
-          <button
-            className="btn animate-pulse"
-            onClick={() => setIsAiModalOpen(true)}
-            style={{
-              position: 'fixed',
-              bottom: '1.75rem',
-              right: '5.5rem',
-              height: '46px',
-              padding: '0 1.1rem',
-              borderRadius: '9999px',
-              zIndex: 80,
-              background: 'linear-gradient(135deg, #e11d48, #9333ea)',
-              color: '#ffffff',
-              boxShadow: '0 8px 25px rgba(225, 29, 72, 0.45)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.45rem',
-              fontWeight: '800',
-              fontSize: '0.85rem',
-              border: '1px solid rgba(255, 255, 255, 0.25)',
-              cursor: 'pointer'
-            }}
-            title="Open VortiQ AI Assistant & Sprint Architect"
-          >
-            <Sparkles size={17} color="#ffffff" />
-            <span className="desktop-only">VortiQ AI ✨</span>
-          </button>
-
           {/* Mobile Floating Action Button */}
           <button
-            className="btn btn-gradient mobile-only"
+            className="btn btn-primary mobile-only"
             onClick={() => handleOpenCreate('TODO')}
             style={{
               position: 'fixed',
               bottom: '1.75rem',
               right: '1.5rem',
-              width: '54px',
-              height: '54px',
+              width: '48px',
+              height: '48px',
               borderRadius: '50%',
               zIndex: 80,
-              boxShadow: '0 8px 25px rgba(225, 29, 72, 0.6)',
+              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.4)',
               padding: 0,
               alignItems: 'center',
               justifyContent: 'center'
             }}
             title="Create Task"
           >
-            <Plus size={24} />
+            <Plus size={20} />
           </button>
         </>
       )}

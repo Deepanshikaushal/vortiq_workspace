@@ -74,11 +74,11 @@ export default function Sidebar({
         <div style={{ paddingBottom: '1.15rem', marginBottom: '1.15rem', borderBottom: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer' }} onClick={() => { if (onGoHome) onGoHome(); onCloseMobileMenu(); }}>
             <div style={{
-              width: '40px',
-              height: '40px',
-              borderRadius: '10px',
-              background: 'rgba(225, 29, 72, 0.2)',
-              border: '1px solid var(--border-purple)',
+              width: '38px',
+              height: '38px',
+              borderRadius: '8px',
+              background: 'rgba(100, 116, 139, 0.15)',
+              border: '1px solid var(--border-color)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center'
@@ -143,7 +143,7 @@ export default function Sidebar({
 
           <div className="glass-card" style={{ padding: '0.5rem 0.75rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', width: '100%' }}>
-              <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: activeWorkspace?.colorCode || '#e11d48', flexShrink: 0, boxShadow: `0 0 8px ${activeWorkspace?.colorCode || '#e11d48'}` }} />
+              <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: activeWorkspace?.colorCode || '#64748b', flexShrink: 0, boxShadow: `0 0 6px ${activeWorkspace?.colorCode || '#64748b'}` }} />
               <select
                 value={activeWorkspace ? activeWorkspace.id : ''}
                 onChange={(e) => {
@@ -375,11 +375,12 @@ export default function Sidebar({
                   width: '34px',
                   height: '34px',
                   borderRadius: '50%',
-                  background: 'linear-gradient(135deg, #e11d48, #9f1239)',
+                  background: 'linear-gradient(135deg, #334155, #1e293b)',
+                  border: '1px solid var(--border-color)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  color: '#fff',
+                  color: '#f8fafc',
                   fontWeight: '700',
                   fontSize: '0.85rem'
                 }}>
@@ -394,7 +395,7 @@ export default function Sidebar({
               </div>
             </div>
             
-            <ShieldCheck size={16} style={{ color: '#e11d48' }} title="JWT Secured" />
+            <ShieldCheck size={16} style={{ color: '#10b981' }} title="JWT Secured" />
           </div>
         )}
 

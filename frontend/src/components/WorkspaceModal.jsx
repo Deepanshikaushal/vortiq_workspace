@@ -11,13 +11,13 @@ import {
 } from '../services/api';
 
 const COLOR_PRESETS = [
-  { name: 'Crimson Red', hex: '#e11d48' },
+  { name: 'Slate Steel', hex: '#64748b' },
   { name: 'Quantum Indigo', hex: '#6366f1' },
   { name: 'Cyber Cyan', hex: '#06b6d4' },
   { name: 'Emerald Green', hex: '#10b981' },
   { name: 'Amber Gold', hex: '#f59e0b' },
   { name: 'Neon Purple', hex: '#a855f7' },
-  { name: 'Rose Pink', hex: '#f43f5e' }
+  { name: 'Muted Rose', hex: '#f43f5e' }
 ];
 
 export default function WorkspaceModal({
@@ -33,7 +33,7 @@ export default function WorkspaceModal({
   const [activeTab, setActiveTab] = useState('list'); // 'list' | 'create' | 'settings' | 'members'
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const [colorCode, setColorCode] = useState('#e11d48');
+  const [colorCode, setColorCode] = useState('#64748b');
 
   const [members, setMembers] = useState([]);
   const [inviteEmail, setInviteEmail] = useState('');
@@ -46,14 +46,14 @@ export default function WorkspaceModal({
     if (activeWorkspace) {
       setName(activeWorkspace.name || '');
       setDescription(activeWorkspace.description || '');
-      setColorCode(activeWorkspace.colorCode || '#e11d48');
+      setColorCode(activeWorkspace.colorCode || '#64748b');
       if (isOpen) {
         loadMembers(activeWorkspace.id);
       }
     } else {
       setName('');
       setDescription('');
-      setColorCode('#e11d48');
+      setColorCode('#64748b');
       setMembers([]);
       setActiveTab('create');
     }
@@ -158,8 +158,8 @@ export default function WorkspaceModal({
       <div className="modal-container" style={{ maxWidth: '620px' }}>
         <div className="modal-header">
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <div style={{ padding: '0.5rem', background: 'rgba(225, 29, 72, 0.2)', borderRadius: '8px', color: '#ff859b' }}>
-              <Briefcase size={20} />
+            <div style={{ padding: '0.45rem', background: '#334155', borderRadius: '8px', color: '#f8fafc' }}>
+              <Briefcase size={18} />
             </div>
             <div>
               <h2 className="modal-title">
@@ -190,7 +190,7 @@ export default function WorkspaceModal({
             type="button"
             className={`btn ${activeTab === 'create' ? 'btn-primary' : 'btn-ghost'}`}
             style={{ padding: '0.45rem 0.85rem', fontSize: '0.825rem', whiteSpace: 'nowrap' }}
-            onClick={() => { setActiveTab('create'); setName(''); setDescription(''); setColorCode('#e11d48'); setStatusMsg({ type: '', text: '' }); }}
+            onClick={() => { setActiveTab('create'); setName(''); setDescription(''); setColorCode('#64748b'); setStatusMsg({ type: '', text: '' }); }}
           >
             <Plus size={14} style={{ marginRight: '0.3rem' }} /> + New Workspace
           </button>
@@ -266,8 +266,8 @@ export default function WorkspaceModal({
                       style={{
                         padding: '0.85rem 1.1rem',
                         borderRadius: '10px',
-                        background: isActive ? 'rgba(225, 29, 72, 0.2)' : 'rgba(255, 255, 255, 0.03)',
-                        border: isActive ? '1.5px solid rgba(225, 29, 72, 0.6)' : '1px solid var(--border-color)',
+                        background: isActive ? 'var(--bg-tertiary)' : 'rgba(255, 255, 255, 0.02)',
+                        border: isActive ? '1px solid var(--border-glow)' : '1px solid var(--border-color)',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'space-between',
@@ -280,14 +280,14 @@ export default function WorkspaceModal({
                           width: '36px',
                           height: '36px',
                           borderRadius: '8px',
-                          backgroundColor: ws.colorCode || '#e11d48',
+                          backgroundColor: ws.colorCode || '#64748b',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
                           color: '#fff',
                           fontWeight: '800',
                           fontSize: '1rem',
-                          boxShadow: `0 0 12px ${ws.colorCode || '#e11d48'}66`
+                          boxShadow: `0 0 10px ${ws.colorCode || '#64748b'}44`
                         }}>
                           {(ws.name || 'W').charAt(0).toUpperCase()}
                         </div>
@@ -295,7 +295,7 @@ export default function WorkspaceModal({
                           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                             <span style={{ fontSize: '0.95rem', fontWeight: '800', color: 'var(--text-main)' }}>{ws.name}</span>
                             {isActive && (
-                              <span style={{ fontSize: '0.7rem', fontWeight: 800, padding: '0.15rem 0.45rem', borderRadius: '4px', background: 'rgba(225, 29, 72, 0.3)', color: '#ff859b' }}>
+                              <span style={{ fontSize: '0.7rem', fontWeight: 700, padding: '0.15rem 0.45rem', borderRadius: '4px', background: 'rgba(100, 116, 139, 0.25)', color: 'var(--text-main)' }}>
                                 ACTIVE
                               </span>
                             )}
@@ -313,7 +313,7 @@ export default function WorkspaceModal({
                           {ws.currentUserRole || 'OWNER'}
                         </span>
                         {isActive ? (
-                          <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: '#e11d48', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>
+                          <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: '#64748b', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>
                             <Check size={14} />
                           </div>
                         ) : (

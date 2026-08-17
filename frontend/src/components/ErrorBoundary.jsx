@@ -42,23 +42,23 @@ export default class ErrorBoundary extends React.Component {
           <div style={{
             maxWidth: '520px',
             width: '100%',
-            background: 'var(--bg-secondary, #111827)',
-            border: '1px solid rgba(225, 29, 72, 0.4)',
+            background: 'var(--bg-secondary, #151c28)',
+            border: '1px solid var(--border-color)',
             borderRadius: '16px',
             padding: '2.5rem 2rem',
             textAlign: 'center',
             boxShadow: '0 20px 40px rgba(0,0,0,0.6)'
           }}>
             <div style={{
-              width: '56px',
-              height: '56px',
+              width: '52px',
+              height: '52px',
               borderRadius: '50%',
-              background: 'rgba(225, 29, 72, 0.2)',
-              color: '#ff859b',
+              background: 'rgba(100, 116, 139, 0.2)',
+              color: 'var(--text-main)',
               display: 'inline-flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: '1.8rem',
+              fontSize: '1.6rem',
               marginBottom: '1.25rem'
             }}>
               ⚡
@@ -95,13 +95,13 @@ export default class ErrorBoundary extends React.Component {
                 style={{
                   padding: '0.65rem 1.4rem',
                   borderRadius: '10px',
-                  background: 'linear-gradient(135deg, #e11d48, #be123c)',
-                  color: '#fff',
-                  border: 'none',
-                  fontWeight: 700,
-                  fontSize: '0.9rem',
+                  background: 'linear-gradient(135deg, #334155, #1e293b)',
+                  color: '#f8fafc',
+                  border: '1px solid rgba(255, 255, 255, 0.12)',
+                  fontWeight: 600,
+                  fontSize: '0.875rem',
                   cursor: 'pointer',
-                  boxShadow: '0 4px 14px rgba(225, 29, 72, 0.4)'
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)'
                 }}
               >
                 Reload Dashboard

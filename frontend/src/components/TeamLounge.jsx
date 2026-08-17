@@ -27,7 +27,7 @@ import {
 } from '../services/api';
 
 const CATEGORIES = [
-  { id: 'ALL', label: 'All Topics', icon: MessageSquare, color: '#e11d48' },
+  { id: 'ALL', label: 'All Topics', icon: MessageSquare, color: '#94a3b8' },
   { id: 'IDEA', label: '💡 Ideas & Proposals', icon: Lightbulb, color: '#38bdf8' },
   { id: 'OPINION', label: '🗣️ Opinions & Feedback', icon: MessageSquare, color: '#fbbf24' },
   { id: 'ROADMAP', label: '🚀 Roadmap & Strategy', icon: Compass, color: '#a855f7' },
@@ -168,20 +168,19 @@ export default function TeamLounge({ activeWorkspace, currentUser, onAddToast })
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
             <div style={{
-              width: '38px',
-              height: '38px',
-              borderRadius: '10px',
-              background: 'linear-gradient(135deg, #e11d48, #9f1239)',
+              width: '36px',
+              height: '36px',
+              borderRadius: '8px',
+              background: '#334155',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: '#fff',
-              boxShadow: '0 0 14px rgba(225, 29, 72, 0.4)'
+              color: '#f8fafc'
             }}>
-              <MessageSquare size={20} />
+              <MessageSquare size={18} />
             </div>
             <div>
-              <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.25rem', fontWeight: 800, margin: 0 }}>
+              <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.2rem', fontWeight: 700, margin: 0 }}>
                 Team Lounge & Opinion Hub
               </h2>
               <p style={{ fontSize: '0.785rem', color: 'var(--text-muted)', margin: 0 }}>
@@ -192,21 +191,21 @@ export default function TeamLounge({ activeWorkspace, currentUser, onAddToast })
         </div>
 
         <button
-          className="btn btn-gradient"
+          className="btn btn-primary"
           onClick={() => setIsComposerOpen(!isComposerOpen)}
-          style={{ gap: '0.4rem', padding: '0.55rem 1.15rem', fontSize: '0.85rem' }}
+          style={{ gap: '0.4rem', padding: '0.45rem 1rem', fontSize: '0.825rem' }}
         >
-          {isComposerOpen ? <X size={16} /> : <Plus size={16} />}
+          {isComposerOpen ? <X size={15} /> : <Plus size={15} />}
           <span>{isComposerOpen ? 'Close Composer' : 'Share Opinion / Idea'}</span>
         </button>
       </div>
 
       {/* Opinion / Topic Composer Box */}
       {isComposerOpen && (
-        <div className="glass-panel animate-fade-in" style={{ padding: '1.5rem', marginBottom: '1.5rem', border: '1px solid #e11d48', boxShadow: '0 8px 30px rgba(225, 29, 72, 0.2)' }}>
+        <div className="glass-panel animate-fade-in" style={{ padding: '1.25rem', marginBottom: '1.25rem', border: '1px solid var(--border-color)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.65rem' }}>
-            <h3 style={{ fontSize: '1.05rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <Sparkles size={18} style={{ color: 'var(--primary-glow)' }} />
+            <h3 style={{ fontSize: '1rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <Sparkles size={16} style={{ color: 'var(--text-muted)' }} />
               <span>Publish a Topic to Team Lounge</span>
             </h3>
             <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Posting as: <strong>{currentUser?.name || currentUser?.username || 'Team Member'}</strong></span>
@@ -227,9 +226,9 @@ export default function TeamLounge({ activeWorkspace, currentUser, onAddToast })
                       fontSize: '0.8rem',
                       fontWeight: 700,
                       cursor: 'pointer',
-                      border: category === cat.id ? `1px solid ${cat.color}` : '1px solid var(--border-color)',
-                      background: category === cat.id ? 'rgba(225, 29, 72, 0.25)' : 'var(--bg-tertiary)',
-                      color: category === cat.id ? '#ffffff' : 'var(--text-muted)'
+                      border: category === cat.id ? '1px solid var(--primary)' : '1px solid var(--border-color)',
+                      background: category === cat.id ? 'var(--primary)' : 'var(--bg-tertiary)',
+                      color: category === cat.id ? '#f8fafc' : 'var(--text-muted)'
                     }}
                   >
                     {cat.label}
@@ -289,21 +288,21 @@ export default function TeamLounge({ activeWorkspace, currentUser, onAddToast })
                 type="button"
                 onClick={() => setSelectedCategory(cat.id)}
                 style={{
-                  padding: '0.35rem 0.75rem',
+                  padding: '0.3rem 0.65rem',
                   borderRadius: '9999px',
-                  fontSize: '0.785rem',
-                  fontWeight: 700,
+                  fontSize: '0.75rem',
+                  fontWeight: 600,
                   cursor: 'pointer',
-                  border: isActive ? '1px solid #e11d48' : '1px solid var(--border-color)',
-                  background: isActive ? 'linear-gradient(135deg, #e11d48, #9f1239)' : 'var(--bg-tertiary)',
-                  color: isActive ? '#fff' : 'var(--text-muted)',
+                  border: isActive ? '1px solid var(--primary)' : '1px solid var(--border-color)',
+                  background: isActive ? 'var(--primary)' : 'var(--bg-tertiary)',
+                  color: isActive ? '#f8fafc' : 'var(--text-muted)',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '0.35rem',
                   transition: 'all 0.2s'
                 }}
               >
-                <Icon size={13} />
+                <Icon size={12} />
                 <span>{cat.label}</span>
               </button>
             );
@@ -327,14 +326,14 @@ export default function TeamLounge({ activeWorkspace, currentUser, onAddToast })
       {/* Discussion Topics Feed */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
         {filteredDiscussions.length === 0 ? (
-          <div className="glass-panel" style={{ padding: '4rem 2rem', textAlign: 'center', color: 'var(--text-muted)' }}>
-            <MessageSquare size={48} style={{ color: '#e11d48', opacity: 0.5, marginBottom: '1rem' }} />
-            <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--text-main)' }}>No discussions found</h3>
-            <p style={{ fontSize: '0.85rem', color: 'var(--text-dim)', maxWidth: '400px', margin: '0.5rem auto 1.5rem' }}>
+          <div className="glass-panel" style={{ padding: '3.5rem 2rem', textAlign: 'center', color: 'var(--text-muted)' }}>
+            <MessageSquare size={40} style={{ color: 'var(--text-dim)', opacity: 0.6, marginBottom: '0.75rem' }} />
+            <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-main)' }}>No discussions found</h3>
+            <p style={{ fontSize: '0.825rem', color: 'var(--text-dim)', maxWidth: '380px', margin: '0.4rem auto 1.25rem' }}>
               Be the first to share an opinion, propose a feature, or start a discussion for your team!
             </p>
             <button className="btn btn-primary" onClick={() => setIsComposerOpen(true)}>
-              <Plus size={16} /> Share the First Topic
+              <Plus size={15} /> Share the First Topic
             </button>
           </div>
         ) : (
@@ -344,7 +343,7 @@ export default function TeamLounge({ activeWorkspace, currentUser, onAddToast })
             const repliesList = disc.replies || [];
 
             return (
-              <div key={disc.id} className="glass-panel animate-fade-in" style={{ padding: '1.5rem', position: 'relative' }}>
+              <div key={disc.id} className="glass-panel animate-fade-in" style={{ padding: '1.25rem', position: 'relative' }}>
                 
                 {/* Author Details & Category Badge */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '1rem', marginBottom: '0.85rem' }}>
@@ -353,20 +352,21 @@ export default function TeamLounge({ activeWorkspace, currentUser, onAddToast })
                       <img
                         src={disc.authorAvatar}
                         alt={disc.authorName}
-                        style={{ width: '42px', height: '42px', borderRadius: '50%', objectFit: 'cover', border: '2px solid var(--border-purple)' }}
+                        style={{ width: '38px', height: '38px', borderRadius: '50%', objectFit: 'cover', border: '1px solid var(--border-color)' }}
                       />
                     ) : (
                       <div style={{
-                        width: '42px',
-                        height: '42px',
+                        width: '38px',
+                        height: '38px',
                         borderRadius: '50%',
-                        background: 'linear-gradient(135deg, #e11d48, #9f1239)',
+                        background: 'linear-gradient(135deg, #334155, #1e293b)',
+                        border: '1px solid var(--border-color)',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        color: '#fff',
-                        fontWeight: 800,
-                        fontSize: '0.9rem'
+                        color: '#f8fafc',
+                        fontWeight: 700,
+                        fontSize: '0.85rem'
                       }}>
                         {(disc.authorName || 'U').charAt(0).toUpperCase()}
                       </div>
@@ -396,9 +396,9 @@ export default function TeamLounge({ activeWorkspace, currentUser, onAddToast })
                       fontWeight: 800,
                       padding: '0.2rem 0.65rem',
                       borderRadius: '9999px',
-                      background: 'rgba(225, 29, 72, 0.15)',
+                      background: 'rgba(255, 255, 255, 0.05)',
                       color: catConfig.color,
-                      border: `1px solid ${catConfig.color}44`
+                      border: `1px solid ${catConfig.color}35`
                     }}>
                       {catConfig.label}
                     </span>
@@ -435,13 +435,13 @@ export default function TeamLounge({ activeWorkspace, currentUser, onAddToast })
                       padding: '0.35rem 0.85rem',
                       fontSize: '0.8rem',
                       gap: '0.4rem',
-                      background: (disc.likesCount || 0) > 0 ? 'rgba(225, 29, 72, 0.15)' : 'var(--bg-tertiary)',
-                      border: (disc.likesCount || 0) > 0 ? '1px solid #e11d48' : '1px solid var(--border-color)',
-                      color: (disc.likesCount || 0) > 0 ? '#ff859b' : 'var(--text-muted)'
+                      background: (disc.likesCount || 0) > 0 ? 'rgba(100, 116, 139, 0.2)' : 'var(--bg-tertiary)',
+                      border: (disc.likesCount || 0) > 0 ? '1px solid #64748b' : '1px solid var(--border-color)',
+                      color: (disc.likesCount || 0) > 0 ? '#f8fafc' : 'var(--text-muted)'
                     }}
                     title="Upvote / Agree with this opinion"
                   >
-                    <Flame size={14} style={{ color: '#f43f5e' }} />
+                    <Flame size={14} style={{ color: '#f59e0b' }} />
                     <span>Agree / Upvote ({disc.likesCount || 0})</span>
                   </button>
 
@@ -462,7 +462,7 @@ export default function TeamLounge({ activeWorkspace, currentUser, onAddToast })
 
                 {/* Thread Replies Section */}
                 {(repliesList.length > 0 || isReplying) && (
-                  <div style={{ marginTop: '1.25rem', paddingLeft: '1rem', borderLeft: '2px solid rgba(225, 29, 72, 0.4)', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                  <div style={{ marginTop: '1.25rem', paddingLeft: '1rem', borderLeft: '2px solid var(--border-color)', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                     
                     {/* Existing Comments */}
                     {repliesList.map((reply) => (
@@ -484,13 +484,14 @@ export default function TeamLounge({ activeWorkspace, currentUser, onAddToast })
                                 width: '24px',
                                 height: '24px',
                                 borderRadius: '50%',
-                                background: 'linear-gradient(135deg, #e11d48, #9f1239)',
+                                background: 'linear-gradient(135deg, #334155, #1e293b)',
+                                border: '1px solid var(--border-color)',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                color: '#fff',
+                                color: '#f8fafc',
                                 fontSize: '0.65rem',
-                                fontWeight: 800
+                                fontWeight: 700
                               }}>
                                 {(reply.authorName || 'U').charAt(0).toUpperCase()}
                               </div>

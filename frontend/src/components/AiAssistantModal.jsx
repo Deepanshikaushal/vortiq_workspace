@@ -171,41 +171,41 @@ export default function AiAssistantModal({
           padding: 0,
           overflow: 'hidden',
           borderRadius: '16px',
-          border: '1px solid rgba(225, 29, 72, 0.3)',
-          boxShadow: '0 25px 60px -15px rgba(225, 29, 72, 0.25)'
+          border: '1px solid var(--border-color)',
+          boxShadow: '0 20px 50px rgba(0, 0, 0, 0.7)'
         }}
       >
         {/* Header */}
         <div style={{
           padding: '1.25rem 1.5rem',
           borderBottom: '1px solid var(--border-color)',
-          background: 'linear-gradient(135deg, rgba(225, 29, 72, 0.12), rgba(15, 23, 42, 0.6))',
+          background: 'var(--bg-secondary)',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <div style={{
-              width: '40px', height: '40px', borderRadius: '12px',
-              background: 'linear-gradient(135deg, #e11d48, #9333ea)',
+              width: '36px', height: '36px', borderRadius: '10px',
+              background: '#334155',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              boxShadow: '0 0 20px rgba(225, 29, 72, 0.5)'
+              color: '#f8fafc'
             }}>
-              <Sparkles size={22} color="#ffffff" className="animate-pulse" />
+              <Sparkles size={18} />
             </div>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.2rem', fontWeight: '800' }}>
+                <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.15rem', fontWeight: '700' }}>
                   VortiQ AI Copilot
                 </h2>
                 <span style={{
                   fontSize: '0.65rem',
-                  padding: '0.15rem 0.5rem',
+                  padding: '0.12rem 0.45rem',
                   borderRadius: '9999px',
-                  background: 'rgba(225, 29, 72, 0.2)',
-                  color: 'var(--primary)',
-                  fontWeight: '800',
-                  border: '1px solid rgba(225, 29, 72, 0.4)'
+                  background: 'rgba(16, 185, 129, 0.15)',
+                  color: '#86efac',
+                  fontWeight: '600',
+                  border: '1px solid rgba(16, 185, 129, 0.25)'
                 }}>
                   ACTIVE • 24/7
                 </span>
@@ -281,17 +281,17 @@ export default function AiAssistantModal({
                   }}
                 >
                   <div style={{
-                    padding: '0.9rem 1.1rem',
+                    padding: '0.85rem 1.05rem',
                     borderRadius: m.sender === 'user' ? '14px 14px 2px 14px' : '14px 14px 14px 2px',
                     background: m.sender === 'user' 
-                      ? 'linear-gradient(135deg, #e11d48, #be123c)'
+                      ? 'linear-gradient(135deg, #334155, #1e293b)'
                       : 'var(--bg-card)',
-                    color: m.sender === 'user' ? '#ffffff' : 'var(--text-primary)',
-                    border: m.sender === 'user' ? 'none' : '1px solid var(--border-color)',
-                    fontSize: '0.875rem',
+                    color: m.sender === 'user' ? '#f8fafc' : 'var(--text-main)',
+                    border: m.sender === 'user' ? '1px solid rgba(255, 255, 255, 0.12)' : '1px solid var(--border-color)',
+                    fontSize: '0.85rem',
                     lineHeight: '1.5',
                     whiteSpace: 'pre-wrap',
-                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.25)',
                     position: 'relative'
                   }}>
                     {m.text}

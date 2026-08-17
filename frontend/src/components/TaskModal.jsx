@@ -118,11 +118,11 @@ export default function TaskModal({
         {/* Modal Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', paddingBottom: '1rem', borderBottom: '1px solid var(--border-color)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-            <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'linear-gradient(135deg, #e11d48, #9f1239)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>
-              <Sparkles size={18} />
+            <div style={{ width: '34px', height: '34px', borderRadius: '8px', background: '#334155', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#f8fafc' }}>
+              <Sparkles size={16} />
             </div>
             <div>
-              <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.25rem', fontWeight: '800' }}>
+              <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.2rem', fontWeight: '700' }}>
                 {taskToEdit ? 'Edit Task' : 'Create New Task'}
               </h2>
               <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
@@ -167,9 +167,9 @@ export default function TaskModal({
                   fontWeight: '700',
                   padding: '0.2rem 0.6rem',
                   borderRadius: '6px',
-                  border: '1px solid rgba(225, 29, 72, 0.4)',
-                  background: 'linear-gradient(135deg, rgba(225, 29, 72, 0.15), rgba(147, 51, 234, 0.15))',
-                  color: 'var(--primary)',
+                  border: '1px solid var(--border-color)',
+                  background: 'var(--bg-tertiary)',
+                  color: 'var(--text-main)',
                   cursor: 'pointer'
                 }}
               >
@@ -219,8 +219,8 @@ export default function TaskModal({
                     borderRadius: '9999px',
                     cursor: 'pointer',
                     border: formData.category === cat ? '1px solid var(--primary)' : '1px solid var(--border-color)',
-                    background: formData.category === cat ? 'linear-gradient(135deg, #e11d48, #9f1239)' : 'var(--bg-tertiary)',
-                    color: formData.category === cat ? '#ffffff' : 'var(--text-muted)'
+                    background: formData.category === cat ? 'var(--primary)' : 'var(--bg-tertiary)',
+                    color: formData.category === cat ? '#f8fafc' : 'var(--text-muted)'
                   }}
                 >
                   {cat}

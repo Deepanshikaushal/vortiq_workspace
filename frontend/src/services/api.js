@@ -94,7 +94,26 @@ export function getStoredAllUsers() {
       localStorage.setItem(ALL_USERS_KEY, JSON.stringify(INITIAL_DEMO_USERS));
       return INITIAL_DEMO_USERS;
     }
-    return JSON.parse(data);
+    const parsed = JSON.parse(data);
+    if (!Array.isArray(parsed) || parsed.length === 0) {
+      localStorage.setItem(ALL_USERS_KEY, JSON.stringify(INITIAL_DEMO_USERS));
+      return INITIAL_DEMO_USERS;
+    }
+
+    // Merge in any missing demo profiles into the local list
+    const existingEmails = new Set(parsed.map(u => (u.email || '').toLowerCase().trim()));
+    let updated = [...parsed];
+    let hasChanged = false;
+    for (const demoU of INITIAL_DEMO_USERS) {
+      if (!existingEmails.has(demoU.email.toLowerCase().trim())) {
+        updated.push(demoU);
+        hasChanged = true;
+      }
+    }
+    if (hasChanged) {
+      localStorage.setItem(ALL_USERS_KEY, JSON.stringify(updated));
+    }
+    return updated;
   } catch (e) {
     return INITIAL_DEMO_USERS;
   }
@@ -488,6 +507,7 @@ export async function changePassword(currentPassword, newPassword) {
 }
 
 export async function fetchAllUsers(filters = {}) {
+  let backendUsers = [];
   try {
     const res = await fetch(`${API_BASE_URL}/users`, {
       headers: getAuthHeaders(),
@@ -495,8 +515,7 @@ export async function fetchAllUsers(filters = {}) {
     if (res.ok) {
       const data = await res.json();
       if (Array.isArray(data) && data.length > 0) {
-        saveStoredAllUsers(data);
-        return filterUsersList(data, filters);
+        backendUsers = data;
       }
     }
   } catch (err) {
@@ -504,7 +523,40 @@ export async function fetchAllUsers(filters = {}) {
   }
 
   const stored = getStoredAllUsers();
-  return filterUsersList(stored, filters);
+  let merged = [...stored];
+
+  if (backendUsers.length > 0) {
+    backendUsers.forEach(bu => {
+      const bEmail = (bu.email || '').toLowerCase().trim();
+      const existingIdx = merged.findIndex(m => (m.email && m.email.toLowerCase().trim() === bEmail) || String(m.id) === String(bu.id));
+      if (existingIdx >= 0) {
+        merged[existingIdx] = {
+          ...merged[existingIdx],
+          ...bu,
+          avatarUrl: bu.avatarUrl || merged[existingIdx].avatarUrl,
+          department: bu.department || merged[existingIdx].department,
+          phone: bu.phone || merged[existingIdx].phone,
+          bio: bu.bio || merged[existingIdx].bio
+        };
+      } else {
+        merged.push({
+          id: bu.id || Date.now(),
+          username: bu.username || bEmail.split('@')[0],
+          name: bu.name || bu.username || bEmail.split('@')[0],
+          email: bEmail,
+          phone: bu.phone || '',
+          department: bu.department || 'Engineering & Development',
+          bio: bu.bio || 'Workspace member',
+          role: bu.role || 'ROLE_USER',
+          avatarUrl: bu.avatarUrl || 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=140&auto=format&fit=crop&q=80',
+          status: 'ONLINE'
+        });
+      }
+    });
+  }
+
+  saveStoredAllUsers(merged);
+  return filterUsersList(merged, filters);
 }
 
 function filterUsersList(list, filters = {}) {

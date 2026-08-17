@@ -411,7 +411,13 @@ export default function MembersDirectory({
       </div>
 
       {/* Main Members Grid or Table View */}
-      {filteredUsers.length === 0 ? (
+      {loading && users.length === 0 ? (
+        <div className="glass-card" style={{ padding: '3rem 1.5rem', textAlign: 'center', border: '1px solid var(--border-color)' }}>
+          <RefreshCw size={28} className="animate-spin-slow" style={{ color: 'var(--primary-glow)', margin: '0 auto 1rem' }} />
+          <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.25rem' }}>Loading Workspace Directory...</h3>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Fetching registered team members and roles</p>
+        </div>
+      ) : filteredUsers.length === 0 ? (
         <div className="glass-card" style={{ padding: '3rem 1.5rem', textAlign: 'center', border: '1px solid var(--border-color)' }}>
           <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: 'rgba(225, 29, 72, 0.15)', color: '#ff6b87', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
             <Users size={26} />

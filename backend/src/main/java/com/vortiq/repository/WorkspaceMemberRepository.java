@@ -16,6 +16,8 @@ public interface WorkspaceMemberRepository extends JpaRepository<WorkspaceMember
 
     Boolean existsByWorkspaceIdAndUserId(Long workspaceId, Long userId);
 
+    Boolean existsByWorkspaceAndUser(com.vortiq.model.Workspace workspace, com.vortiq.model.User user);
+
     void deleteByWorkspaceIdAndUserId(Long workspaceId, Long userId);
 
     void deleteByWorkspaceId(Long workspaceId);

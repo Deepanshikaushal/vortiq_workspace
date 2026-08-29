@@ -1,4 +1,4 @@
-# 🚀 VortiQ Studio - Enterprise Task & Workspace Platform
+# VortiQ Studio - Enterprise Task & Workspace Platform
 
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.3.4-brightgreen?logo=springboot)
 ![React](https://img.shields.io/badge/React-18-blue?logo=react)
@@ -10,20 +10,20 @@
 
 ---
 
-## ✨ Features
+## Features
 
-- **⚡ Interactive Kanban Board**: Move task cards seamlessly across workflow stages (`To Do`, `In Progress`, `In Review`, `Completed`).
-- **📊 Real-Time Analytics**: Sprint velocity calculation meter, backlog tracking, and progress indicators.
-- **🎨 Glassmorphic Cyber UI**: Cyber-midnight theme with backdrop blurs, glow cards, and light/dark theme switching.
-- **🏷️ Smart Categorization & Priority Badges**: Category tagging (`Frontend`, `Backend`, `DevOps`, `Design`, `Database`) and LED-style priority badges (`LOW`, `MEDIUM`, `HIGH`, `URGENT`).
-- **🔍 Instant Search & Multi-Filters**: Debounced text search, workspace selector, and multi-field dropdown filters.
-- **🔔 Toast Alert System**: Real-time feedback for task creation, status updates, and deletions.
-- **⌨️ Keyboard Shortcuts**: Press `Ctrl + K` to jump directly to global search.
-- **🛢️ In-Memory H2 Database**: Pre-populated initial dataset on boot; zero database installation required.
+ Interactive Kanban Board**: Move task cards seamlessly across workflow stages (`To Do`, `In Progress`, `In Review`, `Completed`).
+- Real-Time Analytics**: Sprint velocity calculation meter, backlog tracking, and progress indicators.
+- Glassmorphic Cyber UI**: Cyber-midnight theme with backdrop blurs, glow cards, and light/dark theme switching.
+- Smart Categorization & Priority Badges**: Category tagging (`Frontend`, `Backend`, `DevOps`, `Design`, `Database`) and LED-style priority badges (`LOW`, `MEDIUM`, `HIGH`, `URGENT`).
+- Instant Search & Multi-Filters**: Debounced text search, workspace selector, and multi-field dropdown filters.
+- Toast Alert System**: Real-time feedback for task creation, status updates, and deletions.
+- Keyboard Shortcuts**: Press `Ctrl + K` to jump directly to global search.
+- In-Memory H2 Database**: Pre-populated initial dataset on boot; zero database installation required.
 
 ---
 
-## 🛠️ Tech Stack
+##Tech Stack
 
 ### Backend
 - **Framework**: Spring Boot 3.3.4 (Java Web, Spring Data JPA)
@@ -38,7 +38,7 @@
 
 ---
 
-## 📁 Repository Structure
+## Repository Structure
 
 ```
 vortiq-workspace/
@@ -72,7 +72,7 @@ vortiq-workspace/
 
 ---
 
-## 🚀 Getting Started
+##Getting Started
 
 ### Prerequisites
 - **Java Development Kit (JDK 21)**
@@ -104,7 +104,7 @@ vortiq-workspace/
 
 ---
 
-## 📦 Production Single-JAR Build
+##Production Single-JAR Build
 
 You can bundle the React frontend static build directly inside the Spring Boot JAR for a single-file executable deployment:
 
@@ -127,7 +127,7 @@ java -jar target\taskpulse-backend-0.0.1-SNAPSHOT.jar
 
 ---
 
-## 🔌 API Reference
+## API Reference
 
 | Method | Endpoint | Description |
 | :--- | :--- | :--- |
@@ -142,6 +142,6 @@ java -jar target\taskpulse-backend-0.0.1-SNAPSHOT.jar
 
 ---
 
-## 📜 License
+##  License
 
 Distributed under the MIT License. See `LICENSE` for details.

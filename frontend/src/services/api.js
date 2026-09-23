@@ -8,6 +8,32 @@ const ALL_USERS_KEY = 'vortiq_all_registered_users';
 
 const INITIAL_DEMO_USERS = [
   {
+    id: 100,
+    username: 'admin',
+    name: 'Backend Administrator',
+    email: 'admin@vortiq.com',
+    phone: '+1 (555) 019-0001',
+    department: 'Backend Infrastructure & Systems Administration',
+    bio: 'Dedicated backend administrator account for API orchestration, DB inspection, and system health.',
+    role: 'ROLE_ADMIN',
+    avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=140&auto=format&fit=crop&q=80',
+    joinedDate: '2026-01-01',
+    status: 'ONLINE'
+  },
+  {
+    id: 101,
+    username: 'user',
+    name: 'Standard User',
+    email: 'user@vortiq.com',
+    phone: '+1 (555) 019-0002',
+    department: 'Product & Engineering',
+    bio: 'Standard user account for workspace collaboration, tasks, Kanban boards, and daily work.',
+    role: 'ROLE_MEMBER',
+    avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=140&auto=format&fit=crop&q=80',
+    joinedDate: '2026-01-05',
+    status: 'ONLINE'
+  },
+  {
     id: 1,
     username: 'deepanshi',
     name: 'Deepanshi Kaushal',
@@ -158,7 +184,10 @@ const INITIAL_DEMO_TASKS = [
   { id: 2, title: 'Implement Spring Boot REST APIs', description: 'Build Java REST controllers, JPA repositories, and CORS config.', status: 'COMPLETED', priority: 'URGENT', category: 'Backend', assignee: 'Sarah Chen', dueDate: '2026-08-12', projectId: 1, workspaceId: 1 },
   { id: 3, title: 'Configure H2 Database Auto-schema', description: 'Ensure in-memory entity tables are properly mapped with Hibernate.', status: 'COMPLETED', priority: 'MEDIUM', category: 'Database', assignee: 'Sarah Chen', dueDate: '2026-08-10', projectId: 1, workspaceId: 1 },
   { id: 4, title: 'Integrate Real-Time Status Filter', description: 'Add debounced search input and status dropdown on React grid.', status: 'TODO', priority: 'MEDIUM', category: 'Frontend', assignee: 'Deepanshi Kaushal', dueDate: '2026-08-18', projectId: 1, workspaceId: 1 },
-  { id: 5, title: 'Setup Docker Pipeline', description: 'Write Dockerfiles for Spring Boot jar and Vite build.', status: 'IN_REVIEW', priority: 'HIGH', category: 'DevOps', assignee: 'Marcus Vance', dueDate: '2026-08-14', projectId: 3, workspaceId: 1 }
+  { id: 5, title: 'Setup Docker Pipeline', description: 'Write Dockerfiles for Spring Boot jar and Vite build.', status: 'IN_REVIEW', priority: 'HIGH', category: 'DevOps', assignee: 'Marcus Vance', dueDate: '2026-08-14', projectId: 3, workspaceId: 1 },
+  { id: 6, title: 'Build Mobile Feedback Survey Widget', description: 'Design and integrate responsive client survey modal with rating inputs and animation.', status: 'IN_PROGRESS', priority: 'HIGH', category: 'Frontend', assignee: 'Standard Member', assignedToId: 101, dueDate: '2026-09-22', projectId: 1, workspaceId: 1 },
+  { id: 7, title: 'Document Team Workflows & Daily Standup Checklists', description: 'Draft agile sprint checklist and onboard documentation for junior engineering members.', status: 'TODO', priority: 'MEDIUM', category: 'Product', assignee: 'Standard Member', assignedToId: 101, dueDate: '2026-09-25', projectId: 1, workspaceId: 1 },
+  { id: 8, title: 'Audit Backend API Latency & JVM Memory Caps', description: 'Inspect Actuator metrics, thread pools, and HikariCP connection health under peak loads.', status: 'COMPLETED', priority: 'URGENT', category: 'Backend', assignee: 'Backend Administrator', assignedToId: 100, dueDate: '2026-09-17', projectId: 3, workspaceId: 1 }
 ];
 
 const INITIAL_DEMO_PROJECTS = [

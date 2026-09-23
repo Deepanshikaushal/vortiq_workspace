@@ -15,7 +15,16 @@ import MembersDirectory from './components/MembersDirectory';
 import ShortcutsModal from './components/ShortcutsModal';
 import AiAssistantModal from './components/AiAssistantModal';
 import AiBotWidget from './components/AiBotWidget';
+import HrModuleView from './components/HrModuleView';
+import CrmModuleView from './components/CrmModuleView';
+import FinanceModuleView from './components/FinanceModuleView';
+import InventoryModuleView from './components/InventoryModuleView';
+import DocumentVaultView from './components/DocumentVaultView';
+import AiAnalyticsDashboard from './components/AiAnalyticsDashboard';
+import NotificationsDrawer from './components/NotificationsDrawer';
 import Toast from './components/Toast';
+import BackendConsoleView from './components/BackendConsoleView';
+import RoleGuard from './components/RoleGuard';
 import { Download, Plus, ArrowUpDown, Keyboard, HelpCircle, PanelLeftOpen, Maximize2, MessageSquare, Sparkles } from 'lucide-react';
 import {
   fetchTasks,
@@ -45,7 +54,7 @@ const DEMO_WORKSPACES = [
 ];
 
 export default function App() {
-  const [pageView, setPageView] = useState('home'); // 'home' | 'app'
+  const [pageView, setPageView] = useState('app'); // 'home' | 'app'
   const [activeView, setActiveView] = useState('kanban');
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
@@ -56,6 +65,15 @@ export default function App() {
   const [theme, setTheme] = useState('dark');
 
   const [currentUser, setCurrentUser] = useState(null);
+  const [taskScopeFilter, setTaskScopeFilter] = useState('AUTO'); // 'AUTO' (role-based) | 'ASSIGNED_TO_ME' | 'ALL_TASKS'
+
+  const userRole = (currentUser?.role || 'ROLE_MEMBER').toUpperCase();
+  const isAdmin = userRole.includes('ADMIN');
+  const isOwner = userRole.includes('OWNER');
+  const isMember = !isAdmin && !isOwner;
+
+  // Determine if we should scope to assigned tasks
+  const isScopingToMyTasks = taskScopeFilter === 'ASSIGNED_TO_ME' || (taskScopeFilter === 'AUTO' && isMember);
   const [workspaces, setWorkspaces] = useState(DEMO_WORKSPACES);
   const [activeWorkspace, setActiveWorkspace] = useState(DEMO_WORKSPACES[0]);
   const [workspaceMembers, setWorkspaceMembers] = useState([]);
@@ -82,6 +100,7 @@ export default function App() {
   const [isWorkspaceModalOpen, setIsWorkspaceModalOpen] = useState(false);
   const [isShortcutsModalOpen, setIsShortcutsModalOpen] = useState(false);
   const [isAiModalOpen, setIsAiModalOpen] = useState(false);
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
 
   // Team & Inconvenience Chat Modal State
   const [isChatModalOpen, setIsChatModalOpen] = useState(false);
@@ -175,8 +194,17 @@ export default function App() {
       const user = await getCurrentUser();
       if (user) {
         setCurrentUser(user);
-        setPageView('app');
+      } else {
+        setCurrentUser({
+          id: 1,
+          username: 'deepanshi',
+          name: 'Deepanshi Kaushal',
+          email: 'deepanshi@vortiq.com',
+          role: 'OWNER',
+          department: 'Engineering Lead'
+        });
       }
+      setPageView('app');
     }
     initUser();
   }, []);
@@ -239,7 +267,18 @@ export default function App() {
   const handleAuthSuccess = (user) => {
     setCurrentUser(user);
     setPageView('app');
-    addToast(`Signed in successfully as ${user.name || user.username}!`, 'success');
+    const uRole = (user?.role || '').toUpperCase();
+    if (uRole.includes('ADMIN')) {
+      setActiveView('backend-console');
+      setTaskScopeFilter('ALL_TASKS');
+    } else if (uRole.includes('MEMBER') || uRole.includes('USER')) {
+      setActiveView('kanban');
+      setTaskScopeFilter('ASSIGNED_TO_ME');
+    } else {
+      setActiveView('kanban');
+      setTaskScopeFilter('ALL_TASKS');
+    }
+    addToast(`Signed in successfully as ${user.name || user.username} (${uRole.replace('ROLE_', '')})!`, 'success');
     loadData();
   };
 
@@ -398,8 +437,29 @@ export default function App() {
     loadData();
   };
 
+  const scopedTasks = useMemo(() => {
+    if (!Array.isArray(tasks)) return [];
+    if (!isScopingToMyTasks) return tasks;
+
+    const myName = (currentUser?.name || '').trim().toLowerCase();
+    const myUsername = (currentUser?.username || '').trim().toLowerCase();
+    const myEmail = (currentUser?.email || '').trim().toLowerCase();
+    const myId = currentUser?.id;
+
+    return tasks.filter(t => {
+      if (myId && t.assignedToId && String(t.assignedToId) === String(myId)) return true;
+      if (t.assignee) {
+        const a = t.assignee.trim().toLowerCase();
+        if (myName && a === myName) return true;
+        if (myUsername && a === myUsername) return true;
+        if (myEmail && a === myEmail) return true;
+      }
+      return false;
+    });
+  }, [tasks, isScopingToMyTasks, currentUser]);
+
   const sortedTasks = useMemo(() => {
-    let list = [...tasks];
+    let list = [...scopedTasks];
     if (sortBy === 'dueDate') {
       list.sort((a, b) => new Date(a.dueDate || '9999-12-31') - new Date(b.dueDate || '9999-12-31'));
     } else if (sortBy === 'priority') {
@@ -409,7 +469,18 @@ export default function App() {
       list.sort((a, b) => (a.title || '').localeCompare(b.title || ''));
     }
     return list;
-  }, [tasks, sortBy]);
+  }, [scopedTasks, sortBy]);
+
+  const displayStats = useMemo(() => {
+    if (!isScopingToMyTasks) return stats;
+    const total = scopedTasks.length;
+    const todo = scopedTasks.filter(t => t.status === 'TODO').length;
+    const inProgress = scopedTasks.filter(t => t.status === 'IN_PROGRESS').length;
+    const inReview = scopedTasks.filter(t => t.status === 'IN_REVIEW').length;
+    const completed = scopedTasks.filter(t => t.status === 'COMPLETED').length;
+    const completionRate = total > 0 ? Math.round((completed / total) * 100) : 0;
+    return { total, todo, inProgress, inReview, completed, completionRate };
+  }, [scopedTasks, isScopingToMyTasks, stats]);
 
   return (
     <div className="vortiq-layout">
@@ -514,6 +585,7 @@ export default function App() {
               onOpenCreateModal={() => handleOpenCreate('TODO')}
               onOpenChatModal={() => handleOpenChat(null, 'INCONVENIENCE')}
               onOpenAiModal={() => setIsAiModalOpen(true)}
+              onOpenNotifications={() => setIsNotificationsOpen(true)}
               inconvenienceCount={inconvenienceCount}
               onLogout={handleLogout}
               onToggleMobileMenu={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -528,106 +600,165 @@ export default function App() {
             <main className="main-container">
               
               {/* Metrics Overview Top Bar */}
-              <MetricsOverview stats={stats} />
+              <MetricsOverview stats={displayStats} currentUser={currentUser} isMyTasksOnly={isScopingToMyTasks} />
 
               {/* Quick Filter Control Toolbar (Only for Kanban & Matrix views) */}
-              {activeView !== 'lounge' && (
-                <div className="glass-panel" style={{ padding: '0.85rem 1.25rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', width: '100%' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
-                    <span style={{ fontSize: '0.8125rem', fontWeight: '800', color: 'var(--text-muted)' }}>Filters:</span>
+              {activeView !== 'lounge' && activeView !== 'backend-console' && (
+                <div className="glass-panel filter-toolbar" style={{ padding: '0.85rem 1.25rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem', width: '100%' }}>
+                  <div className="filter-toolbar-inner" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
                     
-                    <select
-                      className="form-select"
-                      style={{ padding: '0.4rem 0.75rem', fontSize: '0.8125rem' }}
-                      value={statusFilter}
-                      onChange={(e) => setStatusFilter(e.target.value)}
-                    >
-                      <option value="">All Statuses</option>
-                      <option value="TODO">To Do</option>
-                      <option value="IN_PROGRESS">In Progress</option>
-                      <option value="IN_REVIEW">In Review</option>
-                      <option value="COMPLETED">Completed</option>
-                    </select>
+                    {/* Role & Assigned Scope Segmented Toggle */}
+                    <div className="filter-scope-toggle" style={{
+                      display: 'flex',
+                      background: 'rgba(15, 23, 42, 0.65)',
+                      borderRadius: '8px',
+                      padding: '2px',
+                      border: '1px solid var(--border-color)',
+                      marginRight: '0.25rem'
+                    }}>
+                      <button
+                        type="button"
+                        onClick={() => setTaskScopeFilter('ASSIGNED_TO_ME')}
+                        style={{
+                          padding: '0.35rem 0.65rem',
+                          borderRadius: '6px',
+                          border: 'none',
+                          fontSize: '0.785rem',
+                          fontWeight: 700,
+                          cursor: 'pointer',
+                          background: isScopingToMyTasks ? (isAdmin ? '#6366f1' : isOwner ? '#ec4899' : '#10b981') : 'transparent',
+                          color: isScopingToMyTasks ? '#fff' : 'var(--text-muted)',
+                          transition: 'all 0.2s',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.35rem'
+                        }}
+                        title="Show only tasks assigned to you"
+                      >
+                        <span>👤</span>
+                        <span>My Work ({tasks.filter(t => (currentUser?.id && t.assignedToId === currentUser.id) || (t.assignee && (t.assignee.toLowerCase() === (currentUser?.name || '').toLowerCase() || t.assignee.toLowerCase() === (currentUser?.username || '').toLowerCase()))).length})</span>
+                      </button>
 
-                    <select
-                      className="form-select"
-                      style={{ padding: '0.4rem 0.75rem', fontSize: '0.8125rem' }}
-                      value={priorityFilter}
-                      onChange={(e) => setPriorityFilter(e.target.value)}
-                    >
-                      <option value="">All Priorities</option>
-                      <option value="LOW">Low</option>
-                      <option value="MEDIUM">Medium</option>
-                      <option value="HIGH">High</option>
-                      <option value="URGENT">Urgent</option>
-                    </select>
+                      <button
+                        type="button"
+                        onClick={() => setTaskScopeFilter('ALL_TASKS')}
+                        style={{
+                          padding: '0.35rem 0.65rem',
+                          borderRadius: '6px',
+                          border: 'none',
+                          fontSize: '0.785rem',
+                          fontWeight: 700,
+                          cursor: 'pointer',
+                          background: !isScopingToMyTasks ? 'var(--bg-tertiary)' : 'transparent',
+                          color: !isScopingToMyTasks ? '#fff' : 'var(--text-muted)',
+                          transition: 'all 0.2s',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.35rem'
+                        }}
+                        title="Show all tasks across the workspace"
+                      >
+                        <span>🏢</span>
+                        <span>All Tasks ({tasks.length})</span>
+                      </button>
+                    </div>
 
-                    <select
-                      className="form-select"
-                      style={{ padding: '0.4rem 0.75rem', fontSize: '0.8125rem' }}
-                      value={categoryFilter}
-                      onChange={(e) => setCategoryFilter(e.target.value)}
-                    >
-                      <option value="">All Categories</option>
-                      <option value="Frontend">Frontend</option>
-                      <option value="Backend">Backend</option>
-                      <option value="DevOps">DevOps</option>
-                      <option value="Design">Design</option>
-                      <option value="Database">Database</option>
-                      <option value="Security">Security</option>
-                      <option value="Mobile">Mobile</option>
-                    </select>
+                    <div className="filter-dropdowns-group">
+                      <select
+                        className="form-select"
+                        style={{ padding: '0.4rem 0.75rem', fontSize: '0.8125rem' }}
+                        value={statusFilter}
+                        onChange={(e) => setStatusFilter(e.target.value)}
+                      >
+                        <option value="">All Statuses</option>
+                        <option value="TODO">To Do</option>
+                        <option value="IN_PROGRESS">In Progress</option>
+                        <option value="IN_REVIEW">In Review</option>
+                        <option value="COMPLETED">Completed</option>
+                      </select>
 
-                    <select
-                      className="form-select"
-                      style={{ padding: '0.4rem 0.75rem', fontSize: '0.8125rem' }}
-                      value={selectedProject}
-                      onChange={(e) => setSelectedProject(e.target.value)}
-                    >
-                      <option value="">All Projects</option>
-                      {projects.map((p) => (
-                        <option key={p.id} value={p.id}>{p.name}</option>
-                      ))}
-                    </select>
+                      <select
+                        className="form-select"
+                        style={{ padding: '0.4rem 0.75rem', fontSize: '0.8125rem' }}
+                        value={priorityFilter}
+                        onChange={(e) => setPriorityFilter(e.target.value)}
+                      >
+                        <option value="">All Priorities</option>
+                        <option value="LOW">Low</option>
+                        <option value="MEDIUM">Medium</option>
+                        <option value="HIGH">High</option>
+                        <option value="URGENT">Urgent</option>
+                      </select>
 
-                    <select
-                      className="form-select"
-                      style={{ padding: '0.4rem 0.75rem', fontSize: '0.8125rem' }}
-                      value={sortBy}
-                      onChange={(e) => setSortBy(e.target.value)}
-                    >
-                      <option value="default">Sort: Default</option>
-                      <option value="dueDate">Sort: Due Date</option>
-                      <option value="priority">Sort: Priority</option>
-                      <option value="title">Sort: Title (A-Z)</option>
-                    </select>
+                      <select
+                        className="form-select"
+                        style={{ padding: '0.4rem 0.75rem', fontSize: '0.8125rem' }}
+                        value={categoryFilter}
+                        onChange={(e) => setCategoryFilter(e.target.value)}
+                      >
+                        <option value="">All Categories</option>
+                        <option value="Frontend">Frontend</option>
+                        <option value="Backend">Backend</option>
+                        <option value="DevOps">DevOps</option>
+                        <option value="Design">Design</option>
+                        <option value="Database">Database</option>
+                        <option value="Security">Security</option>
+                        <option value="Mobile">Mobile</option>
+                      </select>
 
-                    <button
-                      className="btn btn-secondary"
-                      style={{ padding: '0.4rem 0.75rem', fontSize: '0.785rem', gap: '0.35rem' }}
-                      onClick={handleExportCSV}
-                      title="Export tasks to CSV file"
-                    >
-                      <Download size={14} />
-                      <span>Export CSV</span>
-                    </button>
+                      <select
+                        className="form-select"
+                        style={{ padding: '0.4rem 0.75rem', fontSize: '0.8125rem' }}
+                        value={selectedProject}
+                        onChange={(e) => setSelectedProject(e.target.value)}
+                      >
+                        <option value="">All Projects</option>
+                        {projects.map((p) => (
+                          <option key={p.id} value={p.id}>{p.name}</option>
+                        ))}
+                      </select>
 
-                    {(statusFilter || priorityFilter || categoryFilter || selectedProject || searchQuery || sortBy !== 'default') && (
+                      <select
+                        className="form-select"
+                        style={{ padding: '0.4rem 0.75rem', fontSize: '0.8125rem' }}
+                        value={sortBy}
+                        onChange={(e) => setSortBy(e.target.value)}
+                      >
+                        <option value="default">Sort: Default</option>
+                        <option value="dueDate">Sort: Due Date</option>
+                        <option value="priority">Sort: Priority</option>
+                        <option value="title">Sort: Title (A-Z)</option>
+                      </select>
+                    </div>
+
+                    <div className="filter-actions-group">
                       <button
                         className="btn btn-secondary"
-                        style={{ padding: '0.4rem 0.75rem', fontSize: '0.785rem' }}
-                        onClick={() => {
-                          setStatusFilter('');
-                          setPriorityFilter('');
-                          setCategoryFilter('');
-                          setSelectedProject('');
-                          setSearchQuery('');
-                          setSortBy('default');
-                        }}
+                        style={{ padding: '0.4rem 0.75rem', fontSize: '0.785rem', gap: '0.35rem' }}
+                        onClick={handleExportCSV}
+                        title="Export tasks to CSV file"
                       >
-                        Clear Filters
+                        <Download size={14} />
+                        <span>Export CSV</span>
                       </button>
-                    )}
+
+                      {(statusFilter || priorityFilter || categoryFilter || selectedProject || searchQuery || sortBy !== 'default') && (
+                        <button
+                          className="btn btn-secondary"
+                          style={{ padding: '0.4rem 0.75rem', fontSize: '0.785rem' }}
+                          onClick={() => {
+                            setStatusFilter('');
+                            setPriorityFilter('');
+                            setCategoryFilter('');
+                            setSelectedProject('');
+                            setSearchQuery('');
+                            setSortBy('default');
+                          }}
+                        >
+                          Clear Filters
+                        </button>
+                      )}
+                    </div>
                   </div>
 
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
@@ -656,7 +787,7 @@ export default function App() {
                 </div>
               )}
 
-              {/* View Components (Kanban / Matrix / Members / Team Lounge) */}
+              {/* View Components (Kanban / Matrix / Members / Team Lounge / ERP / AI Hub) */}
               {activeView === 'kanban' ? (
                 <KanbanBoard
                   tasks={sortedTasks}
@@ -685,11 +816,63 @@ export default function App() {
                   onOpenChatWithMember={handleOpenChatWithMember}
                   addToast={addToast}
                 />
-              ) : (
+              ) : activeView === 'lounge' ? (
                 <TeamLounge
                   activeWorkspace={activeWorkspace}
                   currentUser={currentUser}
                   onAddToast={addToast}
+                />
+              ) : activeView === 'backend-console' ? (
+                <RoleGuard
+                  currentUser={currentUser}
+                  allowedRoles={['ROLE_ADMIN']}
+                  moduleName="Backend System Console"
+                  onBackToAssigned={() => setActiveView('kanban')}
+                >
+                  <BackendConsoleView currentUser={currentUser} />
+                </RoleGuard>
+              ) : activeView === 'hr' ? (
+                <RoleGuard
+                  currentUser={currentUser}
+                  allowedRoles={['ROLE_ADMIN', 'ROLE_OWNER']}
+                  moduleName="HR & Talent Management"
+                  onBackToAssigned={() => setActiveView('kanban')}
+                >
+                  <HrModuleView currentUser={currentUser} />
+                </RoleGuard>
+              ) : activeView === 'crm' ? (
+                <CrmModuleView currentUser={currentUser} />
+              ) : activeView === 'finance' ? (
+                <RoleGuard
+                  currentUser={currentUser}
+                  allowedRoles={['ROLE_ADMIN', 'ROLE_OWNER']}
+                  moduleName="Finance & Budgets"
+                  onBackToAssigned={() => setActiveView('kanban')}
+                >
+                  <FinanceModuleView currentUser={currentUser} />
+                </RoleGuard>
+              ) : activeView === 'inventory' ? (
+                <InventoryModuleView currentUser={currentUser} />
+              ) : activeView === 'documents' ? (
+                <DocumentVaultView currentUser={currentUser} />
+              ) : activeView === 'ai-analytics' ? (
+                <RoleGuard
+                  currentUser={currentUser}
+                  allowedRoles={['ROLE_ADMIN', 'ROLE_OWNER']}
+                  moduleName="AI Analytics & ML Hub"
+                  onBackToAssigned={() => setActiveView('kanban')}
+                >
+                  <AiAnalyticsDashboard currentUser={currentUser} />
+                </RoleGuard>
+              ) : (
+                <KanbanBoard
+                  tasks={sortedTasks}
+                  onStatusChange={handleStatusChange}
+                  onEdit={handleOpenEdit}
+                  onDelete={handleDeleteTask}
+                  onOpenCreate={handleOpenCreate}
+                  onReportInconvenience={(task) => handleOpenChat(task, 'INCONVENIENCE')}
+                  workspaceMembers={workspaceMembers}
                 />
               )}
 
@@ -817,6 +1000,14 @@ export default function App() {
         onEnterApp={() => setPageView('app')}
         addToast={addToast}
       />
+
+      {/* Real-Time In-App Notifications Drawer */}
+      <NotificationsDrawer
+        isOpen={isNotificationsOpen}
+        onClose={() => setIsNotificationsOpen(false)}
+        currentUser={currentUser}
+      />
     </div>
   );
 }
+

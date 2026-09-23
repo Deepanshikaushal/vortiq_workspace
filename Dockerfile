@@ -21,4 +21,4 @@ WORKDIR /app
 ENV PORT=8080
 COPY --from=backend-builder /app/backend/target/vortiq-backend-0.0.1-SNAPSHOT.jar app.jar
 EXPOSE 8080
-ENTRYPOINT ["java", "-XX:+UseContainerSupport", "-XX:MaxRAMPercentage=75.0", "-Xss512k", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-XX:+UseContainerSupport", "-XX:MaxRAMPercentage=75.0", "-XX:+ExitOnOutOfMemoryError", "-Xss512k", "-Djava.security.egd=file:/dev/./urandom", "-jar", "app.jar"]

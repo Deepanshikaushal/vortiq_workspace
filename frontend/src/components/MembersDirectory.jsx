@@ -436,9 +436,10 @@ export default function MembersDirectory({
         
         /* GRID CARDS VIEW */
         <div
+          className="members-grid-container"
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(310px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
             gap: '1.15rem'
           }}
         >

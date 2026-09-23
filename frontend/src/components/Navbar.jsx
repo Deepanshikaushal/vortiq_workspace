@@ -26,7 +26,8 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   MessageSquare,
-  AlertTriangle
+  AlertTriangle,
+  Bell
 } from 'lucide-react';
 import ApiStatusBadge from './ApiStatusBadge';
 import VortiqLogo from './VortiqLogo';
@@ -50,6 +51,8 @@ export default function Navbar({
   onOpenCreateModal,
   onOpenChatModal,
   onOpenAiModal,
+  onOpenNotifications,
+  unreadNotifsCount = 2,
   inconvenienceCount = 0,
   onLogout,
   onToggleMobileMenu,
@@ -103,11 +106,11 @@ export default function Navbar({
   }, []);
 
   return (
-    <header className="glass-panel" style={{ borderRadius: '0', borderLeft: 'none', borderRight: 'none', borderTop: 'none', position: 'sticky', top: 0, zIndex: 50 }}>
-      <div style={{ padding: '0.6rem 1.25rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', flexWrap: 'wrap' }}>
+    <header className="glass-panel navbar-header" style={{ borderRadius: '0', borderLeft: 'none', borderRight: 'none', borderTop: 'none', position: 'sticky', top: 0, zIndex: 50 }}>
+      <div className="navbar-inner">
         
         {/* Left Side: Hamburger / Sidebar Toggle & Logo */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+        <div className="navbar-left">
           
           {/* Mobile Menu Button */}
           <button
@@ -232,7 +235,7 @@ export default function Navbar({
         </div>
 
         {/* Center: Search Bar */}
-        <div style={{ flex: '1 1 180px', minWidth: '150px', maxWidth: '420px', position: 'relative' }}>
+        <div className="navbar-search" style={{ position: 'relative' }}>
           <Search size={15} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
           <input
             type="text"
@@ -257,7 +260,7 @@ export default function Navbar({
         </div>
 
         {/* Right Tools: Fullscreen, Create, Views, Theme, User */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexWrap: 'nowrap' }}>
+        <div className="navbar-tools">
           
           {/* Team Messaging & Inconvenience Channel Button */}
           {onOpenChatModal && (
@@ -332,7 +335,7 @@ export default function Navbar({
           )}
 
           {/* View Mode Toggle */}
-          <div className="view-tabs" style={{ padding: '0.2rem' }}>
+          <div className="view-tabs desktop-only" style={{ padding: '0.2rem' }}>
             <button
               className={`tab-btn ${activeView === 'kanban' ? 'active' : ''}`}
               onClick={() => setActiveView('kanban')}
@@ -370,6 +373,38 @@ export default function Navbar({
               <span className="desktop-only">Opinions</span>
             </button>
           </div>
+
+          {/* Notification Alert Trigger */}
+          {onOpenNotifications && (
+            <button
+              className="btn btn-secondary btn-icon"
+              onClick={onOpenNotifications}
+              title="Workspace Notifications"
+              style={{ position: 'relative', padding: '0.45rem', minHeight: '36px', minWidth: '36px' }}
+            >
+              <Bell size={16} style={{ color: '#c084fc' }} />
+              {unreadNotifsCount > 0 && (
+                <span style={{
+                  position: 'absolute',
+                  top: '-4px',
+                  right: '-4px',
+                  width: '18px',
+                  height: '18px',
+                  borderRadius: '50%',
+                  background: '#ef4444',
+                  color: '#fff',
+                  fontSize: '0.65rem',
+                  fontWeight: 900,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxShadow: '0 0 6px rgba(239, 68, 68, 0.6)'
+                }}>
+                  {unreadNotifsCount}
+                </span>
+              )}
+            </button>
+          )}
 
           {/* Full Screen Toggle Button */}
           <button
@@ -484,68 +519,128 @@ export default function Navbar({
 
           {/* User Account / Profile Menu */}
           {currentUser ? (
-            <div style={{ position: 'relative' }} ref={userMenuRef}>
-              <button
-                onClick={() => setUserMenuOpen(!userMenuOpen)}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              
+              {/* Prominent Role Badge */}
+              <div
+                className="desktop-only"
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '0.5rem',
-                  padding: '0.2rem 0.65rem 0.2rem 0.3rem',
-                  borderRadius: '24px',
-                  background: 'var(--bg-secondary)',
-                  border: '1px solid var(--border-purple)',
-                  color: 'var(--text-main)',
-                  cursor: 'pointer',
-                  height: '36px'
+                  gap: '0.35rem',
+                  padding: '0.25rem 0.65rem',
+                  borderRadius: '20px',
+                  background: (currentUser?.role || '').toUpperCase().includes('ADMIN')
+                    ? 'rgba(99, 102, 241, 0.18)'
+                    : (currentUser?.role || '').toUpperCase().includes('OWNER')
+                    ? 'rgba(236, 72, 153, 0.18)'
+                    : 'rgba(16, 185, 129, 0.18)',
+                  border: (currentUser?.role || '').toUpperCase().includes('ADMIN')
+                    ? '1px solid rgba(99, 102, 241, 0.45)'
+                    : (currentUser?.role || '').toUpperCase().includes('OWNER')
+                    ? '1px solid rgba(236, 72, 153, 0.45)'
+                    : '1px solid rgba(16, 185, 129, 0.45)',
+                  color: (currentUser?.role || '').toUpperCase().includes('ADMIN')
+                    ? '#a5b4fc'
+                    : (currentUser?.role || '').toUpperCase().includes('OWNER')
+                    ? '#f472b6'
+                    : '#6ee7b7',
+                  fontSize: '0.725rem',
+                  fontWeight: 800,
+                  letterSpacing: '0.04em',
+                  textTransform: 'uppercase',
+                  height: '32px'
                 }}
               >
-                {currentUser.avatarUrl ? (
-                  <img
-                    src={currentUser.avatarUrl}
-                    alt={currentUser.name || currentUser.username}
-                    style={{ width: '28px', height: '28px', borderRadius: '50%', objectFit: 'cover' }}
-                  />
-                ) : (
-                  <div style={{
-                    width: '26px',
-                    height: '26px',
-                    borderRadius: '50%',
-                    background: 'linear-gradient(135deg, #334155, #1e293b)',
-                    border: '1px solid var(--border-color)',
+                <span>{(currentUser?.role || '').toUpperCase().includes('ADMIN') ? '⚡' : (currentUser?.role || '').toUpperCase().includes('OWNER') ? '👑' : '👤'}</span>
+                <span>{(currentUser?.role || '').toUpperCase().includes('ADMIN') ? 'Backend Admin' : (currentUser?.role || '').toUpperCase().includes('OWNER') ? 'Owner' : 'Member'}</span>
+              </div>
+
+              <div style={{ position: 'relative' }} ref={userMenuRef}>
+                <button
+                  onClick={() => setUserMenuOpen(!userMenuOpen)}
+                  style={{
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'center',
-                    fontWeight: 'bold',
-                    fontSize: '0.75rem',
-                    color: '#f8fafc'
-                  }}>
-                    {(currentUser.name || currentUser.username || currentUser.email || 'U').charAt(0).toUpperCase()}
-                  </div>
-                )}
-                <span className="desktop-only" style={{ fontSize: '0.825rem', fontWeight: 700, maxWidth: '100px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  {currentUser.name || currentUser.username}
-                </span>
-              </button>
+                    gap: '0.5rem',
+                    padding: '0.2rem 0.65rem 0.2rem 0.3rem',
+                    borderRadius: '24px',
+                    background: 'var(--bg-secondary)',
+                    border: '1px solid var(--border-purple)',
+                    color: 'var(--text-main)',
+                    cursor: 'pointer',
+                    height: '36px'
+                  }}
+                >
+                  {currentUser.avatarUrl ? (
+                    <img
+                      src={currentUser.avatarUrl}
+                      alt={currentUser.name || currentUser.username}
+                      style={{ width: '28px', height: '28px', borderRadius: '50%', objectFit: 'cover' }}
+                    />
+                  ) : (
+                    <div style={{
+                      width: '26px',
+                      height: '26px',
+                      borderRadius: '50%',
+                      background: 'linear-gradient(135deg, #334155, #1e293b)',
+                      border: '1px solid var(--border-color)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontWeight: 'bold',
+                      fontSize: '0.75rem',
+                      color: '#f8fafc'
+                    }}>
+                      {(currentUser.name || currentUser.username || currentUser.email || 'U').charAt(0).toUpperCase()}
+                    </div>
+                  )}
+                  <span className="desktop-only" style={{ fontSize: '0.825rem', fontWeight: 700, maxWidth: '100px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {currentUser.name || currentUser.username}
+                  </span>
+                </button>
 
-              {userMenuOpen && (
-                <div style={{
-                  position: 'absolute',
-                  right: 0,
-                  top: '120%',
-                  width: '220px',
-                  background: 'var(--bg-glass)',
-                  backdropFilter: 'blur(24px)',
-                  border: '1px solid var(--border-purple)',
-                  borderRadius: '14px',
-                  boxShadow: '0 15px 35px rgba(0,0,0,0.5), 0 0 25px rgba(168, 85, 247, 0.25)',
-                  padding: '0.55rem',
-                  zIndex: 100
-                }}>
-                  <div style={{ padding: '0.5rem 0.75rem', borderBottom: '1px solid var(--border-color)', marginBottom: '0.35rem' }}>
-                    <div style={{ fontSize: '0.88rem', fontWeight: 700 }}>{currentUser.name || currentUser.username}</div>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis' }}>{currentUser.email}</div>
-                  </div>
+                {userMenuOpen && (
+                  <div style={{
+                    position: 'absolute',
+                    right: 0,
+                    top: '120%',
+                    width: '240px',
+                    background: 'var(--bg-glass)',
+                    backdropFilter: 'blur(24px)',
+                    border: '1px solid var(--border-purple)',
+                    borderRadius: '14px',
+                    boxShadow: '0 15px 35px rgba(0,0,0,0.5), 0 0 25px rgba(168, 85, 247, 0.25)',
+                    padding: '0.55rem',
+                    zIndex: 100
+                  }}>
+                    <div style={{ padding: '0.5rem 0.75rem', borderBottom: '1px solid var(--border-color)', marginBottom: '0.35rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', marginBottom: '0.2rem' }}>
+                        <div style={{ fontSize: '0.88rem', fontWeight: 700 }}>{currentUser.name || currentUser.username}</div>
+                        <span style={{
+                          padding: '0.1rem 0.45rem',
+                          borderRadius: '4px',
+                          fontSize: '0.65rem',
+                          fontWeight: 800,
+                          background: (currentUser?.role || '').toUpperCase().includes('ADMIN')
+                            ? 'rgba(99, 102, 241, 0.25)'
+                            : (currentUser?.role || '').toUpperCase().includes('OWNER')
+                            ? 'rgba(236, 72, 153, 0.25)'
+                            : 'rgba(16, 185, 129, 0.25)',
+                          color: (currentUser?.role || '').toUpperCase().includes('ADMIN')
+                            ? '#a5b4fc'
+                            : (currentUser?.role || '').toUpperCase().includes('OWNER')
+                            ? '#f472b6'
+                            : '#6ee7b7'
+                        }}>
+                          {(currentUser?.role || '').toUpperCase().includes('ADMIN') ? 'ADMIN' : (currentUser?.role || '').toUpperCase().includes('OWNER') ? 'OWNER' : 'MEMBER'}
+                        </span>
+                      </div>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis' }}>{currentUser.email}</div>
+                      {currentUser.department && (
+                        <div style={{ fontSize: '0.7rem', color: 'var(--text-dim)', marginTop: '0.2rem' }}>{currentUser.department}</div>
+                      )}
+                    </div>
 
                   <button
                     onClick={() => { setUserMenuOpen(false); onOpenProfileModal(); }}
@@ -575,6 +670,7 @@ export default function Navbar({
                 </div>
               )}
             </div>
+            </div>
           ) : (
             <button className="btn btn-gradient" onClick={onOpenAuthModal} style={{ padding: '0.4rem 1rem', fontSize: '0.85rem', height: '36px' }}>
               <LogIn size={15} /> Sign In
@@ -584,6 +680,46 @@ export default function Navbar({
         </div>
 
       </div>
+
+      {/* Mobile Dedicated View Switcher Bar */}
+      {(activeView === 'kanban' || activeView === 'table' || activeView === 'members' || activeView === 'lounge') && (
+        <div className="mobile-only" style={{ padding: '0 0.75rem 0.5rem', width: '100%' }}>
+          <div className="view-tabs" style={{ width: '100%', display: 'flex', gap: '0.25rem', padding: '0.2rem' }}>
+            <button
+              className={`tab-btn ${activeView === 'kanban' ? 'active' : ''}`}
+              onClick={() => setActiveView('kanban')}
+              style={{ flex: 1, justifyContent: 'center', padding: '0.45rem 0.2rem', fontSize: '0.785rem' }}
+            >
+              <Kanban size={14} />
+              <span>Kanban</span>
+            </button>
+            <button
+              className={`tab-btn ${activeView === 'table' ? 'active' : ''}`}
+              onClick={() => setActiveView('table')}
+              style={{ flex: 1, justifyContent: 'center', padding: '0.45rem 0.2rem', fontSize: '0.785rem' }}
+            >
+              <Table size={14} />
+              <span>Matrix</span>
+            </button>
+            <button
+              className={`tab-btn ${activeView === 'members' ? 'active' : ''}`}
+              onClick={() => setActiveView('members')}
+              style={{ flex: 1, justifyContent: 'center', padding: '0.45rem 0.2rem', fontSize: '0.785rem' }}
+            >
+              <Users size={14} />
+              <span>Team</span>
+            </button>
+            <button
+              className={`tab-btn ${activeView === 'lounge' ? 'active' : ''}`}
+              onClick={() => setActiveView('lounge')}
+              style={{ flex: 1, justifyContent: 'center', padding: '0.45rem 0.2rem', fontSize: '0.785rem' }}
+            >
+              <MessageSquare size={14} />
+              <span>Lounge</span>
+            </button>
+          </div>
+        </div>
+      )}
     </header>
   );
 }

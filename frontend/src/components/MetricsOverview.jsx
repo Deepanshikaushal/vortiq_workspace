@@ -1,30 +1,32 @@
 import React from 'react';
 import { CheckCircle2, Clock, AlertCircle, Layers, Sparkles, Activity } from 'lucide-react';
 
-export default function MetricsOverview({ stats }) {
+export default function MetricsOverview({ stats, currentUser, isMyTasksOnly = false }) {
   const { total = 0, todo = 0, inProgress = 0, inReview = 0, completed = 0, completionRate = 0 } = stats || {};
+
+  const isMember = (currentUser?.role || '').toUpperCase().includes('MEMBER') || isMyTasksOnly;
 
   const cards = [
     {
-      title: 'Total Backlog',
+      title: isMember ? 'My Assigned Tasks' : 'Total Backlog',
       value: total,
-      sub: `${todo} pending tasks`,
+      sub: isMember ? `${todo} pending for me` : `${todo} pending tasks`,
       icon: Layers,
       color: '#cbd5e1',
       borderGlow: 'rgba(148, 163, 184, 0.2)',
       bgGlow: 'rgba(100, 116, 139, 0.15)'
     },
     {
-      title: 'In Progress',
+      title: isMember ? 'My In Progress' : 'In Progress',
       value: inProgress,
-      sub: `${inReview} in review`,
+      sub: isMember ? `${inReview} in review` : `${inReview} team review`,
       icon: Activity,
       color: '#93c5fd',
       borderGlow: 'rgba(99, 102, 241, 0.2)',
       bgGlow: 'rgba(99, 102, 241, 0.12)'
     },
     {
-      title: 'Completed',
+      title: isMember ? 'My Completed' : 'Completed',
       value: completed,
       sub: `${completionRate}% velocity score`,
       icon: CheckCircle2,
@@ -33,9 +35,9 @@ export default function MetricsOverview({ stats }) {
       bgGlow: 'rgba(16, 185, 129, 0.12)'
     },
     {
-      title: 'Action Needed',
+      title: isMember ? 'My Action Needed' : 'Action Needed',
       value: inReview + todo,
-      sub: 'Tasks requiring focus',
+      sub: isMember ? 'Assigned tasks to tackle' : 'Tasks requiring focus',
       icon: AlertCircle,
       color: '#fde68a',
       borderGlow: 'rgba(245, 158, 11, 0.2)',

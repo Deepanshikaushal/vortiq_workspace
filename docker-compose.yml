@@ -1,41 +1,91 @@
 version: '3.8'
 
 services:
-  postgres:
+  # 1. PostgreSQL Database
+  vortiq-db:
     image: postgres:16-alpine
     container_name: vortiq-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: vortiqdb
+      POSTGRES_USER: vortiq_user
+      POSTGRES_PASSWORD: vortiq_secure_password_2026
     ports:
       - "5432:5432"
-    environment:
-      - POSTGRES_DB=vortiqdb
-      - POSTGRES_USER=vortiq
-      - POSTGRES_PASSWORD=vortiqpass
     volumes:
-      - postgres-data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - vortiq-net
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U vortiq -d vortiqdb"]
-      interval: 10s
+      test: ["CMD-SHELL", "pg_isready -U vortiq_user -d vortiqdb"]
+      interval: 5s
       timeout: 5s
       retries: 5
-    restart: unless-stopped
 
-  vortiq-app:
+  # 2. Redis Caching & PubSub Broker
+  vortiq-cache:
+    image: redis:7-alpine
+    container_name: vortiq-redis
+    restart: always
+    ports:
+      - "6379:6379"
+    networks:
+      - vortiq-net
+
+  # 3. Python AI/ML Microservice (FastAPI)
+  vortiq-ai:
     build:
-      context: .
+      context: ./ai-service
       dockerfile: Dockerfile
-    container_name: vortiq-production
+    container_name: vortiq-ai-service
+    restart: always
+    ports:
+      - "8000:8000"
+    networks:
+      - vortiq-net
+
+  # 4. Spring Boot 3 Backend Core
+  vortiq-backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: vortiq-backend
+    restart: always
     ports:
       - "8080:8080"
-    environment:
-      - PORT=8080
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/vortiqdb
-      - SPRING_DATASOURCE_USERNAME=vortiq
-      - SPRING_DATASOURCE_PASSWORD=vortiqpass
-      - ALLOWED_ORIGINS=*
     depends_on:
-      postgres:
+      vortiq-db:
         condition: service_healthy
-    restart: unless-stopped
+      vortiq-cache:
+        condition: service_started
+      vortiq-ai:
+        condition: service_started
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://vortiq-db:5432/vortiqdb
+      SPRING_DATASOURCE_USERNAME: vortiq_user
+      SPRING_DATASOURCE_PASSWORD: vortiq_secure_password_2026
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      AI_SERVICE_URL: http://vortiq-ai:8000
+    networks:
+      - vortiq-net
+
+  # 5. React 18 Frontend UI (Nginx)
+  vortiq-frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: vortiq-frontend
+    restart: always
+    ports:
+      - "3000:80"
+    depends_on:
+      - vortiq-backend
+    networks:
+      - vortiq-net
+
+networks:
+  vortiq-net:
+    driver: bridge
 
 volumes:
-  postgres-data:
+  postgres_data:

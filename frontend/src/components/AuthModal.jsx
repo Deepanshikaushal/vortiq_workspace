@@ -448,10 +448,102 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess, initialMode 
                 </div>
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
-                <span style={{ fontSize: '0.8rem', color: 'var(--text-dim)' }}>
-                  Demo: any password or registered credentials
-                </span>
+              {/* Quick Select Account Badges */}
+              <div style={{ marginBottom: '1.25rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                    Quick Login Accounts
+                  </span>
+                  <span style={{ fontSize: '0.72rem', color: 'var(--primary-glow)' }}>
+                    Click to auto-fill
+                  </span>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEmail('admin@vortiq.com');
+                      setPassword('admin123');
+                    }}
+                    style={{
+                      background: email === 'admin@vortiq.com' ? 'rgba(99, 102, 241, 0.2)' : 'var(--bg-tertiary, rgba(255,255,255,0.05))',
+                      border: email === 'admin@vortiq.com' ? '1px solid #6366f1' : '1px solid var(--border-color)',
+                      borderRadius: '8px',
+                      padding: '0.5rem 0.65rem',
+                      textAlign: 'left',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.5rem',
+                      transition: 'all 0.2s'
+                    }}
+                  >
+                    <div style={{ width: '28px', height: '28px', borderRadius: '6px', background: 'linear-gradient(135deg, #6366f1, #4f46e5)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '0.8rem', fontWeight: 700, flexShrink: 0 }}>
+                      ⚡
+                    </div>
+                    <div style={{ overflow: 'hidden' }}>
+                      <div style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--text-primary)', whiteSpace: 'nowrap' }}>Backend Admin</div>
+                      <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)', textOverflow: 'ellipsis', overflow: 'hidden' }}>admin@vortiq.com</div>
+                    </div>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEmail('user@vortiq.com');
+                      setPassword('user123');
+                    }}
+                    style={{
+                      background: email === 'user@vortiq.com' ? 'rgba(16, 185, 129, 0.2)' : 'var(--bg-tertiary, rgba(255,255,255,0.05))',
+                      border: email === 'user@vortiq.com' ? '1px solid #10b981' : '1px solid var(--border-color)',
+                      borderRadius: '8px',
+                      padding: '0.5rem 0.65rem',
+                      textAlign: 'left',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.5rem',
+                      transition: 'all 0.2s'
+                    }}
+                  >
+                    <div style={{ width: '28px', height: '28px', borderRadius: '6px', background: 'linear-gradient(135deg, #10b981, #059669)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '0.8rem', fontWeight: 700, flexShrink: 0 }}>
+                      👤
+                    </div>
+                    <div style={{ overflow: 'hidden' }}>
+                      <div style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--text-primary)', whiteSpace: 'nowrap' }}>Standard User</div>
+                      <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)', textOverflow: 'ellipsis', overflow: 'hidden' }}>user@vortiq.com</div>
+                    </div>
+                  </button>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEmail('deepanshi@vortiq.com');
+                    setPassword('Password123!');
+                  }}
+                  style={{
+                    width: '100%',
+                    background: email === 'deepanshi@vortiq.com' ? 'rgba(236, 72, 153, 0.2)' : 'var(--bg-tertiary, rgba(255,255,255,0.03))',
+                    border: email === 'deepanshi@vortiq.com' ? '1px solid #ec4899' : '1px solid var(--border-color)',
+                    borderRadius: '8px',
+                    padding: '0.4rem 0.65rem',
+                    textAlign: 'left',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  <div style={{ width: '24px', height: '24px', borderRadius: '6px', background: 'linear-gradient(135deg, #ec4899, #8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '0.75rem', fontWeight: 700, flexShrink: 0 }}>
+                    👑
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
+                    <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-primary)' }}>Workspace Owner (Deepanshi Kaushal)</div>
+                    <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>deepanshi@vortiq.com</div>
+                  </div>
+                </button>
               </div>
 
               <button type="submit" className="btn btn-primary" style={{ width: '100%', padding: '0.75rem' }} disabled={loading}>

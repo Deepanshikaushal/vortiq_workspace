@@ -51,4 +51,24 @@ public class AiController {
         Map<String, Object> result = aiService.generateInsights(tasks);
         return ResponseEntity.ok(result);
     }
+
+    @PostMapping("/predict-priority")
+    public ResponseEntity<Map<String, Object>> predictPriority(@RequestBody Map<String, Object> req) {
+        Double daysLeft = req.get("daysLeft") != null ? Double.parseDouble(req.get("daysLeft").toString()) : 5.0;
+        Integer complexity = req.get("complexity") != null ? Integer.parseInt(req.get("complexity").toString()) : 3;
+        Integer dependencyCount = req.get("dependencyCount") != null ? Integer.parseInt(req.get("dependencyCount").toString()) : 0;
+        Integer assigneeLoad = req.get("assigneeLoad") != null ? Integer.parseInt(req.get("assigneeLoad").toString()) : 3;
+        return ResponseEntity.ok(aiService.predictTaskPriority(daysLeft, complexity, dependencyCount, assigneeLoad));
+    }
+
+    @PostMapping("/predict-risk")
+    public ResponseEntity<Map<String, Object>> predictRisk(@RequestBody Map<String, Object> req) {
+        Integer totalTasks = req.get("totalTasks") != null ? Integer.parseInt(req.get("totalTasks").toString()) : 1;
+        Integer completedTasks = req.get("completedTasks") != null ? Integer.parseInt(req.get("completedTasks").toString()) : 0;
+        Integer blockedTasks = req.get("blockedTasks") != null ? Integer.parseInt(req.get("blockedTasks").toString()) : 0;
+        Integer overdueTasks = req.get("overdueTasks") != null ? Integer.parseInt(req.get("overdueTasks").toString()) : 0;
+        Integer daysToDeadline = req.get("daysToDeadline") != null ? Integer.parseInt(req.get("daysToDeadline").toString()) : 14;
+        return ResponseEntity.ok(aiService.predictProjectRisk(totalTasks, completedTasks, blockedTasks, overdueTasks, daysToDeadline));
+    }
 }
+

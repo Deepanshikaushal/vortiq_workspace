@@ -217,7 +217,7 @@ public class AiService {
         if (tasks != null) {
             for (Map<String, Object> t : tasks) {
                 String status = String.valueOf(t.get("status"));
-                if ("COMPLETED".equalsIgnoreCase(status)) completed++;
+                if ("COMPLETED".equalsIgnoreCase(status) || "DONE".equalsIgnoreCase(status)) completed++;
                 else if ("IN_PROGRESS".equalsIgnoreCase(status)) inProgress++;
                 else if ("IN_REVIEW".equalsIgnoreCase(status)) inReview++;
                 else todo++;
@@ -236,5 +236,80 @@ public class AiService {
         map.put("velocity", total > 0 ? String.format("%.1f tasks/sprint", Math.max(3.5, completed * 1.5)) : "4.8 tasks/sprint");
         map.put("recommendation", inReview > 2 ? "Clear pending pull requests in Review to unblock QA velocity." : "High velocity maintained! Keep breaking large user stories into sub-tasks.");
         return map;
+    }
+
+    public Map<String, Object> predictTaskPriority(Double daysLeft, Integer complexity, Integer dependencyCount, Integer assigneeLoad) {
+        Map<String, Object> result = new HashMap<>();
+        double cDays = daysLeft != null ? Math.max(0.1, daysLeft) : 5.0;
+        int comp = complexity != null ? complexity : 3;
+        int dep = dependencyCount != null ? dependencyCount : 0;
+        int load = assigneeLoad != null ? assigneeLoad : 3;
+
+        double urgencyFactor = cDays <= 30 ? (30.0 / cDays) : 1.0;
+        double rawScore = 45.0 + (urgencyFactor * 2.5) + (comp * 14.5) + (dep * 12.0) + (load * 4.8);
+        int score = (int) Math.max(1, Math.min(100, Math.round(rawScore)));
+
+        String category;
+        String recommendation;
+        if (score >= 80) {
+            category = "URGENT";
+            recommendation = "Immediate attention required. High complexity and tight deadline proximity.";
+        } else if (score >= 60) {
+            category = "HIGH";
+            recommendation = "High priority sprint item. Ensure dependencies are resolved early.";
+        } else if (score >= 35) {
+            category = "MEDIUM";
+            recommendation = "Normal priority task. Progress steadily according to sprint milestone.";
+        } else {
+            category = "LOW";
+            recommendation = "Low urgency. Can be scheduled for buffer cycles.";
+        }
+
+        result.put("priorityScore", score);
+        result.put("recommendedCategory", category);
+        result.put("recommendation", recommendation);
+        return result;
+    }
+
+    public Map<String, Object> predictProjectRisk(Integer totalTasks, Integer completedTasks, Integer blockedTasks, Integer overdueTasks, Integer daysToDeadline) {
+        Map<String, Object> result = new HashMap<>();
+        int total = totalTasks != null ? totalTasks : 1;
+        int comp = completedTasks != null ? completedTasks : 0;
+        int blocked = blockedTasks != null ? blockedTasks : 0;
+        int overdue = overdueTasks != null ? overdueTasks : 0;
+        int days = daysToDeadline != null ? daysToDeadline : 14;
+
+        double completionRate = ((double) comp / total) * 100.0;
+        double blockedRate = ((double) blocked / total) * 100.0;
+        double overdueRate = ((double) overdue / total) * 100.0;
+
+        double riskScore = 15.0;
+        List<String> riskFactors = new ArrayList<>();
+
+        if (overdueRate > 20.0) {
+            riskScore += overdueRate * 1.2;
+            riskFactors.add(overdue + " tasks (" + (int) overdueRate + "%) are past due date.");
+        }
+        if (blockedRate > 15.0) {
+            riskScore += blockedRate * 1.5;
+            riskFactors.add(blocked + " tasks (" + (int) blockedRate + "%) are currently blocked by dependencies.");
+        }
+        if (days <= 7 && completionRate < 70.0) {
+            riskScore += (70.0 - completionRate) * 0.8;
+            riskFactors.add("Only " + (int) completionRate + "% complete with " + days + " days remaining.");
+        }
+
+        double riskPercentage = Math.round(Math.max(5.0, Math.min(99.0, riskScore)) * 10.0) / 10.0;
+        String level = riskPercentage >= 70.0 ? "HIGH" : (riskPercentage >= 40.0 ? "MEDIUM" : "LOW");
+        if (riskFactors.isEmpty()) {
+            riskFactors.add("Project trajectory is healthy and on schedule.");
+        }
+
+        result.put("riskPercentage", riskPercentage);
+        result.put("riskLevel", level);
+        result.put("completionRate", Math.round(completionRate * 10.0) / 10.0);
+        result.put("riskFactors", riskFactors);
+        result.put("suggestedAction", "HIGH".equals(level) ? "Redistribute blocked tasks and adjust milestone scope" : "Maintain current sprint velocity");
+        return result;
     }
 }

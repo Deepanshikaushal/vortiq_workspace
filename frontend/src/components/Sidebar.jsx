@@ -18,7 +18,8 @@ import {
   FolderPlus,
   Check,
   MessageSquare,
-  AlertTriangle
+  AlertTriangle,
+  Server
 } from 'lucide-react';
 import VortiqLogo from './VortiqLogo';
 
@@ -49,6 +50,11 @@ export default function Sidebar({
 }) {
   const [isAddingProject, setIsAddingProject] = useState(false);
   const [newProjectName, setNewProjectName] = useState('');
+
+  const userRole = (currentUser?.role || 'ROLE_MEMBER').toUpperCase();
+  const isAdmin = userRole.includes('ADMIN');
+  const isOwner = userRole.includes('OWNER');
+  const isMember = !isAdmin && !isOwner;
 
   const handleCreateProjectSubmit = (e) => {
     e.preventDefault();
@@ -124,6 +130,57 @@ export default function Sidebar({
             >
               <X size={20} />
             </button>
+          </div>
+        </div>
+
+        {/* Role Identity Badge */}
+        <div style={{
+          padding: '0.6rem 0.75rem',
+          borderRadius: '10px',
+          marginBottom: '1rem',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.6rem',
+          background: isAdmin
+            ? 'linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(147, 51, 234, 0.12))'
+            : isOwner
+            ? 'linear-gradient(135deg, rgba(236, 72, 153, 0.2), rgba(168, 85, 247, 0.12))'
+            : 'linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.12))',
+          border: isAdmin
+            ? '1px solid rgba(99, 102, 241, 0.4)'
+            : isOwner
+            ? '1px solid rgba(236, 72, 153, 0.4)'
+            : '1px solid rgba(16, 185, 129, 0.4)',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
+        }}>
+          <div style={{
+            width: '28px',
+            height: '28px',
+            borderRadius: '6px',
+            background: isAdmin ? '#6366f1' : isOwner ? '#ec4899' : '#10b981',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: '#fff',
+            fontSize: '0.85rem',
+            fontWeight: 800,
+            flexShrink: 0
+          }}>
+            {isAdmin ? '⚡' : isOwner ? '👑' : '👤'}
+          </div>
+          <div style={{ overflow: 'hidden' }}>
+            <div style={{
+              fontSize: '0.78rem',
+              fontWeight: 800,
+              letterSpacing: '0.04em',
+              textTransform: 'uppercase',
+              color: isAdmin ? '#a5b4fc' : isOwner ? '#f472b6' : '#6ee7b7'
+            }}>
+              {isAdmin ? 'Backend Admin' : isOwner ? 'Workspace Owner' : 'Team Member'}
+            </div>
+            <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              {isAdmin ? 'Full System & DB Scope' : isOwner ? 'Executive Org Scope' : 'Assigned Workload Scope'}
+            </div>
           </div>
         </div>
 
@@ -228,9 +285,32 @@ export default function Sidebar({
 
         {/* Main Navigation Options List */}
         <nav style={{ flex: 1, overflowY: 'auto' }}>
-          <div style={{ fontSize: '0.7rem', fontWeight: '800', color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.4rem', paddingLeft: '0.2rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+          
+          {/* BACKEND ADMIN CONSOLE SECTION (Exclusive to ROLE_ADMIN) */}
+          {isAdmin && (
+            <>
+              <div style={{ fontSize: '0.7rem', fontWeight: '800', color: '#818cf8', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.4rem', paddingLeft: '0.2rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                <Server size={12} style={{ color: '#818cf8' }} />
+                <span>Backend Management</span>
+              </div>
+
+              <div
+                className={`sidebar-link ${activeView === 'backend-console' ? 'active' : ''}`}
+                onClick={() => {
+                  setActiveView('backend-console');
+                  onCloseMobileMenu();
+                }}
+                style={{ background: activeView === 'backend-console' ? 'rgba(99, 102, 241, 0.25)' : 'transparent', borderLeft: activeView === 'backend-console' ? '3px solid #6366f1' : 'none' }}
+              >
+                <Server size={18} style={{ color: '#818cf8' }} />
+                <span style={{ fontWeight: 700 }}>Backend System Console</span>
+              </div>
+            </>
+          )}
+
+          <div style={{ fontSize: '0.7rem', fontWeight: '800', color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '0.06em', marginTop: isAdmin ? '0.8rem' : 0, marginBottom: '0.4rem', paddingLeft: '0.2rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
             <SlidersHorizontal size={12} style={{ color: 'var(--primary-glow)' }} />
-            <span>Workspace Views</span>
+            <span>{isMember ? 'My Assigned Views' : 'Workspace Views'}</span>
           </div>
 
           <div
@@ -241,7 +321,7 @@ export default function Sidebar({
             }}
           >
             <Kanban size={18} style={{ color: '#38bdf8' }} />
-            <span>Kanban Board</span>
+            <span>{isMember ? 'Kanban (My Workload)' : 'Kanban Board'}</span>
           </div>
 
           <div
@@ -252,7 +332,110 @@ export default function Sidebar({
             }}
           >
             <Table size={18} style={{ color: '#34d399' }} />
-            <span>Task Matrix List</span>
+            <span>{isMember ? 'Task Matrix (My Assigned)' : 'Task Matrix List'}</span>
+          </div>
+
+          {/* AI Analytics visible to Admin and Owner */}
+          {!isMember && (
+            <div
+              className={`sidebar-link ${activeView === 'ai-analytics' ? 'active' : ''}`}
+              onClick={() => {
+                setActiveView('ai-analytics');
+                onCloseMobileMenu();
+              }}
+            >
+              <Briefcase size={18} style={{ color: '#c084fc' }} />
+              <span>AI Analytics & ML Hub</span>
+            </div>
+          )}
+
+          {/* ENTERPRISE ERP SUITE (Full suite for Admin and Owner) */}
+          {!isMember ? (
+            <>
+              <div style={{ fontSize: '0.7rem', fontWeight: '800', color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '0.06em', marginTop: '0.8rem', marginBottom: '0.4rem', paddingLeft: '0.2rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                <Briefcase size={12} style={{ color: '#f59e0b' }} />
+                <span>Enterprise ERP Suite</span>
+              </div>
+
+              <div
+                className={`sidebar-link ${activeView === 'hr' ? 'active' : ''}`}
+                onClick={() => {
+                  setActiveView('hr');
+                  onCloseMobileMenu();
+                }}
+              >
+                <Users size={18} style={{ color: '#a855f7' }} />
+                <span>HR & Talent Management</span>
+              </div>
+
+              <div
+                className={`sidebar-link ${activeView === 'crm' ? 'active' : ''}`}
+                onClick={() => {
+                  setActiveView('crm');
+                  onCloseMobileMenu();
+                }}
+              >
+                <ShieldCheck size={18} style={{ color: '#38bdf8' }} />
+                <span>CRM & Sales Pipeline</span>
+              </div>
+
+              <div
+                className={`sidebar-link ${activeView === 'finance' ? 'active' : ''}`}
+                onClick={() => {
+                  setActiveView('finance');
+                  onCloseMobileMenu();
+                }}
+              >
+                <Download size={18} style={{ color: '#10b981' }} />
+                <span>Finance & Budgets</span>
+              </div>
+
+              <div
+                className={`sidebar-link ${activeView === 'inventory' ? 'active' : ''}`}
+                onClick={() => {
+                  setActiveView('inventory');
+                  onCloseMobileMenu();
+                }}
+              >
+                <FolderPlus size={18} style={{ color: '#f59e0b' }} />
+                <span>Inventory & Assets</span>
+              </div>
+
+              <div
+                className={`sidebar-link ${activeView === 'documents' ? 'active' : ''}`}
+                onClick={() => {
+                  setActiveView('documents');
+                  onCloseMobileMenu();
+                }}
+              >
+                <HelpCircle size={18} style={{ color: '#06b6d4' }} />
+                <span>Document Vault</span>
+              </div>
+            </>
+          ) : (
+            /* Member-only Workspace Assets */
+            <>
+              <div style={{ fontSize: '0.7rem', fontWeight: '800', color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '0.06em', marginTop: '0.8rem', marginBottom: '0.4rem', paddingLeft: '0.2rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                <HelpCircle size={12} style={{ color: '#06b6d4' }} />
+                <span>Workspace Docs</span>
+              </div>
+
+              <div
+                className={`sidebar-link ${activeView === 'documents' ? 'active' : ''}`}
+                onClick={() => {
+                  setActiveView('documents');
+                  onCloseMobileMenu();
+                }}
+              >
+                <HelpCircle size={18} style={{ color: '#06b6d4' }} />
+                <span>Document Vault</span>
+              </div>
+            </>
+          )}
+
+          <div style={{ fontSize: '0.7rem', fontWeight: '800', color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '0.06em', marginTop: '0.8rem', marginBottom: '0.4rem', paddingLeft: '0.2rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <Users size={12} style={{ color: '#ec4899' }} />
+            <span>Collaboration</span>
           </div>
 
           <div

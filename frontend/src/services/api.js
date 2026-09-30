@@ -197,7 +197,7 @@ const INITIAL_DEMO_PROJECTS = [
 ];
 
 const INITIAL_DEMO_WORKSPACES = [
-  { id: 1, name: 'VortiQ Studio Workspace', description: 'Enterprise collaboration workspace', colorCode: '#6366f1', currentUserRole: 'OWNER' }
+  { id: 1, name: 'Flowvia Studio Workspace', description: 'Enterprise collaboration workspace', colorCode: '#6366f1', currentUserRole: 'OWNER' }
 ];
 
 // --- LocalStorage Persistence Helpers ---
@@ -1145,7 +1145,7 @@ const INITIAL_DEMO_DISCUSSIONS = [
     authorAvatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=140&auto=format&fit=crop&q=80',
     authorDepartment: 'Product & Strategy',
     title: '🚀 Q3 Roadmap: Real-time collaborative document editing & whiteboards',
-    content: 'We are planning our next milestone features for VortiQ Studio! Would you prefer embedded markdown documentation or an interactive canvas whiteboard next? Drop your opinions below!',
+    content: 'We are planning our next milestone features for Flowvia Studio! Would you prefer embedded markdown documentation or an interactive canvas whiteboard next? Drop your opinions below!',
     category: 'ROADMAP',
     likesCount: 15,
     createdAt: new Date(Date.now() - 3600000 * 24).toISOString(),
@@ -1319,7 +1319,7 @@ export async function askAiCopilot(payload) {
   // 1. If user provided a Gemini API Key, try calling Gemini 1.5 Flash endpoint
   if (customKey) {
     try {
-      const systemInstruction = `You are VortiQ AI Bot, an elite enterprise AI co-pilot embedded inside the TaskPulse VortiQ Studio task & workspace management platform.
+      const systemInstruction = `You are Flowvia AI Bot, an elite enterprise AI co-pilot embedded inside the Flowvia Studio task & workspace management platform.
 Current Persona: ${persona}
 Current Workspace: ${workspace}
 Current Tasks in view: ${payload.taskCount || 0}
@@ -1383,14 +1383,14 @@ If the user asks to create or generate tasks, format the recommendations with ti
     const taskTitle = msg.replace(/^(create|add|new)\s+task:?/i, '').trim() || 'New AI Generated Task';
     const newTask = {
       title: taskTitle,
-      description: `Created via VortiQ AI Bot command.\n\nAcceptance Criteria:\n- [ ] Requirements verified\n- [ ] Implemented and tested`,
+      description: `Created via Flowvia AI Bot command.\n\nAcceptance Criteria:\n- [ ] Requirements verified\n- [ ] Implemented and tested`,
       priority: lower.includes('urgent') ? 'URGENT' : lower.includes('high') ? 'HIGH' : lower.includes('low') ? 'LOW' : 'MEDIUM',
       category: lower.includes('backend') ? 'Backend' : lower.includes('frontend') ? 'Frontend' : lower.includes('design') ? 'Design' : lower.includes('devops') ? 'DevOps' : 'Frontend',
       dueDate: new Date(Date.now() + 3 * 86400000).toISOString().split('T')[0]
     };
     return {
       response: `⚡ **Task Created Successfully!**\n\nI have dispatched and added **"${taskTitle}"** directly to your Kanban board with **${newTask.priority}** priority and category **${newTask.category}**.`,
-      modelUsed: 'VortiQ Neural Action Engine',
+      modelUsed: 'Flowvia Neural Action Engine',
       action: { type: 'CREATE_TASK', task: newTask },
       suggestions: ['View Kanban Board', 'Create another task', 'Analyze sprint velocity']
     };
@@ -1399,7 +1399,7 @@ If the user asks to create or generate tasks, format the recommendations with ti
   if (lower.includes('filter urgent') || lower.includes('show urgent')) {
     return {
       response: `🔍 Filter applied! Showing **URGENT** priority tasks on your board.`,
-      modelUsed: 'VortiQ Neural Action Engine',
+      modelUsed: 'Flowvia Neural Action Engine',
       action: { type: 'SET_PRIORITY_FILTER', priority: 'URGENT' },
       suggestions: ['Clear filters', 'Show HIGH priority', 'Switch to Matrix table']
     };
@@ -1408,7 +1408,7 @@ If the user asks to create or generate tasks, format the recommendations with ti
   if (lower.includes('filter high') || lower.includes('show high')) {
     return {
       response: `🔍 Filter applied! Showing **HIGH** priority tasks on your board.`,
-      modelUsed: 'VortiQ Neural Action Engine',
+      modelUsed: 'Flowvia Neural Action Engine',
       action: { type: 'SET_PRIORITY_FILTER', priority: 'HIGH' },
       suggestions: ['Clear filters', 'Show URGENT tasks', 'Switch to Matrix table']
     };
@@ -1417,7 +1417,7 @@ If the user asks to create or generate tasks, format the recommendations with ti
   if (lower.includes('clear filter') || lower.includes('show all tasks')) {
     return {
       response: `✨ All filters cleared. Showing full workspace task list!`,
-      modelUsed: 'VortiQ Neural Action Engine',
+      modelUsed: 'Flowvia Neural Action Engine',
       action: { type: 'CLEAR_FILTERS' },
       suggestions: ['Filter by Backend', 'Analyze sprint health', 'New Task']
     };
@@ -1426,7 +1426,7 @@ If the user asks to create or generate tasks, format the recommendations with ti
   if (lower.includes('switch theme') || lower.includes('dark mode') || lower.includes('light mode')) {
     return {
       response: `🎨 Theme toggled! Enjoy your customized visual workspace ambiance.`,
-      modelUsed: 'VortiQ Neural Action Engine',
+      modelUsed: 'Flowvia Neural Action Engine',
       action: { type: 'TOGGLE_THEME' },
       suggestions: ['Switch view to Matrix', 'View Sprint Health', 'Generate tasks']
     };
@@ -1435,7 +1435,7 @@ If the user asks to create or generate tasks, format the recommendations with ti
   if (lower.includes('table view') || lower.includes('matrix view')) {
     return {
       response: `📊 Switched view to **Data Matrix Table**!`,
-      modelUsed: 'VortiQ Neural Action Engine',
+      modelUsed: 'Flowvia Neural Action Engine',
       action: { type: 'SET_VIEW', view: 'table' },
       suggestions: ['Switch to Kanban', 'Open Team Lounge', 'Create Task']
     };
@@ -1444,7 +1444,7 @@ If the user asks to create or generate tasks, format the recommendations with ti
   if (lower.includes('kanban view') || lower.includes('kanban board')) {
     return {
       response: `📋 Switched view to **Interactive Kanban Board**!`,
-      modelUsed: 'VortiQ Neural Action Engine',
+      modelUsed: 'Flowvia Neural Action Engine',
       action: { type: 'SET_VIEW', view: 'kanban' },
       suggestions: ['Switch to Matrix Table', 'Open Team Lounge', 'Generate tasks']
     };
@@ -1453,7 +1453,7 @@ If the user asks to create or generate tasks, format the recommendations with ti
   if (lower.includes('member') || lower.includes('team directory') || lower.includes('who is in') || lower.includes('team list')) {
     return {
       response: `👥 Switched view to **Team Members & Registered Directory**!\n\nYou can explore all registered platform members, view departments, contact details, and assign tasks.`,
-      modelUsed: 'VortiQ Neural Action Engine',
+      modelUsed: 'Flowvia Neural Action Engine',
       action: { type: 'SET_VIEW', view: 'members' },
       suggestions: ['Invite new member', 'Switch to Kanban', 'Switch to Matrix Table']
     };
@@ -1462,7 +1462,7 @@ If the user asks to create or generate tasks, format the recommendations with ti
   if (lower.includes('team lounge') || lower.includes('opinion') || lower.includes('discussions')) {
     return {
       response: `☕ Opened **Team Lounge & Opinion Board**! Check out architectural proposals and team discussions.`,
-      modelUsed: 'VortiQ Neural Action Engine',
+      modelUsed: 'Flowvia Neural Action Engine',
       action: { type: 'SET_VIEW', view: 'lounge' },
       suggestions: ['Post new idea', 'Return to Kanban', 'View Sprint Health']
     };
@@ -1497,7 +1497,7 @@ If the user asks to create or generate tasks, format the recommendations with ti
 
     return {
       response: `🚀 **Sprint Plan Generated for "${clean}"**:\n\nI have generated ${generated.length} modular, production-ready work items with acceptance criteria, priority tiers, and category tags. You can add them directly to your board using the action buttons below!`,
-      modelUsed: 'VortiQ Neural Copilot 2.0',
+      modelUsed: 'Flowvia Neural Copilot 2.0',
       suggestions: ['Add all to Kanban Board', 'Create Stripe payment tasks', 'Analyze workspace health'],
       generatedTasks: generated
     };
@@ -1507,7 +1507,7 @@ If the user asks to create or generate tasks, format the recommendations with ti
     const count = payload.taskCount || 5;
     return {
       response: `📊 **Workspace Intelligence & Velocity Analysis for ${workspace}**\n\n• **Health Score:** 94/100 (Optimal Velocity 🚀)\n• **Active Work Items:** ${count} tracked tasks\n• **Estimated Sprint Velocity:** 5.4 stories / week\n• **Bottleneck Alert:** 0 critical blockers detected\n• **Recommendation:** High velocity maintained! Prioritize closing in-review pull requests before pulling new backlog stories.`,
-      modelUsed: 'VortiQ Neural Copilot 2.0',
+      modelUsed: 'Flowvia Neural Copilot 2.0',
       suggestions: ['Generate sprint review report', 'Filter URGENT tasks', 'Create blocker resolution task'],
       insights: { healthScore: 94, status: 'Optimal Velocity', velocity: '5.4 tasks/week' }
     };
@@ -1515,23 +1515,23 @@ If the user asks to create or generate tasks, format the recommendations with ti
 
   if (persona === 'code-auditor' || lower.includes('security') || lower.includes('audit') || lower.includes('jwt') || lower.includes('docker') || lower.includes('code review')) {
     return {
-      response: `🛡️ **VortiQ Code & Security Audit**:\n\n• **Authentication:** Stateless HMAC-SHA256 JWT tokens with Spring Security filter chain.\n• **Data Storage:** H2 In-Memory for instantaneous local development + PostgreSQL production ready via Flyway.\n• **Frontend Resilience:** React 18 with Error Boundary isolation and optimistic UI state caching.\n• **Docker Optimization:** Multi-stage production container embedding React \`dist\` in Spring Boot JAR.\n\n*Pro-tip:* Enable rate limiting on auth endpoints for enhanced brute-force resistance.`,
-      modelUsed: 'VortiQ Code & Security Auditor',
+      response: `🛡️ **Flowvia Code & Security Audit**:\n\n• **Authentication:** Stateless HMAC-SHA256 JWT tokens with Spring Security filter chain.\n• **Data Storage:** H2 In-Memory for instantaneous local development + PostgreSQL production ready via Flyway.\n• **Frontend Resilience:** React 18 with Error Boundary isolation and optimistic UI state caching.\n• **Docker Optimization:** Multi-stage production container embedding React \`dist\` in Spring Boot JAR.\n\n*Pro-tip:* Enable rate limiting on auth endpoints for enhanced brute-force resistance.`,
+      modelUsed: 'Flowvia Code & Security Auditor',
       suggestions: ['Review JWT security flow', 'Check Docker multi-stage build', 'Generate unit test suite']
     };
   }
 
   if (persona === 'site-guide' || lower.includes('what is') || lower.includes('how to') || lower.includes('shortcuts') || lower.includes('features') || lower.includes('help')) {
     return {
-      response: `👋 **Welcome to VortiQ Studio Platform Guide!**\n\nHere is how to get the most out of the platform:\n\n• ⚡ **Interactive Kanban Board:** Drag and drop cards across stages (\`TODO\`, \`IN_PROGRESS\`, \`IN_REVIEW\`, \`COMPLETED\`).\n• 📊 **Data Matrix View:** High-density table with multi-column sorting and filtering.\n• ☕ **Team Lounge:** Share architectural proposals and upvote team discussions.\n• 💬 **Inconvenience Support:** Instant workspace chat for blocker resolution.\n• ⌨️ **Keyboard Shortcuts:** Press \`Ctrl + K\` to search, \`N\` for new task, \`V\` to toggle views, \`D\` to toggle dark mode.\n• 🤖 **AI Assistant:** Type *"create task: [title]"* or *"generate tasks for [feature]"*!`,
-      modelUsed: 'VortiQ Platform Guide',
+      response: `👋 **Welcome to Flowvia Studio Platform Guide!**\n\nHere is how to get the most out of the platform:\n\n• ⚡ **Interactive Kanban Board:** Drag and drop cards across stages (\`TODO\`, \`IN_PROGRESS\`, \`IN_REVIEW\`, \`COMPLETED\`).\n• 📊 **Data Matrix View:** High-density table with multi-column sorting and filtering.\n• ☕ **Team Lounge:** Share architectural proposals and upvote team discussions.\n• 💬 **Inconvenience Support:** Instant workspace chat for blocker resolution.\n• ⌨️ **Keyboard Shortcuts:** Press \`Ctrl + K\` to search, \`N\` for new task, \`V\` to toggle views, \`D\` to toggle dark mode.\n• 🤖 **AI Assistant:** Type *"create task: [title]"* or *"generate tasks for [feature]"*!`,
+      modelUsed: 'Flowvia Platform Guide',
       suggestions: ['Create task: Setup CI/CD', 'Analyze sprint velocity', 'Switch to Matrix view']
     };
   }
 
   return {
-    response: `💡 **VortiQ AI Assistant (${persona.replace('-', ' ').toUpperCase()})**:\n\nRegarding *"${msg}"*:\n\nTo achieve optimal flow in **${workspace}**, I recommend breaking this milestone into 3 focused stages:\n1. **Design & API Contract:** Define specifications and schemas.\n2. **Implementation:** Build backend endpoints and glassmorphic UI components.\n3. **Validation & Test:** Verify acceptance criteria and staging health.\n\n*Try asking me:* \`"Create task: ${msg.slice(0, 20)}"\` or \`"Generate tasks for ${msg.slice(0, 25)}"\`!`,
-    modelUsed: 'VortiQ Neural Copilot 2.0',
+    response: `💡 **Flowvia AI Assistant (${persona.replace('-', ' ').toUpperCase()})**:\n\nRegarding *"${msg}"*:\n\nTo achieve optimal flow in **${workspace}**, I recommend breaking this milestone into 3 focused stages:\n1. **Design & API Contract:** Define specifications and schemas.\n2. **Implementation:** Build backend endpoints and glassmorphic UI components.\n3. **Validation & Test:** Verify acceptance criteria and staging health.\n\n*Try asking me:* \`"Create task: ${msg.slice(0, 20)}"\` or \`"Generate tasks for ${msg.slice(0, 25)}"\`!`,
+    modelUsed: 'Flowvia Neural Copilot 2.0',
     suggestions: [`Generate tasks for ${msg.slice(0, 20)}`, 'Analyze workspace health', 'Review security best practices']
   };
 }

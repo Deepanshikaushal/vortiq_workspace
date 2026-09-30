@@ -1,5 +1,5 @@
 """
-VortiQ Workspace - Python AI/ML Intelligence Microservice (FastAPI)
+Flowvia Workspace - Python AI/ML Intelligence Microservice (FastAPI)
 Exposes REST endpoints for:
 1. Task Priority Prediction (Supervised ML)
 2. Project Risk Prediction (Risk Percentage & Factor Extraction)
@@ -15,8 +15,8 @@ from ml_models import TaskPriorityModel, ProjectRiskModel, WorkloadOptimizationE
 import uvicorn
 
 app = FastAPI(
-    title="VortiQ AI/ML Microservice",
-    description="Machine Learning and AI services for VortiQ Enterprise Workspace",
+    title="Flowvia AI/ML Microservice",
+    description="Machine Learning and AI services for Flowvia Enterprise Workspace",
     version="1.0.0"
 )
 

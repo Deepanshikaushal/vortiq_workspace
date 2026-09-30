@@ -50,7 +50,7 @@ const DEMO_PROJECTS = [
 ];
 
 const DEMO_WORKSPACES = [
-  { id: 1, name: 'VortiQ Studio Workspace', description: 'Enterprise collaboration workspace', colorCode: '#64748b', currentUserRole: 'OWNER' }
+  { id: 1, name: 'Flowvia Studio Workspace', description: 'Enterprise collaboration workspace', colorCode: '#6366f1', currentUserRole: 'OWNER' }
 ];
 
 export default function App() {
@@ -181,7 +181,7 @@ export default function App() {
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
     link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `${(activeWorkspace?.name || 'VortiQ').replace(/\s+/g, '_')}_Tasks_${new Date().toISOString().split('T')[0]}.csv`);
+    link.setAttribute('download', `${(activeWorkspace?.name || 'Flowvia').replace(/\s+/g, '_')}_Tasks_${new Date().toISOString().split('T')[0]}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

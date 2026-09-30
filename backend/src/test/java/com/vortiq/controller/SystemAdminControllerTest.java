@@ -60,7 +60,7 @@ class SystemAdminControllerTest {
         assertEquals(200, response.getStatusCode().value());
         Map<String, Object> body = response.getBody();
         assertNotNull(body);
-        assertEquals("VortiQ Workspace Enterprise Edition", body.get("application"));
+        assertEquals("Flowvia Workspace Enterprise Edition", body.get("application"));
         assertEquals("HEALTHY", body.get("status"));
         assertEquals(20L, body.get("totalTasks"));
         assertTrue((Long) body.get("heapUsedMB") > 0);

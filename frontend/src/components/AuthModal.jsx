@@ -304,7 +304,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess, initialMode 
             <div>
               <h2 className="modal-title">
                 {mode === 'login'
-                  ? 'Welcome to VortiQ'
+                  ? 'Welcome to Flowvia'
                   : mode === 'register'
                   ? (step === 1 ? 'Create Official Account' : 'Verify Email Address')
                   : (forgotStep === 1 ? 'Reset Account Password' : 'Verify & Set New Password')}

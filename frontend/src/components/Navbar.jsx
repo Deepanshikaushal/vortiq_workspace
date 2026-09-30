@@ -136,7 +136,7 @@ export default function Navbar({
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', cursor: 'pointer' }} onClick={onGoHome} title="Go to Home Landing Page">
             <VortiqLogo size={22} />
-            <span style={{ fontFamily: 'var(--font-display)', fontWeight: '800', fontSize: '1rem' }}>VortiQ</span>
+            <span style={{ fontFamily: 'var(--font-display)', fontWeight: '800', fontSize: '1rem', background: 'linear-gradient(135deg, #6366f1, #a855f7)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Flowvia</span>
           </div>
 
           {/* Workspace Quick Switcher Pill (Desktop) */}
@@ -314,7 +314,7 @@ export default function Navbar({
                 color: 'var(--text-main)',
                 fontWeight: 600
               }}
-              title="Open VortiQ AI Copilot & Sprint Architect"
+              title="Open Flowvia AI Copilot & Sprint Architect"
             >
               <Sparkles size={15} style={{ color: '#94a3b8' }} />
               <span className="desktop-only">AI Copilot</span>

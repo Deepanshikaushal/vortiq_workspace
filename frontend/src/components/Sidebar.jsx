@@ -100,7 +100,7 @@ export default function Sidebar({
                 color: 'var(--text-main)',
                 lineHeight: 1.2
               }}>
-                VortiQ Studio
+                Flowvia Studio
               </h1>
               <p style={{ fontSize: '0.65rem', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
                 Workspace Platform

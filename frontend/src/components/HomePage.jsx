@@ -39,11 +39,10 @@ export default function HomePage({ onOpenAuth, onOpenSignUp, onEnterApp, current
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', cursor: 'pointer' }} onClick={onEnterApp}>
           <VortiqLogo size={28} />
-          <div>
-            <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.1rem', fontWeight: 800, color: 'var(--text-main)' }}>
-              TaskPulse <span style={{ fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--text-muted)', padding: '0.15rem 0.4rem', borderRadius: '4px', background: 'rgba(255, 255, 255, 0.06)', border: '1px solid var(--border-color)' }}>VortiQ</span>
+            <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.2rem', fontWeight: 800, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <span style={{ background: 'linear-gradient(135deg, #6366f1, #a855f7)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Flowvia</span>
+              <span style={{ fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '1px', color: '#c084fc', padding: '0.15rem 0.45rem', borderRadius: '4px', background: 'rgba(168, 85, 247, 0.12)', border: '1px solid rgba(168, 85, 247, 0.3)' }}>Workspace</span>
             </div>
-          </div>
         </div>
 
         {/* Center Nav Links */}
@@ -170,7 +169,7 @@ export default function HomePage({ onOpenAuth, onOpenSignUp, onEnterApp, current
                 <span style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#ef4444', display: 'inline-block' }} />
                 <span style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#f59e0b', display: 'inline-block' }} />
                 <span style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#10b981', display: 'inline-block' }} />
-                <span style={{ marginLeft: '0.75rem', fontSize: '0.8rem', color: 'var(--text-muted)', fontFamily: 'monospace' }}>taskpulse.vortiq.app/kanban-board</span>
+                <span style={{ marginLeft: '0.75rem', fontSize: '0.8rem', color: 'var(--text-muted)', fontFamily: 'monospace' }}>flowvia.workspace.app/kanban-board</span>
               </div>
               <span className="badge badge-high" style={{ fontSize: '0.725rem' }}>Live Demo Preview</span>
             </div>
@@ -247,7 +246,7 @@ export default function HomePage({ onOpenAuth, onOpenSignUp, onEnterApp, current
               <Sparkles size={20} />
             </div>
             <h3 style={{ fontSize: '1.15rem', fontWeight: 700, marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-              <span>VortiQ AI Copilot & Bot</span>
+              <span>Flowvia AI Copilot & Bot</span>
               <span className="badge" style={{ background: 'rgba(100, 116, 139, 0.15)', color: '#94a3b8', fontSize: '0.65rem', padding: '0.1rem 0.4rem' }}>NEW</span>
             </h3>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', lineHeight: 1.6, marginBottom: '1rem' }}>
@@ -373,9 +372,9 @@ export default function HomePage({ onOpenAuth, onOpenSignUp, onEnterApp, current
       <footer style={{ borderTop: '1px solid var(--border-color)', padding: '2rem 1.5rem', textAlign: 'center', color: 'var(--text-dim)', fontSize: '0.85rem' }}>
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
           <VortiqLogo size={20} />
-          <span style={{ fontWeight: 700, color: 'var(--text-muted)' }}>TaskPulse VortiQ Studio</span>
+          <span style={{ fontWeight: 700, color: 'var(--text-muted)' }}>Flowvia Studio Workspace</span>
         </div>
-        <p>© 2026 VortiQ Studio. All user data auto-saved to LocalStorage and Spring Boot REST backend.</p>
+        <p>© 2026 Flowvia Studio. All user data auto-saved to LocalStorage and Spring Boot REST backend.</p>
       </footer>
 
     </div>

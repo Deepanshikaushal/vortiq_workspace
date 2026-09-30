@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: vortiq-workspace
+    name: flowvia-workspace
     runtime: docker
     dockerfilePath: ./Dockerfile
     plan: free

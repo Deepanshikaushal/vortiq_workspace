@@ -22,13 +22,13 @@ import java.util.List;
 public class OpenApiConfig {
 
     @Bean
-    public OpenAPI vortiqOpenAPI() {
+    public OpenAPI flowviaOpenAPI() {
         final String securitySchemeName = "BearerAuth";
 
         return new OpenAPI()
             .info(new Info()
-                .title("VortiQ Workspace — Enterprise Multi-Tenant API")
-                .description("REST API documentation for VortiQ Workspace & ERP Platform. " +
+                .title("Flowvia Workspace — Enterprise Multi-Tenant API")
+                .description("REST API documentation for Flowvia Workspace & ERP Platform. " +
                              "Designed for B.Tech Major Project viva demonstration. " +
                              "Includes Task Kanban, Project Management, ML Priority Forecasting, and ERP Suite.")
                 .version("1.0.0")

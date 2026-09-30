@@ -1,4 +1,4 @@
-# VortiQ: A Distributed Multi-Tenant Architecture with Machine Learning-Driven Predictive Risk and Heuristic Workload Optimization for Enterprise Agile Workspaces
+# Flowvia: A Distributed Multi-Tenant Architecture with Machine Learning-Driven Predictive Risk and Heuristic Workload Optimization for Enterprise Agile Workspaces
 
 **Deepanshi Kaushal**  
 *Department of Computer Science & Engineering*  
@@ -10,7 +10,7 @@ GitHub: [https://github.com/Deepanshikaushal/vortiq_workspace](https://github.co
 ### **ABSTRACT**
 Contemporary software engineering enterprises rely heavily on fragmented tools for sprint tracking, customer relationship management (CRM), human resource tracking (HRMS), and financial ledgers. This operational decoupling introduces data silos, delays milestone detection, and limits risk intervention to reactive post-mortems. 
 
-In this paper, we propose and implement **VortiQ Workspace**, an intelligent, high-throughput, multi-tenant enterprise platform that unifies project execution with enterprise resource planning (ERP) under a Spring Boot 3.3 modular architecture and a Python FastAPI intelligence microservice. We formulate and evaluate:
+In this paper, we propose and implement **Flowvia Workspace**, an intelligent, high-throughput, multi-tenant enterprise platform that unifies project execution with enterprise resource planning (ERP) under a Spring Boot 3.3 modular architecture and a Python FastAPI intelligence microservice. We formulate and evaluate:
 1. A **Supervised Random Forest Regression Model** for dynamic task priority calculation ($R^2 = 0.914$, $\text{RMSE} = 3.68$), factoring in deadline proximity, complexity vectors, blocker dependencies, and agent utilization.
 2. A **Multi-Factor Risk Prediction Regressor** that alerts project managers to critical path slippage before deadline milestones.
 3. A **Greedy Min-Max Bin-Packing Heuristic** for automated task redistribution that minimizes team capacity variance.
@@ -30,13 +30,13 @@ Agile software delivery hinges on rapid feedback loops, transparent sprint backl
 2. **Static Priority Heuristics**: Priority flags (`LOW`, `HIGH`, `URGENT`) are assigned subjectively by developers without mathematical correlation to dependency cascades or critical-path proximity.
 3. **Developer Burnout via Unbalanced Queues**: Task allocation often causes high utilization variances, leading to developer bottlenecking and sprint slippage.
 
-To address these limitations, **VortiQ Workspace** introduces an end-to-end full-stack platform unifying project management, predictive analytics, and enterprise business modules under rigorous software engineering standards.
+To address these limitations, **Flowvia Workspace** introduces an end-to-end full-stack platform unifying project management, predictive analytics, and enterprise business modules under rigorous software engineering standards.
 
 ---
 
 ## II. SYSTEM ARCHITECTURE & DESIGN
 
-VortiQ is designed following the **Modular Monolith** paradigm for domain core logic, combined with an asynchronous microservice for machine learning inference.
+Flowvia is designed following the **Modular Monolith** paradigm for domain core logic, combined with an asynchronous microservice for machine learning inference.
 
 ### A. Architectural Layers
 1. **Client Tier (Presentation)**: Built on React 18, Vite 5, and vanilla CSS design tokens, utilizing glassmorphic telemetry dashboards, interactive Kanban drag-and-drop boards, and role-guarded view controllers.
@@ -51,7 +51,7 @@ VortiQ is designed following the **Modular Monolith** paradigm for domain core l
 
 ### A. Dynamic Task Priority Scoring Model
 
-Rather than relying on static categorical labels, VortiQ computes a continuous Priority Index $P \in [1, 100]$ using feature vectors:
+Rather than relying on static categorical labels, Flowvia computes a continuous Priority Index $P \in [1, 100]$ using feature vectors:
 
 $$\mathbf{x} = \left[ \frac{1}{\max(\Delta t, 0.1)}, \; C, \; D, \; L \right]^T$$
 
@@ -102,7 +102,7 @@ To establish empirical rigor, we evaluated multiple machine learning regressors 
 
 ## V. ENTERPRISE COMPLIANCE & IMMUTABLE AUDIT TRAIL
 
-To satisfy enterprise governance standards (SOC2 / ISO27001), VortiQ incorporates an immutable audit trail (`audit_logs`) tracking all system mutations.
+To satisfy enterprise governance standards (SOC2 / ISO27001), Flowvia incorporates an immutable audit trail (`audit_logs`) tracking all system mutations.
 
 Every create, update, delete, and state transition triggers:
 ```
@@ -131,7 +131,7 @@ Audit queries are indexed by `(entityType, entityId)` and `timestamp`, enabling 
 
 ## VII. CONCLUSION & FUTURE WORK
 
-This paper presented **VortiQ Workspace**, demonstrating the successful synthesis of enterprise ERP workflows, machine learning-driven prioritization, and heuristic workload balancing into a single, high-availability multi-tenant platform. Empirical benchmarks validate that integrating supervised learning with agile task boards reduces milestone slippage while maintaining sub-millisecond API response times.
+This paper presented **Flowvia Workspace**, demonstrating the successful synthesis of enterprise ERP workflows, machine learning-driven prioritization, and heuristic workload balancing into a single, high-availability multi-tenant platform. Empirical benchmarks validate that integrating supervised learning with agile task boards reduces milestone slippage while maintaining sub-millisecond API response times.
 
 Future work will expand the NLP assistant into a full Retrieval-Augmented Generation (RAG) agent utilizing embedded vector stores for enterprise document intelligence.
 

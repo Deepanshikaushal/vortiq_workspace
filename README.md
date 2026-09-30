@@ -1,4 +1,4 @@
-# VortiQ Studio - Enterprise Task & Workspace Platform
+# Flowvia Studio - Enterprise Task & Workspace Platform
 
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.3.4-brightgreen?logo=springboot)
 ![React](https://img.shields.io/badge/React-18-blue?logo=react)
@@ -7,7 +7,7 @@
 ![License](https://img.shields.io/badge/License-MIT-green)
 [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/Deepanshikaushal/vortiq_workspace)
 
-**VortiQ Studio** is a modern full-stack enterprise task management platform engineered with a **Core Java Spring Boot REST API** backend and a **React 18 (Vite)** frontend UI. It features interactive Kanban boards, data matrix tables, real-time velocity metrics, dynamic workspace categorization, and full ERP suite modules (CRM, HR, Finance, Inventory, Document Vault).
+**Flowvia Studio** is a modern full-stack enterprise task management platform engineered with a **Core Java Spring Boot REST API** backend and a **React 18 (Vite)** frontend UI. It features interactive Kanban boards, data matrix tables, real-time velocity metrics, dynamic workspace categorization, and full ERP suite modules (CRM, HR, Finance, Inventory, Document Vault).
 
 ---
 

@@ -27,7 +27,7 @@ export default function AiAssistantModal({
     {
       id: 'welcome',
       sender: 'ai',
-      text: `👋 Hi! I am **VortiQ AI Copilot**.\n\nI can **auto-generate tasks**, review your **sprint velocity**, enhance requirements with acceptance criteria, or answer technical architecture questions for **${activeWorkspace?.name || 'your workspace'}**.`,
+      text: `👋 Hi! I am **Flowvia AI Copilot**.\n\nI can **auto-generate tasks**, review your **sprint velocity**, enhance requirements with acceptance criteria, or answer technical architecture questions for **${activeWorkspace?.name || 'your workspace'}**.`,
       time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       suggestions: [
         "⚡ Generate sprint tasks for Next Feature",

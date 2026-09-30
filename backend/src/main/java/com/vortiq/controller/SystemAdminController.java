@@ -55,7 +55,7 @@ public class SystemAdminController {
         long heapUsedMB = memoryBean.getHeapMemoryUsage().getUsed() / (1024 * 1024);
         long heapMaxMB = memoryBean.getHeapMemoryUsage().getMax() / (1024 * 1024);
 
-        info.put("application", "VortiQ Workspace Enterprise Edition");
+        info.put("application", "Flowvia Workspace Enterprise Edition");
         info.put("version", "1.0.0-PROD");
         info.put("status", "HEALTHY");
         info.put("timestamp", LocalDateTime.now().toString());

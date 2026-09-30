@@ -11,6 +11,7 @@ import AutomationsView from './components/AutomationsView';
 import InboxView from './components/InboxView';
 import DocumentVaultView from './components/DocumentVaultView';
 import MetricsOverview from './components/MetricsOverview';
+import TaskWorkspace from './components/TaskWorkspace';
 import KanbanBoard from './components/KanbanBoard';
 import TaskTable from './components/TaskTable';
 import TaskModal from './components/TaskModal';
@@ -370,12 +371,22 @@ export default function App() {
   };
 
   const handleStatusChange = async (taskId, newStatus) => {
+    setTasks((prev) => prev.map((t) => (String(t.id) === String(taskId) ? { ...t, status: newStatus } : t)));
     try {
       await updateTaskStatus(taskId, newStatus);
       addToast(`Task moved to ${newStatus.replace('_', ' ')}`, 'info');
       await loadData();
     } catch (err) {
       addToast('Failed to update task status', 'danger');
+    }
+  };
+
+  const handleUpdateTaskDirect = async (taskId, updatedTask) => {
+    setTasks((prev) => prev.map((t) => (String(t.id) === String(taskId) ? { ...t, ...updatedTask } : t)));
+    try {
+      await updateTask(taskId, updatedTask);
+    } catch (err) {
+      console.warn('Failed to save task update:', err);
     }
   };
 
@@ -670,140 +681,20 @@ export default function App() {
               {/* Metrics Overview Top Bar */}
               <MetricsOverview stats={displayStats} currentUser={currentUser} isMyTasksOnly={activeView === 'my-tasks' || isScopingToMyTasks} />
 
-              {/* View Toggle & Filter Toolbar */}
-              <div style={{
-                backgroundColor: '#111726',
-                border: '1px solid #1f2b42',
-                borderRadius: '8px',
-                padding: '0.75rem 1rem',
-                marginBottom: '1.25rem',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                flexWrap: 'wrap',
-                gap: '0.75rem'
-              }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
-                  {/* View Segmented Toggle (Kanban / Table) */}
-                  <div style={{
-                    display: 'flex',
-                    backgroundColor: '#0c101a',
-                    padding: '2px',
-                    borderRadius: '6px',
-                    border: '1px solid #1f2b42'
-                  }}>
-                    <button
-                      onClick={() => setActiveView(activeView === 'my-tasks' ? 'my-tasks' : 'kanban')}
-                      style={{
-                        padding: '0.35rem 0.65rem',
-                        fontSize: '0.75rem',
-                        fontWeight: 600,
-                        borderRadius: '4px',
-                        border: 'none',
-                        cursor: 'pointer',
-                        backgroundColor: activeView !== 'table' ? '#6366f1' : 'transparent',
-                        color: activeView !== 'table' ? '#ffffff' : '#94a3b8'
-                      }}
-                    >
-                      Kanban
-                    </button>
-                    <button
-                      onClick={() => setActiveView('table')}
-                      style={{
-                        padding: '0.35rem 0.65rem',
-                        fontSize: '0.75rem',
-                        fontWeight: 600,
-                        borderRadius: '4px',
-                        border: 'none',
-                        cursor: 'pointer',
-                        backgroundColor: activeView === 'table' ? '#6366f1' : 'transparent',
-                        color: activeView === 'table' ? '#ffffff' : '#94a3b8'
-                      }}
-                    >
-                      Table
-                    </button>
-                  </div>
-
-                  <select
-                    className="form-select"
-                    style={{ padding: '0.35rem 0.65rem', fontSize: '0.785rem', width: 'auto' }}
-                    value={statusFilter}
-                    onChange={(e) => setStatusFilter(e.target.value)}
-                  >
-                    <option value="">All Statuses</option>
-                    <option value="TODO">To Do</option>
-                    <option value="IN_PROGRESS">In Progress</option>
-                    <option value="IN_REVIEW">In Review</option>
-                    <option value="COMPLETED">Completed</option>
-                  </select>
-
-                  <select
-                    className="form-select"
-                    style={{ padding: '0.35rem 0.65rem', fontSize: '0.785rem', width: 'auto' }}
-                    value={priorityFilter}
-                    onChange={(e) => setPriorityFilter(e.target.value)}
-                  >
-                    <option value="">All Priorities</option>
-                    <option value="LOW">Low</option>
-                    <option value="MEDIUM">Medium</option>
-                    <option value="HIGH">High</option>
-                    <option value="URGENT">Urgent</option>
-                  </select>
-
-                  <select
-                    className="form-select"
-                    style={{ padding: '0.35rem 0.65rem', fontSize: '0.785rem', width: 'auto' }}
-                    value={selectedProject}
-                    onChange={(e) => setSelectedProject(e.target.value)}
-                  >
-                    <option value="">All Projects</option>
-                    {projects.map((p) => (
-                      <option key={p.id} value={p.id}>{p.name}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <button
-                    className="btn btn-secondary"
-                    style={{ padding: '0.35rem 0.65rem', fontSize: '0.75rem', gap: '0.35rem' }}
-                    onClick={handleExportCSV}
-                    title="Export tasks to CSV file"
-                  >
-                    <Download size={13} />
-                    <span>Export CSV</span>
-                  </button>
-                  <button
-                    className="btn btn-primary"
-                    style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', gap: '0.35rem' }}
-                    onClick={() => handleOpenCreate('TODO')}
-                  >
-                    <Plus size={13} />
-                    <span>Add Task</span>
-                  </button>
-                </div>
-              </div>
-
-              {activeView === 'table' ? (
-                <TaskTable
-                  tasks={sortedTasks}
-                  onStatusChange={handleStatusChange}
-                  onEdit={handleOpenEdit}
-                  onDelete={handleDeleteTask}
-                  onReportInconvenience={(task) => handleOpenChat(task, 'INCONVENIENCE')}
-                  workspaceMembers={workspaceMembers}
-                />
-              ) : (
-                <KanbanBoard
-                  tasks={sortedTasks}
-                  onStatusChange={handleStatusChange}
-                  onEdit={handleOpenEdit}
-                  onDelete={handleDeleteTask}
-                  onOpenCreate={handleOpenCreate}
-                  onReportInconvenience={(task) => handleOpenChat(task, 'INCONVENIENCE')}
-                  workspaceMembers={workspaceMembers}
-                />
-              )}
+              {/* Flexible Task Workspace: List, Kanban, Timeline & Embedded Detail Panel */}
+              <TaskWorkspace
+                tasks={sortedTasks}
+                projects={projects}
+                workspaceMembers={workspaceMembers}
+                currentUser={currentUser}
+                activeWorkspace={activeWorkspace}
+                onStatusChange={handleStatusChange}
+                onUpdateTask={handleUpdateTaskDirect}
+                onDeleteTask={handleDeleteTask}
+                onCreateTask={handleSaveTask}
+                onAddToast={addToast}
+                onExportCSV={handleExportCSV}
+              />
             </>
           )}
 

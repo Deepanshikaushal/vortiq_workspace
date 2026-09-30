@@ -179,15 +179,311 @@ export function appendRegisteredUser(user) {
   } catch (e) {}
 }
 
+export function normalizeTask(task, projects = []) {
+  if (!task) return null;
+  const projectObj = projects.find(p => String(p.id) === String(task.projectId)) || { name: 'Core Platform', colorCode: '#6366f1' };
+
+  const defaultSubtasks = [
+    { id: 'st-1', title: 'Review technical spec & security checklist', completed: true },
+    { id: 'st-2', title: 'Implement feature logic & error handling', completed: task.status === 'COMPLETED' || task.status === 'IN_REVIEW' },
+    { id: 'st-3', title: 'Verify staging deployment & regression pass', completed: task.status === 'COMPLETED' }
+  ];
+
+  const defaultAttachments = [
+    { id: 'att-1', name: 'architecture_diagram.pdf', size: '1.4 MB', type: 'pdf', uploadedAt: 'Yesterday 16:30' },
+    { id: 'att-2', name: 'api_contract_v2.json', size: '38 KB', type: 'code', uploadedAt: 'Today 09:15' }
+  ];
+
+  const defaultComments = [
+    {
+      id: 'cm-1',
+      author: 'Sarah Chen',
+      avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=140&auto=format&fit=crop&q=80',
+      text: 'Verified staging environment. Ready for final review once PR #108 is approved.',
+      createdAt: '25 min ago',
+      reactions: ['👍', '🚀']
+    }
+  ];
+
+  const defaultHistory = [
+    { id: 'act-1', user: task.assignee || 'Alex Rivera', action: `created task with priority ${task.priority || 'MEDIUM'}`, timestamp: '2 days ago' },
+    { id: 'act-2', user: 'Flow Intelligence', action: 'analyzed dependency runway and assigned 45m target', timestamp: 'Yesterday' }
+  ];
+
+  return {
+    ...task,
+    estimatedTime: task.estimatedTime || '45m',
+    tags: Array.isArray(task.tags) && task.tags.length > 0 ? task.tags : [task.category?.toLowerCase() || 'engineering', 'sprint-18'],
+    subtasks: Array.isArray(task.subtasks) && task.subtasks.length > 0 ? task.subtasks : defaultSubtasks,
+    attachments: Array.isArray(task.attachments) && task.attachments.length > 0 ? task.attachments : defaultAttachments,
+    comments: Array.isArray(task.comments) && task.comments.length > 0 ? task.comments : defaultComments,
+    activityHistory: Array.isArray(task.activityHistory) && task.activityHistory.length > 0 ? task.activityHistory : defaultHistory,
+    dependencies: Array.isArray(task.dependencies) ? task.dependencies : [],
+    relatedTasks: Array.isArray(task.relatedTasks) ? task.relatedTasks : [],
+    aiSuggestions: Array.isArray(task.aiSuggestions) && task.aiSuggestions.length > 0 ? task.aiSuggestions : [
+      { id: 'ai-1', title: 'Acceptance Criteria', text: 'Verify response status code 200 on valid payload and structured RFC-7807 error problem detail on 4xx/5xx.' },
+      { id: 'ai-2', title: 'Velocity Projection', text: 'On-time delivery likelihood is 92% if code review commences before 16:00 UTC.' }
+    ]
+  };
+}
+
 const INITIAL_DEMO_TASKS = [
-  { id: 1, title: 'Design Glassmorphic UI Components', description: 'Create modern, translucent card components and custom scrollbars.', status: 'IN_PROGRESS', priority: 'HIGH', category: 'Frontend', assignee: 'Deepanshi Kaushal', dueDate: '2026-08-15', projectId: 1, workspaceId: 1 },
-  { id: 2, title: 'Implement Spring Boot REST APIs', description: 'Build Java REST controllers, JPA repositories, and CORS config.', status: 'COMPLETED', priority: 'URGENT', category: 'Backend', assignee: 'Sarah Chen', dueDate: '2026-08-12', projectId: 1, workspaceId: 1 },
-  { id: 3, title: 'Configure H2 Database Auto-schema', description: 'Ensure in-memory entity tables are properly mapped with Hibernate.', status: 'COMPLETED', priority: 'MEDIUM', category: 'Database', assignee: 'Sarah Chen', dueDate: '2026-08-10', projectId: 1, workspaceId: 1 },
-  { id: 4, title: 'Integrate Real-Time Status Filter', description: 'Add debounced search input and status dropdown on React grid.', status: 'TODO', priority: 'MEDIUM', category: 'Frontend', assignee: 'Deepanshi Kaushal', dueDate: '2026-08-18', projectId: 1, workspaceId: 1 },
-  { id: 5, title: 'Setup Docker Pipeline', description: 'Write Dockerfiles for Spring Boot jar and Vite build.', status: 'IN_REVIEW', priority: 'HIGH', category: 'DevOps', assignee: 'Marcus Vance', dueDate: '2026-08-14', projectId: 3, workspaceId: 1 },
-  { id: 6, title: 'Build Mobile Feedback Survey Widget', description: 'Design and integrate responsive client survey modal with rating inputs and animation.', status: 'IN_PROGRESS', priority: 'HIGH', category: 'Frontend', assignee: 'Standard Member', assignedToId: 101, dueDate: '2026-09-22', projectId: 1, workspaceId: 1 },
-  { id: 7, title: 'Document Team Workflows & Daily Standup Checklists', description: 'Draft agile sprint checklist and onboard documentation for junior engineering members.', status: 'TODO', priority: 'MEDIUM', category: 'Product', assignee: 'Standard Member', assignedToId: 101, dueDate: '2026-09-25', projectId: 1, workspaceId: 1 },
-  { id: 8, title: 'Audit Backend API Latency & JVM Memory Caps', description: 'Inspect Actuator metrics, thread pools, and HikariCP connection health under peak loads.', status: 'COMPLETED', priority: 'URGENT', category: 'Backend', assignee: 'Backend Administrator', assignedToId: 100, dueDate: '2026-09-17', projectId: 3, workspaceId: 1 }
+  {
+    id: 1,
+    title: 'Design Glassmorphic UI Components & Design Tokens',
+    description: 'Create modern, translucent card components, subtle layered surfaces, and custom scrollbars for Flowvia.',
+    status: 'IN_PROGRESS',
+    priority: 'HIGH',
+    category: 'Frontend',
+    assignee: 'Deepanshi Kaushal',
+    dueDate: '2026-10-02',
+    estimatedTime: '1h 30m',
+    projectId: 1,
+    workspaceId: 1,
+    tags: ['ui', 'design-tokens', 'glassmorphism'],
+    subtasks: [
+      { id: 'st-1-1', title: 'Establish color tokens in index.css', completed: true },
+      { id: 'st-1-2', title: 'Implement slide-over panel animation', completed: true },
+      { id: 'st-1-3', title: 'Audit contrast ratios for WCAG AA compliance', completed: false }
+    ],
+    attachments: [
+      { id: 'att-1-1', name: 'design_specs_v3.pdf', size: '2.8 MB', type: 'pdf', uploadedAt: 'Yesterday 14:00' }
+    ],
+    comments: [
+      {
+        id: 'cm-1-1',
+        author: 'Alex Rivera',
+        avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=140&auto=format&fit=crop&q=80',
+        text: 'The translucent border contrast is dialed in nicely. Make sure hover transitions are under 150ms.',
+        createdAt: '1 hour ago',
+        reactions: ['✨', '👍']
+      }
+    ],
+    activityHistory: [
+      { id: 'act-1-1', user: 'Deepanshi Kaushal', action: 'moved status from TODO to IN_PROGRESS', timestamp: 'Today 09:30' },
+      { id: 'act-1-2', user: 'Alex Rivera', action: 'added comment and attached design_specs_v3.pdf', timestamp: '1 hour ago' }
+    ],
+    dependencies: [
+      { id: 'dep-1', taskId: 2, taskTitle: 'Implement Spring Boot REST APIs', type: 'BLOCKED_BY' }
+    ],
+    relatedTasks: [2, 4],
+    aiSuggestions: [
+      { id: 'ai-1-1', title: 'Refinement Opportunity', text: 'Consider exporting design tokens as CSS variables for faster dark/light theme switching.' }
+    ]
+  },
+  {
+    id: 2,
+    title: 'Implement Spring Boot REST APIs & JWT Handshake',
+    description: 'Build Java REST controllers, JPA repositories, OAuth2 token handlers, and CORS configuration.',
+    status: 'COMPLETED',
+    priority: 'URGENT',
+    category: 'Backend',
+    assignee: 'Sarah Chen',
+    dueDate: '2026-09-29',
+    estimatedTime: '2h 15m',
+    projectId: 1,
+    workspaceId: 1,
+    tags: ['backend', 'spring-boot', 'auth', 'security'],
+    subtasks: [
+      { id: 'st-2-1', title: 'Write TaskController and TaskService endpoints', completed: true },
+      { id: 'st-2-2', title: 'Configure JwtAuthenticationFilter with RSA256', completed: true },
+      { id: 'st-2-3', title: 'Run JUnit integration tests with MockMvc', completed: true }
+    ],
+    attachments: [
+      { id: 'att-2-1', name: 'swagger_openapi_spec.json', size: '64 KB', type: 'code', uploadedAt: '2 days ago' }
+    ],
+    comments: [
+      {
+        id: 'cm-2-1',
+        author: 'Marcus Vance',
+        avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=140&auto=format&fit=crop&q=80',
+        text: 'All endpoints verified on staging. Latency avg is 7.2ms.',
+        createdAt: '3 hours ago',
+        reactions: ['🚀']
+      }
+    ],
+    activityHistory: [
+      { id: 'act-2-1', user: 'Sarah Chen', action: 'completed task and merged PR #114', timestamp: 'Yesterday 17:45' }
+    ],
+    dependencies: [],
+    relatedTasks: [1, 3],
+    aiSuggestions: [
+      { id: 'ai-2-1', title: 'Performance Tip', text: 'Connection pool metrics show HikariCP operating at 12% peak saturation.' }
+    ]
+  },
+  {
+    id: 3,
+    title: 'Configure H2 Database Auto-schema & Indexes',
+    description: 'Ensure in-memory entity tables are properly mapped with Hibernate and compound indexes are active.',
+    status: 'COMPLETED',
+    priority: 'MEDIUM',
+    category: 'Database',
+    assignee: 'Sarah Chen',
+    dueDate: '2026-09-28',
+    estimatedTime: '45m',
+    projectId: 1,
+    workspaceId: 1,
+    tags: ['database', 'h2', 'hibernate', 'indexes'],
+    subtasks: [
+      { id: 'st-3-1', title: 'Add compound indexes on tasks(status, priority)', completed: true },
+      { id: 'st-3-2', title: 'Verify schema generation with ddl-auto=update', completed: true }
+    ],
+    attachments: [],
+    comments: [],
+    activityHistory: [
+      { id: 'act-3-1', user: 'Sarah Chen', action: 'created and marked completed', timestamp: '3 days ago' }
+    ],
+    dependencies: [],
+    relatedTasks: [2],
+    aiSuggestions: []
+  },
+  {
+    id: 4,
+    title: 'Integrate Real-Time Status Filter & Fuzzy Search',
+    description: 'Add debounced search input, status dropdown, priority filter, and URL synchronization on task table.',
+    status: 'TODO',
+    priority: 'MEDIUM',
+    category: 'Frontend',
+    assignee: 'Deepanshi Kaushal',
+    dueDate: '2026-10-04',
+    estimatedTime: '1h 00m',
+    projectId: 1,
+    workspaceId: 1,
+    tags: ['frontend', 'search', 'ux'],
+    subtasks: [
+      { id: 'st-4-1', title: 'Implement useDebounce hook with 250ms delay', completed: true },
+      { id: 'st-4-2', title: 'Add keyboard shortcut for search autofocus', completed: false }
+    ],
+    attachments: [],
+    comments: [],
+    activityHistory: [
+      { id: 'act-4-1', user: 'Deepanshi Kaushal', action: 'created task', timestamp: 'Yesterday' }
+    ],
+    dependencies: [],
+    relatedTasks: [1],
+    aiSuggestions: [
+      { id: 'ai-4-1', title: 'Search Recommendation', text: 'Index task description and tags for comprehensive client-side matching.' }
+    ]
+  },
+  {
+    id: 5,
+    title: 'Setup Docker Multi-stage Pipeline & Automated CI/CD',
+    description: 'Write Dockerfiles for Spring Boot jar and Vite build with Temurin-21 and Node 20 alpine.',
+    status: 'IN_REVIEW',
+    priority: 'HIGH',
+    category: 'DevOps',
+    assignee: 'Marcus Vance',
+    dueDate: '2026-10-01',
+    estimatedTime: '2h 00m',
+    projectId: 3,
+    workspaceId: 1,
+    tags: ['devops', 'docker', 'ci-cd', 'render'],
+    subtasks: [
+      { id: 'st-5-1', title: 'Create multi-stage Dockerfile', completed: true },
+      { id: 'st-5-2', title: 'Configure Render auto-deploy webhook on main branch', completed: true },
+      { id: 'st-5-3', title: 'Verify healthcheck endpoint in production', completed: false }
+    ],
+    attachments: [
+      { id: 'att-5-1', name: 'docker-compose.prod.yml', size: '3.2 KB', type: 'code', uploadedAt: 'Yesterday' }
+    ],
+    comments: [
+      {
+        id: 'cm-5-1',
+        author: 'Marcus Vance',
+        avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=140&auto=format&fit=crop&q=80',
+        text: 'Docker image size optimized to 184MB using Alpine runtime.',
+        createdAt: '5 hours ago',
+        reactions: ['⚡']
+      }
+    ],
+    activityHistory: [
+      { id: 'act-5-1', user: 'Marcus Vance', action: 'moved task to IN_REVIEW', timestamp: '5 hours ago' }
+    ],
+    dependencies: [],
+    relatedTasks: [2],
+    aiSuggestions: []
+  },
+  {
+    id: 6,
+    title: 'Build Mobile Feedback Survey Widget & Haptic Cues',
+    description: 'Design and integrate responsive client survey modal with rating inputs, micro-animations, and audio feedback.',
+    status: 'IN_PROGRESS',
+    priority: 'HIGH',
+    category: 'Frontend',
+    assignee: 'Alex Rivera',
+    assignedToId: 101,
+    dueDate: '2026-10-03',
+    estimatedTime: '1h 15m',
+    projectId: 2,
+    workspaceId: 1,
+    tags: ['mobile', 'feedback', 'animations'],
+    subtasks: [
+      { id: 'st-6-1', title: 'Build touch-friendly rating stars and feedback input', completed: true },
+      { id: 'st-6-2', title: 'Wire Web Audio API tick on star selection', completed: false }
+    ],
+    attachments: [],
+    comments: [],
+    activityHistory: [
+      { id: 'act-6-1', user: 'Alex Rivera', action: 'assigned to self and started working', timestamp: 'Today 11:00' }
+    ],
+    dependencies: [],
+    relatedTasks: [1],
+    aiSuggestions: []
+  },
+  {
+    id: 7,
+    title: 'Document Team Workflows & Daily Standup Checklists',
+    description: 'Draft agile sprint checklist, PR review SLAs, and onboarding documentation for engineering members.',
+    status: 'TODO',
+    priority: 'LOW',
+    category: 'Product',
+    assignee: 'Sarah Chen',
+    assignedToId: 101,
+    dueDate: '2026-10-06',
+    estimatedTime: '45m',
+    projectId: 1,
+    workspaceId: 1,
+    tags: ['documentation', 'agile', 'workflows'],
+    subtasks: [
+      { id: 'st-7-1', title: 'Document PR review SLAs and merge checklists', completed: false },
+      { id: 'st-7-2', title: 'Add engineering onboarding guide to Document Vault', completed: false }
+    ],
+    attachments: [],
+    comments: [],
+    activityHistory: [
+      { id: 'act-7-1', user: 'Sarah Chen', action: 'created task', timestamp: '3 days ago' }
+    ],
+    dependencies: [],
+    relatedTasks: [],
+    aiSuggestions: []
+  },
+  {
+    id: 8,
+    title: 'Audit Backend API Latency & JVM Memory Caps',
+    description: 'Inspect Actuator metrics, thread pools, and HikariCP connection health under peak loads.',
+    status: 'COMPLETED',
+    priority: 'URGENT',
+    category: 'Backend',
+    assignee: 'Marcus Vance',
+    assignedToId: 100,
+    dueDate: '2026-09-27',
+    estimatedTime: '1h 45m',
+    projectId: 3,
+    workspaceId: 1,
+    tags: ['backend', 'latency', 'jvm', 'monitoring'],
+    subtasks: [
+      { id: 'st-8-1', title: 'Run Apache Bench stress test with 500 concurrent connections', completed: true },
+      { id: 'st-8-2', title: 'Cap heap memory at 512MB in Docker startup script', completed: true }
+    ],
+    attachments: [],
+    comments: [],
+    activityHistory: [
+      { id: 'act-8-1', user: 'Marcus Vance', action: 'marked completed', timestamp: '4 days ago' }
+    ],
+    dependencies: [],
+    relatedTasks: [5],
+    aiSuggestions: []
+  }
 ];
 
 const INITIAL_DEMO_PROJECTS = [
@@ -237,7 +533,12 @@ export function getStoredTasks() {
       localStorage.setItem(TASKS_KEY, JSON.stringify(INITIAL_DEMO_TASKS));
       return INITIAL_DEMO_TASKS;
     }
-    return JSON.parse(data);
+    const parsed = JSON.parse(data);
+    if (!Array.isArray(parsed) || parsed.length === 0) {
+      localStorage.setItem(TASKS_KEY, JSON.stringify(INITIAL_DEMO_TASKS));
+      return INITIAL_DEMO_TASKS;
+    }
+    return parsed.map(t => normalizeTask(t));
   } catch (e) {
     return INITIAL_DEMO_TASKS;
   }
@@ -768,10 +1069,11 @@ export async function fetchTasks(filters = {}) {
     const res = await fetch(url, { headers: getAuthHeaders() });
     if (!res.ok) throw new Error('Failed to fetch tasks from Spring Boot backend');
     const tasks = await res.json();
-    saveStoredTasks(tasks);
-    return tasks;
+    const normalized = Array.isArray(tasks) ? tasks.map(t => normalizeTask(t)) : [];
+    saveStoredTasks(normalized);
+    return normalized;
   } catch (err) {
-    let tasks = getStoredTasks();
+    let tasks = getStoredTasks().map(t => normalizeTask(t));
     if (filters.workspaceId) {
       tasks = tasks.filter(t => !t.workspaceId || String(t.workspaceId) === String(filters.workspaceId));
     }

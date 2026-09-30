@@ -901,3 +901,26 @@ html, body {
     bottom: 1rem !important;
   }
 }
+
+/* =========================================================
+   KANBAN DRAG AND DROP & CARD INTERACTIONS
+   ========================================================= */
+
+.kanban-column-container {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.kanban-column-drop-active {
+  background: rgba(99, 102, 241, 0.08) !important;
+  border: 2px dashed #6366f1 !important;
+  box-shadow: 0 0 25px rgba(99, 102, 241, 0.25) !important;
+}
+
+[draggable="true"] {
+  cursor: grab;
+  user-select: none;
+}
+
+[draggable="true"]:active {
+  cursor: grabbing;
+}

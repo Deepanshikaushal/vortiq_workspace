@@ -15,11 +15,6 @@ import MembersDirectory from './components/MembersDirectory';
 import ShortcutsModal from './components/ShortcutsModal';
 import AiAssistantModal from './components/AiAssistantModal';
 import AiBotWidget from './components/AiBotWidget';
-import HrModuleView from './components/HrModuleView';
-import CrmModuleView from './components/CrmModuleView';
-import FinanceModuleView from './components/FinanceModuleView';
-import InventoryModuleView from './components/InventoryModuleView';
-import DocumentVaultView from './components/DocumentVaultView';
 import AiAnalyticsDashboard from './components/AiAnalyticsDashboard';
 import NotificationsDrawer from './components/NotificationsDrawer';
 import Toast from './components/Toast';
@@ -761,27 +756,19 @@ export default function App() {
                     </div>
                   </div>
 
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                     <div style={{ fontSize: '0.8125rem', color: 'var(--text-dim)', fontWeight: '700' }}>
                       Showing {sortedTasks.length} {sortedTasks.length === 1 ? 'task' : 'tasks'}
                     </div>
 
                     <button
                       className="btn btn-secondary"
-                      style={{ padding: '0.4rem 0.75rem', fontSize: '0.8rem', gap: '0.35rem', color: '#f59e0b' }}
-                      onClick={() => handleOpenChat(null, 'INCONVENIENCE')}
+                      style={{ padding: '0.4rem 0.75rem', fontSize: '0.785rem', gap: '0.35rem' }}
+                      onClick={handleExportCSV}
+                      title="Export tasks to CSV file"
                     >
-                      <MessageSquare size={14} />
-                      <span>Team Chat</span>
-                    </button>
-
-                    <button
-                      className="btn btn-primary"
-                      style={{ padding: '0.4rem 0.85rem', fontSize: '0.8rem', gap: '0.35rem' }}
-                      onClick={() => handleOpenCreate('TODO')}
-                    >
-                      <Plus size={14} />
-                      <span>New Task</span>
+                      <Download size={14} />
+                      <span>Export CSV</span>
                     </button>
                   </div>
                 </div>
@@ -831,35 +818,11 @@ export default function App() {
                 >
                   <BackendConsoleView currentUser={currentUser} />
                 </RoleGuard>
-              ) : activeView === 'hr' ? (
-                <RoleGuard
-                  currentUser={currentUser}
-                  allowedRoles={['ROLE_ADMIN', 'ROLE_OWNER']}
-                  moduleName="HR & Talent Management"
-                  onBackToAssigned={() => setActiveView('kanban')}
-                >
-                  <HrModuleView currentUser={currentUser} />
-                </RoleGuard>
-              ) : activeView === 'crm' ? (
-                <CrmModuleView currentUser={currentUser} />
-              ) : activeView === 'finance' ? (
-                <RoleGuard
-                  currentUser={currentUser}
-                  allowedRoles={['ROLE_ADMIN', 'ROLE_OWNER']}
-                  moduleName="Finance & Budgets"
-                  onBackToAssigned={() => setActiveView('kanban')}
-                >
-                  <FinanceModuleView currentUser={currentUser} />
-                </RoleGuard>
-              ) : activeView === 'inventory' ? (
-                <InventoryModuleView currentUser={currentUser} />
-              ) : activeView === 'documents' ? (
-                <DocumentVaultView currentUser={currentUser} />
               ) : activeView === 'ai-analytics' ? (
                 <RoleGuard
                   currentUser={currentUser}
                   allowedRoles={['ROLE_ADMIN', 'ROLE_OWNER']}
-                  moduleName="AI Analytics & ML Hub"
+                  moduleName="AI Velocity & Risk Hub"
                   onBackToAssigned={() => setActiveView('kanban')}
                 >
                   <AiAnalyticsDashboard currentUser={currentUser} />

@@ -345,95 +345,11 @@ export default function Sidebar({
               }}
             >
               <Briefcase size={18} style={{ color: '#c084fc' }} />
-              <span>AI Analytics & ML Hub</span>
+              <span>AI Velocity & Risk Hub</span>
             </div>
           )}
 
-          {/* ENTERPRISE ERP SUITE (Full suite for Admin and Owner) */}
-          {!isMember ? (
-            <>
-              <div style={{ fontSize: '0.7rem', fontWeight: '800', color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '0.06em', marginTop: '0.8rem', marginBottom: '0.4rem', paddingLeft: '0.2rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                <Briefcase size={12} style={{ color: '#f59e0b' }} />
-                <span>Enterprise ERP Suite</span>
-              </div>
-
-              <div
-                className={`sidebar-link ${activeView === 'hr' ? 'active' : ''}`}
-                onClick={() => {
-                  setActiveView('hr');
-                  onCloseMobileMenu();
-                }}
-              >
-                <Users size={18} style={{ color: '#a855f7' }} />
-                <span>HR & Talent Management</span>
-              </div>
-
-              <div
-                className={`sidebar-link ${activeView === 'crm' ? 'active' : ''}`}
-                onClick={() => {
-                  setActiveView('crm');
-                  onCloseMobileMenu();
-                }}
-              >
-                <ShieldCheck size={18} style={{ color: '#38bdf8' }} />
-                <span>CRM & Sales Pipeline</span>
-              </div>
-
-              <div
-                className={`sidebar-link ${activeView === 'finance' ? 'active' : ''}`}
-                onClick={() => {
-                  setActiveView('finance');
-                  onCloseMobileMenu();
-                }}
-              >
-                <Download size={18} style={{ color: '#10b981' }} />
-                <span>Finance & Budgets</span>
-              </div>
-
-              <div
-                className={`sidebar-link ${activeView === 'inventory' ? 'active' : ''}`}
-                onClick={() => {
-                  setActiveView('inventory');
-                  onCloseMobileMenu();
-                }}
-              >
-                <FolderPlus size={18} style={{ color: '#f59e0b' }} />
-                <span>Inventory & Assets</span>
-              </div>
-
-              <div
-                className={`sidebar-link ${activeView === 'documents' ? 'active' : ''}`}
-                onClick={() => {
-                  setActiveView('documents');
-                  onCloseMobileMenu();
-                }}
-              >
-                <HelpCircle size={18} style={{ color: '#06b6d4' }} />
-                <span>Document Vault</span>
-              </div>
-            </>
-          ) : (
-            /* Member-only Workspace Assets */
-            <>
-              <div style={{ fontSize: '0.7rem', fontWeight: '800', color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '0.06em', marginTop: '0.8rem', marginBottom: '0.4rem', paddingLeft: '0.2rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                <HelpCircle size={12} style={{ color: '#06b6d4' }} />
-                <span>Workspace Docs</span>
-              </div>
-
-              <div
-                className={`sidebar-link ${activeView === 'documents' ? 'active' : ''}`}
-                onClick={() => {
-                  setActiveView('documents');
-                  onCloseMobileMenu();
-                }}
-              >
-                <HelpCircle size={18} style={{ color: '#06b6d4' }} />
-                <span>Document Vault</span>
-              </div>
-            </>
-          )}
-
-          <div style={{ fontSize: '0.7rem', fontWeight: '800', color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '0.06em', marginTop: '0.8rem', marginBottom: '0.4rem', paddingLeft: '0.2rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+          <div style={{ fontSize: '0.7rem', fontWeight: '800', color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '0.06em', marginTop: '1.25rem', marginBottom: '0.4rem', paddingLeft: '0.2rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
             <Users size={12} style={{ color: '#ec4899' }} />
             <span>Collaboration</span>
           </div>
@@ -470,8 +386,8 @@ export default function Sidebar({
               style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                <MessageSquare size={18} style={{ color: '#f59e0b' }} />
-                <span>Team & Inconveniences</span>
+                <AlertTriangle size={18} style={{ color: '#f59e0b' }} />
+                <span>Issue & Blocker Chat</span>
               </div>
               {inconvenienceCount > 0 && (
                 <span style={{
@@ -488,9 +404,9 @@ export default function Sidebar({
             </div>
           )}
 
-          <div className="sidebar-link" onClick={() => { onOpenWorkspaceModal(); onCloseMobileMenu(); }}>
-            <Users size={18} style={{ color: '#fbbf24' }} />
-            <span>Manage Workspaces</span>
+          <div style={{ fontSize: '0.7rem', fontWeight: '800', color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '0.06em', marginTop: '1.25rem', marginBottom: '0.4rem', paddingLeft: '0.2rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <Settings size={12} style={{ color: '#94a3b8' }} />
+            <span>Platform</span>
           </div>
 
           <div
@@ -501,32 +417,18 @@ export default function Sidebar({
             }}
           >
             <Home size={18} style={{ color: '#f43f5e' }} />
-            <span>Home Landing Page</span>
+            <span>Landing Page</span>
           </div>
 
-          <div className="sidebar-link" onClick={() => { onOpenProfileModal(); onCloseMobileMenu(); }}>
-            <Settings size={18} style={{ color: '#a855f7' }} />
-            <span>Profile & Security</span>
+          <div className="sidebar-link" onClick={() => { onOpenWorkspaceModal(); onCloseMobileMenu(); }}>
+            <Users size={18} style={{ color: '#fbbf24' }} />
+            <span>Manage Workspaces</span>
           </div>
-
-          {onOpenAuthModal && (
-            <div className="sidebar-link" onClick={() => { onOpenAuthModal(); onCloseMobileMenu(); }}>
-              <Lock size={18} style={{ color: '#ec4899' }} />
-              <span>OTP Sign In / Auth</span>
-            </div>
-          )}
-
-          {onExportCSV && (
-            <div className="sidebar-link" onClick={() => { onExportCSV(); onCloseMobileMenu(); }}>
-              <Download size={18} style={{ color: '#22c55e' }} />
-              <span>Export CSV Report</span>
-            </div>
-          )}
 
           {onOpenShortcutsModal && (
             <div className="sidebar-link" onClick={() => { onOpenShortcutsModal(); onCloseMobileMenu(); }}>
               <HelpCircle size={18} style={{ color: '#38bdf8' }} />
-              <span>Keyboard Shortcuts (?)</span>
+              <span>Keyboard Shortcuts</span>
             </div>
           )}
 

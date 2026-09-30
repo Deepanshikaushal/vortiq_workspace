@@ -330,7 +330,7 @@ export default function Navbar({
               title="Create new task (N)"
             >
               <Plus size={15} />
-              <span className="desktop-only">Task</span>
+              <span className="desktop-only">New Task</span>
             </button>
           )}
 
@@ -419,93 +419,6 @@ export default function Navbar({
           {/* API Health Status */}
           <ApiStatusBadge isConnected={isConnected} onRetry={onCheckApi} />
 
-          {/* Options Dropdown Menu */}
-          <div style={{ position: 'relative' }} ref={optionsMenuRef}>
-            <button
-              onClick={() => setOptionsMenuOpen(!optionsMenuOpen)}
-              className="btn btn-secondary"
-              style={{
-                padding: '0.4rem 0.65rem',
-                fontSize: '0.8rem',
-                gap: '0.3rem',
-                height: '36px',
-                border: '1px solid var(--border-color)',
-                background: optionsMenuOpen ? 'var(--bg-tertiary)' : 'var(--bg-secondary)'
-              }}
-              title="Application options"
-            >
-              <SlidersHorizontal size={14} style={{ color: 'var(--text-muted)' }} />
-              <ChevronDown size={13} style={{ transform: optionsMenuOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
-            </button>
-
-            {optionsMenuOpen && (
-              <div style={{
-                position: 'absolute',
-                right: 0,
-                top: '125%',
-                width: 'min(260px, 88vw)',
-                background: 'var(--bg-glass)',
-                backdropFilter: 'blur(20px)',
-                border: '1px solid var(--border-color)',
-                borderRadius: '12px',
-                boxShadow: '0 12px 30px rgba(0,0,0,0.6)',
-                padding: '0.55rem',
-                zIndex: 100
-              }}>
-                <div style={{ padding: '0.4rem 0.75rem', fontSize: '0.725rem', fontWeight: 800, color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '0.06em', borderBottom: '1px solid var(--border-color)', marginBottom: '0.35rem' }}>
-                  Workspace Tools
-                </div>
-
-                <button
-                  onClick={() => { setOptionsMenuOpen(false); if (onOpenChatModal) onOpenChatModal(); }}
-                  className="btn btn-ghost"
-                  style={{ width: '100%', justifyContent: 'flex-start', fontSize: '0.85rem', padding: '0.5rem 0.75rem', gap: '0.6rem' }}
-                >
-                  <MessageSquare size={16} style={{ color: '#f59e0b' }} />
-                  <span>Team & Blockers Chat</span>
-                </button>
-
-                <button
-                  onClick={() => { setOptionsMenuOpen(false); onOpenWorkspaceModal(); }}
-                  className="btn btn-ghost"
-                  style={{ width: '100%', justifyContent: 'flex-start', fontSize: '0.85rem', padding: '0.5rem 0.75rem', gap: '0.6rem' }}
-                >
-                  <Users size={16} style={{ color: '#10b981' }} />
-                  <span>Workspace Collaboration</span>
-                </button>
-
-                <button
-                  onClick={() => { setOptionsMenuOpen(false); onOpenProfileModal(); }}
-                  className="btn btn-ghost"
-                  style={{ width: '100%', justifyContent: 'flex-start', fontSize: '0.85rem', padding: '0.5rem 0.75rem', gap: '0.6rem' }}
-                >
-                  <Settings size={16} style={{ color: '#f43f5e' }} />
-                  <span>Profile & Security</span>
-                </button>
-
-                <button
-                  onClick={() => { setOptionsMenuOpen(false); onExportCSV(); }}
-                  className="btn btn-ghost"
-                  style={{ width: '100%', justifyContent: 'flex-start', fontSize: '0.85rem', padding: '0.5rem 0.75rem', gap: '0.6rem' }}
-                >
-                  <Download size={16} style={{ color: '#06b6d4' }} />
-                  <span>Export Tasks CSV</span>
-                </button>
-
-                {onOpenShortcutsModal && (
-                  <button
-                    onClick={() => { setOptionsMenuOpen(false); onOpenShortcutsModal(); }}
-                    className="btn btn-ghost"
-                    style={{ width: '100%', justifyContent: 'flex-start', fontSize: '0.85rem', padding: '0.5rem 0.75rem', gap: '0.6rem' }}
-                  >
-                    <HelpCircle size={16} style={{ color: '#38bdf8' }} />
-                    <span>Keyboard Shortcuts</span>
-                  </button>
-                )}
-
-              </div>
-            )}
-          </div>
 
           {/* Theme Toggle Button */}
           <button

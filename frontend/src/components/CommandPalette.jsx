@@ -29,7 +29,8 @@ export default function CommandPalette({
   onOpenCreateProject,
   onStartFocus,
   onOpenProfile,
-  onToggleTheme
+  onToggleTheme,
+  onOpenFlowIntelligence
 }) {
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -44,6 +45,15 @@ export default function CommandPalette({
   }, [isOpen]);
 
   const defaultActions = [
+    {
+      id: 'act-flow-intel',
+      title: 'Flow Intelligence & Attention Drawer',
+      subtitle: 'Open real-time workspace friction analysis and Smart Brief',
+      category: 'Intelligence',
+      icon: Sparkles,
+      shortcut: 'I',
+      action: () => { onClose(); onOpenFlowIntelligence?.(); }
+    },
     {
       id: 'act-new-task',
       title: 'Create New Task',

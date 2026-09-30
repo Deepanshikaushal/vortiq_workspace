@@ -53,7 +53,8 @@ export default function Sidebar({
   onToggleSidebarCollapse,
   taskCount = 0,
   myTaskCount = 0,
-  onOpenAiModal
+  onOpenAiModal,
+  onOpenFlowIntelligence
 }) {
   const [isWorkspaceMenuOpen, setIsWorkspaceMenuOpen] = useState(false);
   const [isProjectsExpanded, setIsProjectsExpanded] = useState(true);
@@ -81,12 +82,13 @@ export default function Sidebar({
     { id: 'team', label: 'Team', icon: Users },
     { id: 'analytics', label: 'Analytics', icon: BarChart2 },
     { id: 'automations', label: 'Automations', icon: Cpu },
-    { id: 'ai-assistant', label: 'AI Assistant', icon: Sparkles, highlight: true }
+    { id: 'flow-intelligence', label: 'Flow Intelligence', icon: Sparkles, highlight: true }
   ];
 
   const handleNavClick = (id) => {
-    if (id === 'ai-assistant') {
-      if (onOpenAiModal) onOpenAiModal();
+    if (id === 'flow-intelligence' || id === 'ai-assistant') {
+      if (onOpenFlowIntelligence) onOpenFlowIntelligence();
+      else if (onOpenAiModal) onOpenAiModal();
       else setActiveView('ai-analytics');
     } else {
       setActiveView(id);

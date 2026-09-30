@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import WorkspaceDashboard from './components/WorkspaceDashboard';
 import CommandCenter from './components/CommandCenter';
 import CommandPalette from './components/CommandPalette';
+import FlowIntelligencePanel from './components/FlowIntelligencePanel';
 import CalendarView from './components/CalendarView';
 import NotesView from './components/NotesView';
 import AutomationsView from './components/AutomationsView';
@@ -93,6 +94,9 @@ export default function App() {
   // Command Palette State
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
 
+  // Flow Intelligence Drawer State
+  const [isFlowIntelligenceOpen, setIsFlowIntelligenceOpen] = useState(false);
+
   // Modal Control States
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [taskToEdit, setTaskToEdit] = useState(null);
@@ -151,6 +155,15 @@ export default function App() {
       } else if (e.key.toLowerCase() === 'd' && !['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) {
         e.preventDefault();
         setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
+      } else if (
+        ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'i') ||
+        (e.key.toLowerCase() === 'i' && !['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName))
+      ) {
+        e.preventDefault();
+        setIsFlowIntelligenceOpen((prev) => !prev);
+      } else if (e.key === 'Escape') {
+        setIsFlowIntelligenceOpen(false);
+        setIsCommandPaletteOpen(false);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
@@ -522,6 +535,7 @@ export default function App() {
         taskCount={tasks.length}
         myTaskCount={scopedTasks.length}
         onOpenAiModal={() => setIsAiModalOpen(true)}
+        onOpenFlowIntelligence={() => setIsFlowIntelligenceOpen(true)}
       />
 
       {/* Main Content Area */}
@@ -561,6 +575,7 @@ export default function App() {
           isSidebarCollapsed={isSidebarCollapsed}
           onToggleSidebarCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
           onOpenCommandPalette={() => setIsCommandPaletteOpen(true)}
+          onOpenFlowIntelligence={() => setIsFlowIntelligenceOpen(true)}
         />
 
         {/* Page Inner Container */}
@@ -579,6 +594,7 @@ export default function App() {
               onDeleteTask={handleDeleteTask}
               onNavigate={(v) => setActiveView(v)}
               onAddToast={addToast}
+              onOpenFlowIntelligence={() => setIsFlowIntelligenceOpen(true)}
             />
           ) : activeView === 'inbox' ? (
             <InboxView
@@ -919,6 +935,42 @@ export default function App() {
         isOpen={isNotificationsOpen}
         onClose={() => setIsNotificationsOpen(false)}
         currentUser={currentUser}
+      />
+
+      {/* Global Command Palette (Cmd+K / Ctrl+K) */}
+      <CommandPalette
+        isOpen={isCommandPaletteOpen}
+        onClose={() => setIsCommandPaletteOpen(false)}
+        tasks={tasks}
+        projects={projects}
+        onNavigate={(view) => setActiveView(view)}
+        onOpenCreateTask={() => handleOpenCreate('TODO')}
+        onOpenCreateProject={() => setIsWorkspaceModalOpen(true)}
+        onStartFocus={() => {
+          setActiveView('focus');
+          addToast('Focus session activated', 'info');
+        }}
+        onOpenProfile={() => setIsProfileModalOpen(true)}
+        onToggleTheme={() => setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))}
+        onOpenFlowIntelligence={() => setIsFlowIntelligenceOpen(true)}
+      />
+
+      {/* Flow Intelligence Contextual Attention & Smart Brief Panel */}
+      <FlowIntelligencePanel
+        isOpen={isFlowIntelligenceOpen}
+        onClose={() => setIsFlowIntelligenceOpen(false)}
+        tasks={tasks}
+        projects={projects}
+        currentUser={currentUser}
+        onOpenTask={() => {
+          setIsFlowIntelligenceOpen(false);
+          setActiveView('kanban');
+        }}
+        onAddToast={addToast}
+        onPromoteToFocus={(task) => {
+          setActiveView('focus');
+          addToast(`Promoted "${task?.title || 'task'}" to Focus Now`, 'success');
+        }}
       />
     </div>
   );

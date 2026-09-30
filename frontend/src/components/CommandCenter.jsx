@@ -48,7 +48,8 @@ export default function CommandCenter({
   onStatusChange,
   onDeleteTask,
   onNavigate,
-  onAddToast
+  onAddToast,
+  onOpenFlowIntelligence
 }) {
   // Audio state
   const [soundOn, setSoundOn] = useState(isSoundEnabled());
@@ -406,6 +407,38 @@ export default function CommandCenter({
           >
             {soundOn ? <Volume2 size={14} /> : <VolumeX size={14} />}
             <span className="desktop-only">{soundOn ? 'Audio Live' : 'Muted'}</span>
+          </button>
+
+          {/* Embedded Flow Intelligence Trigger */}
+          <button
+            onClick={onOpenFlowIntelligence}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.4rem',
+              backgroundColor: '#0c101a',
+              border: '1px solid rgba(99, 102, 241, 0.35)',
+              padding: '0.45rem 0.75rem',
+              borderRadius: '6px',
+              color: '#818cf8',
+              fontSize: '0.75rem',
+              fontWeight: 700,
+              cursor: 'pointer',
+              transition: 'all 0.15s ease'
+            }}
+            title="Open Flow Intelligence Panel (I)"
+          >
+            <Sparkles size={13} color="#818cf8" />
+            <span>Flow Intelligence</span>
+            <span style={{
+              fontSize: '0.62rem',
+              backgroundColor: 'rgba(99, 102, 241, 0.25)',
+              color: '#c7d2fe',
+              padding: '1px 5px',
+              borderRadius: '3px'
+            }}>
+              5
+            </span>
           </button>
 
           {/* Quick Flow Pulse Indicator */}

@@ -47,7 +47,8 @@ export default function Navbar({
   onOpenShortcutsModal,
   isSidebarCollapsed,
   onToggleSidebarCollapse,
-  onOpenCommandPalette
+  onOpenCommandPalette,
+  onOpenFlowIntelligence
 }) {
   const [createMenuOpen, setCreateMenuOpen] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
@@ -197,6 +198,39 @@ export default function Navbar({
       {/* Right: Workspace Status, Quick Create, Notifications, Profile */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
         
+        {/* Embedded Flow Intelligence Trigger */}
+        <button
+          onClick={onOpenFlowIntelligence}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.4rem',
+            backgroundColor: '#111726',
+            border: '1px solid rgba(99, 102, 241, 0.35)',
+            padding: '0.25rem 0.65rem',
+            borderRadius: '6px',
+            color: '#818cf8',
+            fontSize: '0.72rem',
+            fontWeight: 700,
+            cursor: 'pointer',
+            transition: 'all 0.15s ease'
+          }}
+          title="Open Flow Intelligence Panel (I)"
+        >
+          <Sparkles size={12} color="#818cf8" />
+          <span className="desktop-only">Flow Intelligence</span>
+          <span style={{
+            fontSize: '0.62rem',
+            backgroundColor: 'rgba(99, 102, 241, 0.25)',
+            color: '#c7d2fe',
+            padding: '1px 5px',
+            borderRadius: '3px',
+            marginLeft: '2px'
+          }}>
+            5
+          </span>
+        </button>
+
         {/* Workspace Live Status Indicator */}
         <div
           className="desktop-only"

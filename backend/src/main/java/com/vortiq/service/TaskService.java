@@ -25,16 +25,19 @@ public class TaskService {
     private final ProjectRepository projectRepository;
     private final WorkspaceRepository workspaceRepository;
     private final UserRepository userRepository;
+    private final AuditLogService auditLogService;
 
     public TaskService(
             TaskRepository taskRepository,
             ProjectRepository projectRepository,
             WorkspaceRepository workspaceRepository,
-            UserRepository userRepository) {
+            UserRepository userRepository,
+            AuditLogService auditLogService) {
         this.taskRepository = taskRepository;
         this.projectRepository = projectRepository;
         this.workspaceRepository = workspaceRepository;
         this.userRepository = userRepository;
+        this.auditLogService = auditLogService;
     }
 
     public List<Task> getAllTasks(Long workspaceId, TaskStatus status, TaskPriority priority, Long assignedToId, String search) {
@@ -63,7 +66,11 @@ public class TaskService {
             userRepository.findById(task.getAssignedToId()).ifPresent(task::setAssignedTo);
         }
 
-        return taskRepository.save(task);
+        Task saved = taskRepository.save(task);
+        auditLogService.record("TASK_CREATED", "TASK", saved.getId().toString(),
+                creator != null ? creator.getUsername() : "System",
+                "Created task: " + saved.getTitle() + " [Priority: " + saved.getPriority() + "]", null);
+        return saved;
     }
 
     @Transactional
@@ -87,7 +94,10 @@ public class TaskService {
                     if (updatedTask.getAssignedToId() != null) {
                         userRepository.findById(updatedTask.getAssignedToId()).ifPresent(existing::setAssignedTo);
                     }
-                    return taskRepository.save(existing);
+                    Task saved = taskRepository.save(existing);
+                    auditLogService.record("TASK_UPDATED", "TASK", id.toString(), "User",
+                            "Updated task: " + saved.getTitle(), null);
+                    return saved;
                 })
                 .orElseThrow(() -> new IllegalArgumentException("Task not found with ID: " + id));
     }
@@ -104,21 +114,32 @@ public class TaskService {
         } else {
             task.setAssignedTo(null);
         }
-        return taskRepository.save(task);
+        Task saved = taskRepository.save(task);
+        auditLogService.record("TASK_ASSIGNED", "TASK", taskId.toString(), "User",
+                "Assigned task to: " + (task.getAssignedTo() != null ? task.getAssignedTo().getUsername() : "Unassigned"), null);
+        return saved;
     }
 
     @Transactional
     public Task updateTaskStatus(Long id, TaskStatus status) {
         return taskRepository.findById(id)
                 .map(task -> {
+                    TaskStatus oldStatus = task.getStatus();
                     task.setStatus(status);
-                    return taskRepository.save(task);
+                    Task saved = taskRepository.save(task);
+                    auditLogService.record("STATUS_TRANSITION", "TASK", id.toString(), "User",
+                            "Changed status from " + oldStatus + " to " + status + " on: " + task.getTitle(), null);
+                    return saved;
                 })
                 .orElseThrow(() -> new IllegalArgumentException("Task not found with ID: " + id));
     }
 
     @Transactional
     public void deleteTask(Long id) {
+        taskRepository.findById(id).ifPresent(task ->
+            auditLogService.record("TASK_DELETED", "TASK", id.toString(), "User",
+                    "Deleted task: " + task.getTitle(), null)
+        );
         taskRepository.deleteById(id);
     }
 

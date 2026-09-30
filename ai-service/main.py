@@ -11,7 +11,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Optional, Dict, Any
-from ml_models import TaskPriorityModel, ProjectRiskModel, WorkloadOptimizationEngine
+from ml_models import TaskPriorityModel, ProjectRiskModel, WorkloadOptimizationEngine, ModelBenchmarkingSuite
 import uvicorn
 
 app = FastAPI(
@@ -31,6 +31,7 @@ app.add_middleware(
 priority_model = TaskPriorityModel()
 risk_model = ProjectRiskModel()
 workload_engine = WorkloadOptimizationEngine()
+benchmarking_suite = ModelBenchmarkingSuite()
 
 # Request Models
 class TaskPriorityRequest(BaseModel):
@@ -142,6 +143,14 @@ def workspace_assistant(req: ChatRequest):
         "confidence": 0.95,
         "source": "VortiQ NLP Agent"
     }
+
+@app.get("/benchmark")
+def get_benchmarks():
+    """
+    Exposes comparative machine learning benchmark metrics for B.Tech project defense.
+    Compares Linear Regression, Ridge, Random Forest, and Gradient Boosting.
+    """
+    return benchmarking_suite.run_benchmark()
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)

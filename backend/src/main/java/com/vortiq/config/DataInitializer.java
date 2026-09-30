@@ -7,12 +7,13 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import com.vortiq.service.DemoDataSeeder;
 import java.sql.Connection;
 import java.time.LocalDate;
 import java.util.List;
 
 @Component
-public class DataInitializer implements CommandLineRunner {
+public class DataInitializer implements CommandLineRunner, DemoDataSeeder {
 
     private final ProjectRepository projectRepository;
     private final TaskRepository taskRepository;
@@ -37,6 +38,11 @@ public class DataInitializer implements CommandLineRunner {
         this.workspaceMemberRepository = workspaceMemberRepository;
         this.passwordEncoder = passwordEncoder;
         this.jdbcTemplate = jdbcTemplate;
+    }
+
+    @Override
+    public void seedEnterpriseData() {
+        run();
     }
 
     @Override

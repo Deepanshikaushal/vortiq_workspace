@@ -15,9 +15,12 @@ import {
   Download,
   Users,
   ShieldCheck,
-  HardDrive
+  HardDrive,
+  ExternalLink,
+  Sparkles,
+  BookOpen
 } from 'lucide-react';
-import { checkApiHealth, fetchTasks, fetchWorkspaces } from '../services/api';
+import { checkApiHealth, fetchTasks, fetchWorkspaces, fetchSystemTelemetry, fetchAuditLogs, seedEnterpriseDemoData } from '../services/api';
 
 export default function BackendConsoleView({ currentUser }) {
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -59,7 +62,39 @@ export default function BackendConsoleView({ currentUser }) {
     { id: 7, time: '05:55:17', level: 'AUTH', message: 'POST /api/auth/login — User deepanshi@vortiq.com authenticated with ROLE_OWNER' }
   ]);
 
+  const [isSeeding, setIsSeeding] = useState(false);
+  const [realAuditLogs, setRealAuditLogs] = useState([]);
+
+  const loadTelemetryAndLogs = async () => {
+    try {
+      const telemetry = await fetchSystemTelemetry();
+      if (telemetry) {
+        setSystemHealth((prev) => ({
+          ...prev,
+          jvmMemoryUsed: `${telemetry.heapUsedMB} MB`,
+          jvmMemoryMax: `${telemetry.heapMaxMB} MB`,
+          activeThreads: telemetry.activeThreads,
+          status: telemetry.status
+        }));
+        setDbTables((prev) => prev.map((t) => {
+          if (t.name === 'tasks') return { ...t, records: telemetry.totalTasks };
+          if (t.name === 'projects') return { ...t, records: telemetry.totalProjects };
+          if (t.name === 'workspaces') return { ...t, records: telemetry.totalWorkspaces };
+          if (t.name === 'users') return { ...t, records: telemetry.totalUsers };
+          return t;
+        }));
+      }
+      const logs = await fetchAuditLogs();
+      if (logs && logs.length > 0) {
+        setRealAuditLogs(logs);
+      }
+    } catch (e) {
+      console.warn('Telemetry load failed:', e);
+    }
+  };
+
   useEffect(() => {
+    loadTelemetryAndLogs();
     const timer = setInterval(() => {
       setUptimeSeconds((prev) => prev + 1);
     }, 1000);
@@ -71,6 +106,18 @@ export default function BackendConsoleView({ currentUser }) {
     const mins = Math.floor((secs % 3600) / 60);
     const remSecs = secs % 60;
     return `${hours}h ${mins}m ${remSecs}s`;
+  };
+
+  const handleSeedEnterpriseData = async () => {
+    setIsSeeding(true);
+    try {
+      const res = await seedEnterpriseDemoData();
+      if (res && res.success) {
+        await loadTelemetryAndLogs();
+      }
+    } finally {
+      setIsSeeding(false);
+    }
   };
 
   const handleRunTest = async (endpoint) => {
@@ -108,20 +155,12 @@ export default function BackendConsoleView({ currentUser }) {
     }
   };
 
-  const handleRefreshMetrics = () => {
+  const handleRefreshMetrics = async () => {
     setIsRefreshing(true);
+    await loadTelemetryAndLogs();
     setTimeout(() => {
       setIsRefreshing(false);
-      setAdminLogs((prev) => [
-        {
-          id: Date.now(),
-          time: new Date().toTimeString().split(' ')[0],
-          level: 'INFO',
-          message: 'Telemetry metrics polled: CPU usage nominal, 24 threads active'
-        },
-        ...prev
-      ]);
-    }, 600);
+    }, 400);
   };
 
   return (
@@ -178,7 +217,29 @@ export default function BackendConsoleView({ currentUser }) {
           </div>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', flexWrap: 'wrap' }}>
+          <button
+            onClick={() => window.open('/swagger-ui/index.html', '_blank')}
+            className="btn btn-secondary"
+            style={{ fontSize: '0.825rem', padding: '0.5rem 0.85rem', gap: '0.4rem', border: '1px solid rgba(16, 185, 129, 0.4)', color: '#34d399' }}
+            title="Open Interactive Swagger UI API Documentation"
+          >
+            <BookOpen size={14} />
+            <span>OpenAPI 3.0 Docs</span>
+            <ExternalLink size={12} />
+          </button>
+
+          <button
+            onClick={handleSeedEnterpriseData}
+            className="btn btn-secondary"
+            style={{ fontSize: '0.825rem', padding: '0.5rem 0.85rem', gap: '0.4rem', border: '1px solid rgba(139, 92, 246, 0.4)', color: '#c084fc' }}
+            disabled={isSeeding}
+            title="1-Click Seed Realistic Enterprise Data for Viva Demonstration"
+          >
+            <Sparkles size={14} className={isSeeding ? 'animate-spin' : ''} />
+            <span>{isSeeding ? 'Seeding...' : 'Seed Demo Data'}</span>
+          </button>
+
           <button
             onClick={handleRefreshMetrics}
             className="btn btn-secondary"
@@ -436,29 +497,72 @@ export default function BackendConsoleView({ currentUser }) {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
             <div>
               <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#f8fafc', margin: 0 }}>
-                Live System Audit Stream
+                Enterprise Immutable Audit Trail ({realAuditLogs.length} Events)
               </h3>
               <p style={{ fontSize: '0.825rem', color: 'var(--text-muted)', margin: '0.25rem 0 0' }}>
-                Chronological record of authentication, data seeding, and API traffic
+                PostgreSQL / H2 persistence audit logging capturing mutations, security logins, and task state changes
               </p>
             </div>
             <button
-              onClick={() => setAdminLogs([])}
+              onClick={loadTelemetryAndLogs}
               className="btn btn-ghost"
               style={{ fontSize: '0.785rem' }}
             >
-              Clear Logs
+              Refresh Audit Logs
             </button>
           </div>
+
+          {realAuditLogs.length > 0 && (
+            <div style={{ marginBottom: '1.25rem', overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.8rem', fontFamily: 'monospace' }}>
+                <thead>
+                  <tr style={{ borderBottom: '1px solid var(--border-color)', textAlign: 'left', color: 'var(--text-muted)' }}>
+                    <th style={{ padding: '0.5rem' }}>Timestamp</th>
+                    <th style={{ padding: '0.5rem' }}>Action</th>
+                    <th style={{ padding: '0.5rem' }}>Entity</th>
+                    <th style={{ padding: '0.5rem' }}>Actor</th>
+                    <th style={{ padding: '0.5rem' }}>Audit Details</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {realAuditLogs.map((log) => (
+                    <tr key={log.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.03)' }}>
+                      <td style={{ padding: '0.5rem', color: 'var(--text-dim)' }}>
+                        {new Date(log.timestamp).toLocaleTimeString()}
+                      </td>
+                      <td style={{ padding: '0.5rem' }}>
+                        <span style={{
+                          padding: '0.1rem 0.4rem',
+                          borderRadius: '4px',
+                          background: log.action.includes('CREATED') || log.action.includes('SEEDED') ? 'rgba(16, 185, 129, 0.2)' : 'rgba(99, 102, 241, 0.2)',
+                          color: log.action.includes('CREATED') || log.action.includes('SEEDED') ? '#34d399' : '#818cf8',
+                          fontSize: '0.7rem',
+                          fontWeight: 800
+                        }}>
+                          {log.action}
+                        </span>
+                      </td>
+                      <td style={{ padding: '0.5rem', color: '#c084fc' }}>{log.entityType}:{log.entityId}</td>
+                      <td style={{ padding: '0.5rem', color: '#f8fafc', fontWeight: 700 }}>{log.performedBy}</td>
+                      <td style={{ padding: '0.5rem', color: '#e2e8f0' }}>{log.details}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
 
           <div style={{
             background: '#090d16',
             borderRadius: '10px',
             padding: '1rem',
             border: '1px solid var(--border-color)',
-            maxHeight: '400px',
+            maxHeight: '300px',
             overflowY: 'auto'
           }}>
+            <div style={{ fontSize: '0.75rem', color: 'var(--text-dim)', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              API Session Inspector Stream:
+            </div>
             {adminLogs.map((log) => (
               <div
                 key={log.id}

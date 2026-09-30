@@ -1623,3 +1623,37 @@ export async function enhanceTaskWithAi(taskData) {
     suggestedPriority: taskData.priority || 'MEDIUM'
   };
 }
+
+export async function fetchSystemTelemetry() {
+  try {
+    const res = await fetch(`${API_BASE_URL}/admin/system-info`);
+    if (res.ok) return await res.json();
+  } catch (e) {
+    console.warn('System telemetry fetch error:', e);
+  }
+  return null;
+}
+
+export async function fetchAuditLogs() {
+  try {
+    const res = await fetch(`${API_BASE_URL}/audit-logs`);
+    if (res.ok) return await res.json();
+  } catch (e) {
+    console.warn('Audit logs fetch error:', e);
+  }
+  return [];
+}
+
+export async function seedEnterpriseDemoData() {
+  try {
+    const res = await fetch(`${API_BASE_URL}/admin/seed-demo-data`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' }
+    });
+    if (res.ok) return await res.json();
+  } catch (e) {
+    console.error('Demo data seed error:', e);
+  }
+  return { success: false };
+}
+

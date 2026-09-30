@@ -127,32 +127,32 @@ export default function TaskListView({
 
   return (
     <div style={{
-      backgroundColor: '#111726',
-      borderRadius: '8px',
-      border: '1px solid #1f2b42',
+      backgroundColor: '#0e1422',
+      borderRadius: '6px',
+      border: '1px solid #1a2336',
       overflowX: 'auto',
-      boxShadow: '0 4px 20px rgba(0, 0, 0, 0.4)'
+      boxShadow: 'var(--shadow-card)'
     }}>
       <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', minWidth: '880px' }}>
         <thead>
           <tr style={{
-            borderBottom: '1px solid #1f2b42',
+            borderBottom: '1px solid #1a2336',
             backgroundColor: '#0c101a',
-            fontSize: '0.7rem',
-            fontWeight: 800,
+            fontSize: '0.6875rem',
+            fontWeight: 700,
             textTransform: 'uppercase',
             letterSpacing: '0.05em',
             color: '#64748b'
           }}>
-            <th style={{ padding: '0.75rem 1rem', width: '38px' }}>Status</th>
-            <th style={{ padding: '0.75rem 1rem' }}>Task Deliverable</th>
-            <th style={{ padding: '0.75rem 0.75rem' }}>Project</th>
-            <th style={{ padding: '0.75rem 0.75rem' }}>Checklist</th>
-            <th style={{ padding: '0.75rem 0.75rem' }}>Priority</th>
-            <th style={{ padding: '0.75rem 0.75rem' }}>Assignee</th>
-            <th style={{ padding: '0.75rem 0.75rem' }}>Due Date</th>
-            <th style={{ padding: '0.75rem 0.75rem' }}>Runway</th>
-            <th style={{ padding: '0.75rem 1rem', textAlign: 'right' }}>Actions</th>
+            <th style={{ padding: '8px 12px', width: '38px' }}>Status</th>
+            <th style={{ padding: '8px 12px' }}>Task Deliverable</th>
+            <th style={{ padding: '8px 10px' }}>Project</th>
+            <th style={{ padding: '8px 10px' }}>Checklist</th>
+            <th style={{ padding: '8px 10px' }}>Priority</th>
+            <th style={{ padding: '8px 10px' }}>Assignee</th>
+            <th style={{ padding: '8px 10px' }}>Due Date</th>
+            <th style={{ padding: '8px 10px' }}>Runway</th>
+            <th style={{ padding: '8px 12px', textAlign: 'right' }}>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -172,13 +172,13 @@ export default function TaskListView({
                   onOpenDetail?.(task);
                 }}
                 style={{
-                  borderBottom: '1px solid #1a2336',
-                  backgroundColor: isFocused ? 'rgba(99, 102, 241, 0.08)' : 'transparent',
-                  transition: 'background-color 0.12s ease',
+                  borderBottom: '1px solid #141c2c',
+                  backgroundColor: isFocused ? '#18223a' : 'transparent',
+                  transition: 'background-color 0.1s ease',
                   cursor: 'pointer'
                 }}
                 onMouseEnter={(e) => {
-                  if (!isFocused) e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.02)';
+                  if (!isFocused) e.currentTarget.style.backgroundColor = '#131b2e';
                 }}
                 onMouseLeave={(e) => {
                   if (!isFocused) e.currentTarget.style.backgroundColor = 'transparent';

@@ -236,8 +236,7 @@ export default function FlowIntelligencePanel({
                   width: '6px',
                   height: '6px',
                   borderRadius: '50%',
-                  backgroundColor: '#10b981',
-                  boxShadow: '0 0 6px #10b981'
+                  backgroundColor: '#10b981'
                 }} />
               </div>
               <p style={{ fontSize: '0.68rem', color: '#64748b', margin: '2px 0 0' }}>

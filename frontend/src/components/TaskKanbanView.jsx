@@ -124,44 +124,44 @@ export default function TaskKanbanView({
             onDragLeave={(e) => handleDragLeave(e, col.id)}
             onDrop={(e) => handleDrop(e, col.id)}
             style={{
-              backgroundColor: '#0c101a',
-              borderRadius: '8px',
-              border: isTarget ? `1px solid ${col.accent}` : '1px solid #1a2336',
-              boxShadow: isTarget ? `0 0 16px ${col.accent}30` : 'none',
+              backgroundColor: '#090d16',
+              borderRadius: '6px',
+              border: isTarget ? '1px dashed #6366f1' : '1px solid #1a2336',
               display: 'flex',
               flexDirection: 'column',
               minHeight: '480px',
-              transition: 'border-color 0.15s, box-shadow 0.15s'
+              transition: 'border-color 0.12s ease'
             }}
           >
             {/* Column Header */}
             <div style={{
-              padding: '0.75rem 1rem',
+              padding: '8px 12px',
               borderBottom: '1px solid #1a2336',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
-              backgroundColor: '#111726',
-              borderTopLeftRadius: '7px',
-              borderTopRightRadius: '7px'
+              backgroundColor: '#0e1422',
+              borderTopLeftRadius: '5px',
+              borderTopRightRadius: '5px'
             }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <span style={{
-                  width: '8px',
-                  height: '8px',
+                  width: '6px',
+                  height: '6px',
                   borderRadius: '50%',
                   backgroundColor: col.dot
                 }} />
-                <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#f8fafc', letterSpacing: '-0.01em' }}>
+                <span style={{ fontSize: '0.785rem', fontWeight: 700, color: '#f8fafc', letterSpacing: '-0.01em' }}>
                   {col.title}
                 </span>
                 <span style={{
-                  fontSize: '0.68rem',
-                  fontWeight: 700,
-                  backgroundColor: 'rgba(255, 255, 255, 0.06)',
+                  fontSize: '0.65rem',
+                  fontWeight: 600,
+                  backgroundColor: '#131b2e',
+                  border: '1px solid #1a2336',
                   color: '#94a3b8',
-                  padding: '1px 6px',
-                  borderRadius: '10px'
+                  padding: '1px 5px',
+                  borderRadius: '3px'
                 }}>
                   {colTasks.length}
                 </span>
@@ -177,14 +177,14 @@ export default function TaskKanbanView({
                   border: 'none',
                   color: '#64748b',
                   cursor: 'pointer',
-                  padding: '3px',
-                  borderRadius: '4px',
+                  padding: '2px',
+                  borderRadius: '3px',
                   display: 'flex',
                   alignItems: 'center'
                 }}
-                title={`Add task to ${col.title}`}
+                title={`Add deliverable to ${col.title}`}
               >
-                <Plus size={15} />
+                <Plus size={14} />
               </button>
             </div>
 
@@ -192,7 +192,7 @@ export default function TaskKanbanView({
             {inlineCreateColId === col.id && (
               <form
                 onSubmit={(e) => handleInlineCreateSubmit(e, col.id)}
-                style={{ padding: '0.65rem 0.85rem', borderBottom: '1px solid #1a2336', backgroundColor: '#111726' }}
+                style={{ padding: '8px 10px', borderBottom: '1px solid #1a2336', backgroundColor: '#0e1422' }}
               >
                 <input
                   type="text"
@@ -202,27 +202,27 @@ export default function TaskKanbanView({
                   placeholder="Task title (Enter to save)..."
                   style={{
                     width: '100%',
-                    padding: '0.45rem 0.65rem',
+                    padding: '6px 8px',
                     fontSize: '0.785rem',
-                    backgroundColor: '#0c101a',
+                    backgroundColor: '#090d16',
                     color: '#f8fafc',
                     border: '1px solid #6366f1',
-                    borderRadius: '5px',
+                    borderRadius: '4px',
                     outline: 'none',
-                    marginBottom: '0.45rem'
+                    marginBottom: '6px'
                   }}
                 />
-                <div style={{ display: 'flex', gap: '0.35rem', justifyContent: 'flex-end' }}>
+                <div style={{ display: 'flex', gap: '6px', justifyContent: 'flex-end' }}>
                   <button
                     type="button"
                     onClick={() => setInlineCreateColId(null)}
                     style={{
-                      padding: '3px 8px',
+                      padding: '2px 8px',
                       fontSize: '0.7rem',
                       backgroundColor: 'transparent',
-                      border: '1px solid #1f2b42',
+                      border: '1px solid #1a2336',
                       color: '#94a3b8',
-                      borderRadius: '4px',
+                      borderRadius: '3px',
                       cursor: 'pointer'
                     }}
                   >
@@ -231,13 +231,13 @@ export default function TaskKanbanView({
                   <button
                     type="submit"
                     style={{
-                      padding: '3px 10px',
+                      padding: '2px 10px',
                       fontSize: '0.7rem',
-                      fontWeight: 700,
+                      fontWeight: 600,
                       backgroundColor: '#6366f1',
-                      border: 'none',
+                      border: '1px solid #4f46e5',
                       color: '#ffffff',
-                      borderRadius: '4px',
+                      borderRadius: '3px',
                       cursor: 'pointer'
                     }}
                   >
@@ -249,24 +249,24 @@ export default function TaskKanbanView({
 
             {/* Cards Container */}
             <div style={{
-              padding: '0.65rem',
+              padding: '8px',
               display: 'flex',
               flexDirection: 'column',
-              gap: '0.65rem',
+              gap: '8px',
               flex: 1,
               overflowY: 'auto'
             }}>
               {colTasks.length === 0 ? (
                 <div style={{
-                  padding: '2.5rem 1rem',
+                  padding: '32px 16px',
                   textAlign: 'center',
                   color: '#475569',
                   fontSize: '0.72rem',
                   border: '1px dashed #1a2336',
-                  borderRadius: '6px',
-                  margin: '0.25rem 0'
+                  borderRadius: '4px',
+                  margin: '4px 0'
                 }}>
-                  Drop tasks here
+                  Drop deliverables here
                 </div>
               ) : (
                 colTasks.map((task) => {
@@ -284,26 +284,26 @@ export default function TaskKanbanView({
                       onDragEnd={handleDragEnd}
                       onClick={() => onOpenDetail?.(task)}
                       style={{
-                        padding: '0.75rem 0.85rem',
-                        backgroundColor: '#111726',
-                        borderRadius: '6px',
-                        border: '1px solid #1f2b42',
+                        padding: '10px 12px',
+                        backgroundColor: '#0e1422',
+                        borderRadius: '4px',
+                        border: '1px solid #1a2336',
                         borderLeft: `3px solid ${priorityStripe[task.priority] || '#3b82f6'}`,
                         cursor: 'grab',
                         opacity: isDragging ? 0.35 : 1,
                         display: 'flex',
                         flexDirection: 'column',
-                        gap: '0.55rem',
-                        transition: 'transform 0.12s ease, border-color 0.12s ease',
-                        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.25)'
+                        gap: '6px',
+                        transition: 'border-color 0.12s ease, background-color 0.12s ease',
+                        boxShadow: 'var(--shadow-sm)'
                       }}
                       onMouseEnter={(e) => {
-                        e.currentTarget.style.borderColor = '#2e3d5c';
-                        e.currentTarget.style.transform = 'translateY(-1px)';
+                        e.currentTarget.style.borderColor = '#263552';
+                        e.currentTarget.style.backgroundColor = '#131b2e';
                       }}
                       onMouseLeave={(e) => {
-                        e.currentTarget.style.borderColor = '#1f2b42';
-                        e.currentTarget.style.transform = 'none';
+                        e.currentTarget.style.borderColor = '#1a2336';
+                        e.currentTarget.style.backgroundColor = '#0e1422';
                       }}
                     >
                       {/* Top Row: Project & Priority Badge */}

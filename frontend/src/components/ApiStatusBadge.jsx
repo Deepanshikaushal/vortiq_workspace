@@ -9,30 +9,29 @@ export default function ApiStatusBadge({ isConnected, onRetry }) {
       style={{
         display: 'inline-flex',
         alignItems: 'center',
-        gap: '0.45rem',
-        padding: '0.35rem 0.75rem',
-        borderRadius: '9999px',
-        fontSize: '0.75rem',
-        fontWeight: '600',
+        gap: '6px',
+        padding: '3px 8px',
+        borderRadius: '4px',
+        fontSize: '0.72rem',
+        fontWeight: '500',
         cursor: 'pointer',
-        transition: 'all 0.2s ease',
-        background: isConnected ? 'rgba(16, 185, 129, 0.12)' : 'rgba(239, 68, 68, 0.12)',
+        transition: 'all 0.15s ease',
+        background: isConnected ? 'rgba(16, 185, 129, 0.08)' : 'rgba(239, 68, 68, 0.08)',
         color: isConnected ? '#34d399' : '#f87171',
-        border: `1px solid ${isConnected ? 'rgba(16, 185, 129, 0.3)' : 'rgba(239, 68, 68, 0.3)'}`,
+        border: `1px solid ${isConnected ? 'rgba(16, 185, 129, 0.25)' : 'rgba(239, 68, 68, 0.25)'}`,
       }}
     >
       <span
         style={{
-          width: '7px',
-          height: '7px',
+          width: '6px',
+          height: '6px',
           borderRadius: '50%',
           backgroundColor: isConnected ? '#10b981' : '#ef4444',
-          boxShadow: isConnected ? '0 0 8px #10b981' : '0 0 8px #ef4444',
           display: 'inline-block',
         }}
       />
-      <Server size={13} />
-      <span>{isConnected ? 'Spring Boot API Connected' : 'API Offline (Click to Retry)'}</span>
+      <Server size={12} />
+      <span>{isConnected ? 'API Live' : 'API Offline'}</span>
     </div>
   );
 }

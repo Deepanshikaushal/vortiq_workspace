@@ -104,33 +104,34 @@ export default function TaskTimelineView({
 
   return (
     <div style={{
-      backgroundColor: '#111726',
-      borderRadius: '8px',
-      border: '1px solid #1f2b42',
+      backgroundColor: '#0e1422',
+      borderRadius: '6px',
+      border: '1px solid #1a2336',
       display: 'flex',
       flexDirection: 'column',
       overflow: 'hidden'
     }}>
       {/* Top Timeline Controls */}
       <div style={{
-        padding: '0.75rem 1.25rem',
+        padding: '10px 14px',
         borderBottom: '1px solid #1a2336',
         backgroundColor: '#0c101a',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         flexWrap: 'wrap',
-        gap: '0.75rem'
+        gap: '10px'
       }}>
         {/* Navigation & Today Button */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
           <button
             onClick={() => { playClickSound(); setTimelineOffsetDays((prev) => prev - 7); }}
             style={{
-              padding: '0.35rem 0.6rem',
+              padding: '0 8px',
+              height: '28px',
               fontSize: '0.75rem',
-              backgroundColor: '#111726',
-              border: '1px solid #1f2b42',
+              backgroundColor: '#131b2e',
+              border: '1px solid #1a2336',
               color: '#cbd5e1',
               borderRadius: '4px',
               cursor: 'pointer',
@@ -139,7 +140,7 @@ export default function TaskTimelineView({
             }}
             title="Previous Week"
           >
-            <ChevronLeft size={14} />
+            <ChevronLeft size={13} />
           </button>
 
           <button

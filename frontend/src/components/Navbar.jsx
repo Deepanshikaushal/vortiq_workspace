@@ -92,20 +92,20 @@ export default function Navbar({
 
   return (
     <header style={{
-      height: '52px',
-      backgroundColor: '#0c101a',
+      height: '46px',
+      backgroundColor: '#0b0f19',
       borderBottom: '1px solid #1a2336',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
-      padding: '0 1.25rem',
+      padding: '0 16px',
       position: 'sticky',
       top: 0,
       zIndex: 40,
-      gap: '0.75rem'
+      gap: '12px'
     }}>
       {/* Left: Mobile Toggle & Breadcrumbs */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', minWidth: 0 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
         {/* Mobile menu trigger */}
         <button
           className="mobile-only"
@@ -121,14 +121,14 @@ export default function Navbar({
           }}
           title="Toggle Navigation Menu"
         >
-          <Menu size={18} />
+          <Menu size={16} />
         </button>
 
         {/* Breadcrumb Hierarchy */}
         <div style={{
           display: 'flex',
           alignItems: 'center',
-          gap: '0.35rem',
+          gap: '6px',
           fontSize: '0.785rem',
           color: '#64748b',
           overflow: 'hidden',
@@ -139,15 +139,15 @@ export default function Navbar({
             onClick={() => setActiveView?.('focus')}
             style={{
               color: '#94a3b8',
-              fontWeight: 600,
+              fontWeight: 500,
               cursor: 'pointer',
               transition: 'color 0.12s'
             }}
           >
             {activeWorkspace?.name || 'Flowvia Studio'}
           </span>
-          <ChevronRight size={12} color="#475569" style={{ flexShrink: 0 }} />
-          <span style={{ color: '#f1f5f9', fontWeight: 700 }}>
+          <ChevronRight size={11} color="#475569" style={{ flexShrink: 0 }} />
+          <span style={{ color: '#f1f5f9', fontWeight: 600 }}>
             {currentViewTitle}
           </span>
         </div>
@@ -157,23 +157,24 @@ export default function Navbar({
       <div
         onClick={onOpenCommandPalette}
         style={{
-          flex: '0 1 420px',
+          flex: '0 1 400px',
+          height: '30px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          backgroundColor: '#111726',
-          border: '1px solid #1f2b42',
-          borderRadius: '6px',
-          padding: '0.35rem 0.75rem',
+          backgroundColor: '#0e1422',
+          border: '1px solid #1a2336',
+          borderRadius: '4px',
+          padding: '0 10px',
           cursor: 'pointer',
-          transition: 'all 0.15s ease'
+          transition: 'border-color 0.12s ease'
         }}
         className="nav-search-trigger"
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', minWidth: 0 }}>
-          <Search size={14} color="#64748b" />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
+          <Search size={13} color="#64748b" />
           <span style={{
-            fontSize: '0.785rem',
+            fontSize: '0.75rem',
             color: '#64748b',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
@@ -184,12 +185,12 @@ export default function Navbar({
         </div>
 
         <kbd style={{
-          fontSize: '0.65rem',
+          fontSize: '0.625rem',
           color: '#94a3b8',
-          backgroundColor: '#161f33',
-          border: '1px solid #24324f',
-          padding: '1px 5px',
-          borderRadius: '3px',
+          backgroundColor: '#131b2e',
+          border: '1px solid #1f2b42',
+          padding: '1px 4px',
+          borderRadius: '2px',
           fontFamily: 'var(--font-mono)'
         }}>
           ⌘K
@@ -197,7 +198,7 @@ export default function Navbar({
       </div>
 
       {/* Right: Workspace Status, Quick Create, Notifications, Profile */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
         
         {/* Embedded Flow Intelligence Trigger */}
         <button
@@ -205,27 +206,28 @@ export default function Navbar({
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '0.4rem',
-            backgroundColor: '#111726',
-            border: '1px solid rgba(99, 102, 241, 0.35)',
-            padding: '0.25rem 0.65rem',
-            borderRadius: '6px',
+            gap: '5px',
+            backgroundColor: '#0e1422',
+            border: '1px solid rgba(99, 102, 241, 0.3)',
+            height: '28px',
+            padding: '0 8px',
+            borderRadius: '4px',
             color: '#818cf8',
             fontSize: '0.72rem',
-            fontWeight: 700,
+            fontWeight: 600,
             cursor: 'pointer',
-            transition: 'all 0.15s ease'
+            transition: 'all 0.12s ease'
           }}
           title="Open Flow Intelligence Panel (I)"
         >
           <Sparkles size={12} color="#818cf8" />
           <span className="desktop-only">Flow Intelligence</span>
           <span style={{
-            fontSize: '0.62rem',
-            backgroundColor: 'rgba(99, 102, 241, 0.25)',
+            fontSize: '0.625rem',
+            backgroundColor: 'rgba(99, 102, 241, 0.2)',
             color: '#c7d2fe',
-            padding: '1px 5px',
-            borderRadius: '3px',
+            padding: '1px 4px',
+            borderRadius: '2px',
             marginLeft: '2px'
           }}>
             5
@@ -238,11 +240,12 @@ export default function Navbar({
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '0.4rem',
-            backgroundColor: '#111726',
-            border: '1px solid #1f2b42',
-            padding: '0.25rem 0.6rem',
-            borderRadius: '12px'
+            gap: '6px',
+            backgroundColor: '#0e1422',
+            border: '1px solid #1a2336',
+            height: '28px',
+            padding: '0 8px',
+            borderRadius: '4px'
           }}
           title={isConnected ? 'Connected to Flowvia Sync Engine' : 'Sync Engine Offline'}
         >
@@ -250,11 +253,10 @@ export default function Navbar({
             width: '6px',
             height: '6px',
             borderRadius: '50%',
-            backgroundColor: isConnected ? '#10b981' : '#f59e0b',
-            boxShadow: isConnected ? '0 0 8px rgba(16, 185, 129, 0.6)' : 'none'
+            backgroundColor: isConnected ? '#10b981' : '#f59e0b'
           }} />
-          <span style={{ fontSize: '0.68rem', color: '#94a3b8', fontWeight: 600 }}>
-            {isConnected ? 'All systems nominal' : 'Connecting...'}
+          <span style={{ fontSize: '0.6875rem', color: '#94a3b8', fontWeight: 500 }}>
+            {isConnected ? 'Sync Nominal' : 'Connecting...'}
           </span>
         </div>
 
@@ -265,16 +267,16 @@ export default function Navbar({
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '0.35rem',
+              gap: '4px',
               backgroundColor: '#6366f1',
               color: '#ffffff',
-              border: 'none',
-              borderRadius: '5px',
-              padding: '0.35rem 0.75rem',
+              border: '1px solid #4f46e5',
+              borderRadius: '4px',
+              height: '28px',
+              padding: '0 10px',
               fontSize: '0.75rem',
               fontWeight: 600,
-              cursor: 'pointer',
-              transition: 'background-color 0.12s ease'
+              cursor: 'pointer'
             }}
           >
             <Plus size={13} />

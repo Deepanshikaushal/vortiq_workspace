@@ -170,24 +170,24 @@ export default function TaskWorkspace({
       
       {/* Top Workspace Header & Views Switcher Toolbar */}
       <div style={{
-        backgroundColor: '#111726',
-        borderRadius: '8px',
-        border: '1px solid #1f2b42',
-        padding: '0.75rem 1rem',
+        backgroundColor: '#0e1422',
+        borderRadius: '6px',
+        border: '1px solid #1a2336',
+        padding: '8px 12px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         flexWrap: 'wrap',
-        gap: '0.75rem'
+        gap: '8px'
       }}>
         {/* Left: View Switcher Tabs (List, Kanban, Timeline) */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <div style={{
             display: 'flex',
-            backgroundColor: '#0c101a',
+            backgroundColor: '#090d16',
             padding: '2px',
-            borderRadius: '6px',
-            border: '1px solid #1f2b42'
+            borderRadius: '4px',
+            border: '1px solid #1a2336'
           }}>
             {/* 1. LIST VIEW */}
             <button
@@ -195,11 +195,12 @@ export default function TaskWorkspace({
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: '0.35rem',
-                padding: '0.35rem 0.75rem',
+                gap: '4px',
+                height: '26px',
+                padding: '0 8px',
                 fontSize: '0.75rem',
-                fontWeight: 700,
-                borderRadius: '4px',
+                fontWeight: 600,
+                borderRadius: '3px',
                 border: 'none',
                 cursor: 'pointer',
                 backgroundColor: viewMode === 'list' ? '#6366f1' : 'transparent',
@@ -210,7 +211,7 @@ export default function TaskWorkspace({
             >
               <List size={13} />
               <span>List</span>
-              <kbd style={{ fontSize: '0.62rem', opacity: 0.6, marginLeft: '2px' }}>1</kbd>
+              <kbd style={{ fontSize: '0.625rem', opacity: 0.6, marginLeft: '2px' }}>1</kbd>
             </button>
 
             {/* 2. KANBAN VIEW */}
@@ -219,11 +220,12 @@ export default function TaskWorkspace({
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: '0.35rem',
-                padding: '0.35rem 0.75rem',
+                gap: '4px',
+                height: '26px',
+                padding: '0 8px',
                 fontSize: '0.75rem',
-                fontWeight: 700,
-                borderRadius: '4px',
+                fontWeight: 600,
+                borderRadius: '3px',
                 border: 'none',
                 cursor: 'pointer',
                 backgroundColor: viewMode === 'kanban' ? '#6366f1' : 'transparent',
@@ -234,7 +236,7 @@ export default function TaskWorkspace({
             >
               <LayoutGrid size={13} />
               <span>Kanban</span>
-              <kbd style={{ fontSize: '0.62rem', opacity: 0.6, marginLeft: '2px' }}>2</kbd>
+              <kbd style={{ fontSize: '0.625rem', opacity: 0.6, marginLeft: '2px' }}>2</kbd>
             </button>
 
             {/* 3. TIMELINE VIEW */}
@@ -243,11 +245,12 @@ export default function TaskWorkspace({
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: '0.35rem',
-                padding: '0.35rem 0.75rem',
+                gap: '4px',
+                height: '26px',
+                padding: '0 8px',
                 fontSize: '0.75rem',
-                fontWeight: 700,
-                borderRadius: '4px',
+                fontWeight: 600,
+                borderRadius: '3px',
                 border: 'none',
                 cursor: 'pointer',
                 backgroundColor: viewMode === 'timeline' ? '#6366f1' : 'transparent',
@@ -258,11 +261,11 @@ export default function TaskWorkspace({
             >
               <Calendar size={13} />
               <span>Timeline</span>
-              <kbd style={{ fontSize: '0.62rem', opacity: 0.6, marginLeft: '2px' }}>3</kbd>
+              <kbd style={{ fontSize: '0.625rem', opacity: 0.6, marginLeft: '2px' }}>3</kbd>
             </button>
           </div>
 
-          <span style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 600 }}>
+          <span style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 500 }}>
             {filteredTasks.length} {filteredTasks.length === 1 ? 'deliverable' : 'deliverables'}
           </span>
         </div>

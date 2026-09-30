@@ -312,100 +312,90 @@ export default function CommandCenter({
       
       {/* =========================================================================
           DYNAMIC "NOW" SECTION AT THE TOP
+      {/* =========================================================================
+          COMMAND CENTER HEADER & OPERATIONAL BAR
           ========================================================================= */}
       <div style={{
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         flexWrap: 'wrap',
-        gap: '0.85rem',
-        padding: '1.2rem 1.4rem',
-        backgroundColor: '#111726',
-        borderRadius: '8px',
-        border: '1px solid #1f2b42',
-        position: 'relative',
-        overflow: 'hidden'
+        gap: '12px',
+        padding: '12px 16px',
+        backgroundColor: '#0e1422',
+        borderRadius: '6px',
+        border: '1px solid #1a2336'
       }}>
-        {/* Subtle dynamic background ambient tint */}
-        <div style={{
-          position: 'absolute',
-          top: 0,
-          right: 0,
-          width: '320px',
-          height: '100%',
-          background: 'linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.05))',
-          pointerEvents: 'none'
-        }} />
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', zIndex: 1 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <div style={{
-            width: '42px',
-            height: '42px',
-            borderRadius: '8px',
-            backgroundColor: 'rgba(99, 102, 241, 0.15)',
-            border: '1px solid rgba(99, 102, 241, 0.35)',
+            width: '32px',
+            height: '32px',
+            borderRadius: '4px',
+            backgroundColor: '#131b2e',
+            border: '1px solid #1a2336',
             color: '#818cf8',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             flexShrink: 0
           }}>
-            <Target size={22} />
+            <Target size={17} />
           </div>
 
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <h1 style={{
-                fontSize: '1.35rem',
-                fontWeight: 800,
+                fontSize: '1.125rem',
+                fontWeight: 700,
                 color: '#f8fafc',
                 margin: 0,
-                letterSpacing: '-0.02em',
-                fontFamily: 'var(--font-display)'
+                letterSpacing: '-0.01em',
+                fontFamily: 'var(--font-main)'
               }}>
                 {timeGreeting}, {userName}
               </h1>
               <span style={{
-                fontSize: '0.65rem',
+                fontSize: '0.625rem',
                 fontWeight: 700,
                 textTransform: 'uppercase',
-                letterSpacing: '0.06em',
+                letterSpacing: '0.05em',
                 color: '#818cf8',
-                backgroundColor: 'rgba(99, 102, 241, 0.12)',
-                border: '1px solid rgba(99, 102, 241, 0.3)',
-                padding: '2px 8px',
-                borderRadius: '4px'
+                backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                border: '1px solid rgba(99, 102, 241, 0.25)',
+                padding: '1px 6px',
+                borderRadius: '3px'
               }}>
                 Command Center
               </span>
             </div>
-            <p style={{ fontSize: '0.825rem', color: '#94a3b8', margin: '4px 0 0' }}>
-              Here's what needs your attention. <span style={{ color: '#cbd5e1' }}>4 priority items · High energy window available</span>
+            <p style={{ fontSize: '0.75rem', color: '#94a3b8', margin: '2px 0 0' }}>
+              Here's what needs your attention. <span style={{ color: '#cbd5e1' }}>4 priority items · Peak efficiency window</span>
             </p>
           </div>
         </div>
 
         {/* Real-time Status Telemetry Controls */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', zIndex: 1, flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
           {/* Sound FX Toggle */}
           <button
             onClick={handleToggleSound}
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '0.35rem',
-              backgroundColor: '#0c101a',
+              gap: '4px',
+              backgroundColor: '#090d16',
               color: soundOn ? '#818cf8' : '#64748b',
-              border: '1px solid #1f2b42',
-              padding: '0.45rem 0.75rem',
-              borderRadius: '6px',
+              border: '1px solid #1a2336',
+              height: '30px',
+              padding: '0 10px',
+              borderRadius: '4px',
               cursor: 'pointer',
               fontSize: '0.75rem',
               fontWeight: 600
             }}
-            title={soundOn ? 'Mute sound effects' : 'Enable sound effects'}
+            title={soundOn ? 'Mute audio feedback' : 'Enable audio feedback'}
           >
-            {soundOn ? <Volume2 size={14} /> : <VolumeX size={14} />}
+            {soundOn ? <Volume2 size={13} /> : <VolumeX size={13} />}
             <span className="desktop-only">{soundOn ? 'Audio Live' : 'Muted'}</span>
           </button>
 
@@ -415,27 +405,28 @@ export default function CommandCenter({
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '0.4rem',
-              backgroundColor: '#0c101a',
-              border: '1px solid rgba(99, 102, 241, 0.35)',
-              padding: '0.45rem 0.75rem',
-              borderRadius: '6px',
+              gap: '5px',
+              backgroundColor: '#090d16',
+              border: '1px solid rgba(99, 102, 241, 0.3)',
+              height: '30px',
+              padding: '0 10px',
+              borderRadius: '4px',
               color: '#818cf8',
               fontSize: '0.75rem',
-              fontWeight: 700,
+              fontWeight: 600,
               cursor: 'pointer',
-              transition: 'all 0.15s ease'
+              transition: 'all 0.12s ease'
             }}
             title="Open Flow Intelligence Panel (I)"
           >
-            <Sparkles size={13} color="#818cf8" />
+            <Sparkles size={12} color="#818cf8" />
             <span>Flow Intelligence</span>
             <span style={{
-              fontSize: '0.62rem',
-              backgroundColor: 'rgba(99, 102, 241, 0.25)',
+              fontSize: '0.625rem',
+              backgroundColor: 'rgba(99, 102, 241, 0.2)',
               color: '#c7d2fe',
               padding: '1px 5px',
-              borderRadius: '3px'
+              borderRadius: '2px'
             }}>
               5
             </span>
@@ -445,13 +436,14 @@ export default function CommandCenter({
           <div style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '0.5rem',
-            backgroundColor: '#0c101a',
-            padding: '0.45rem 0.85rem',
-            borderRadius: '6px',
-            border: '1px solid #1f2b42'
+            gap: '6px',
+            backgroundColor: '#090d16',
+            height: '30px',
+            padding: '0 10px',
+            borderRadius: '4px',
+            border: '1px solid #1a2336'
           }}>
-            <Activity size={14} color="#10b981" />
+            <Activity size={13} color="#10b981" />
             <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#f1f5f9', fontFamily: 'var(--font-mono)' }}>
               Flow 88%
             </span>
@@ -462,16 +454,16 @@ export default function CommandCenter({
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '0.4rem',
+              gap: '4px',
               backgroundColor: '#6366f1',
               color: '#ffffff',
-              border: 'none',
-              borderRadius: '6px',
-              padding: '0.5rem 1rem',
+              border: '1px solid #4f46e5',
+              borderRadius: '4px',
+              height: '30px',
+              padding: '0 12px',
               fontSize: '0.785rem',
               fontWeight: 600,
-              cursor: 'pointer',
-              transition: 'background-color 0.15s ease'
+              cursor: 'pointer'
             }}
           >
             <span>+ Quick Create</span>
@@ -480,48 +472,46 @@ export default function CommandCenter({
       </div>
 
       {/* =========================================================================
-          PRIORITY INTELLIGENCE HERO: "FOCUS NOW"
+          PRIORITY INTELLIGENCE: "FOCUS NOW"
           ========================================================================= */}
       <div style={{
-        backgroundColor: '#111726',
-        borderRadius: '8px',
-        border: '1px solid rgba(99, 102, 241, 0.4)',
-        boxShadow: '0 8px 30px -4px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(99, 102, 241, 0.15)',
-        padding: '1.35rem',
+        backgroundColor: '#0e1422',
+        borderRadius: '6px',
+        border: '1px solid #1f2b42',
+        padding: '16px',
         display: 'flex',
         flexDirection: 'column',
-        gap: '1rem',
-        position: 'relative'
+        gap: '12px'
       }}>
         {/* Top Tag & Recommendation Indicator */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <div style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '0.35rem',
-              fontSize: '0.7rem',
-              fontWeight: 800,
+              gap: '4px',
+              fontSize: '0.6875rem',
+              fontWeight: 700,
               textTransform: 'uppercase',
-              letterSpacing: '0.08em',
+              letterSpacing: '0.06em',
               color: '#818cf8',
-              backgroundColor: 'rgba(99, 102, 241, 0.14)',
-              border: '1px solid rgba(99, 102, 241, 0.35)',
-              padding: '3px 8px',
-              borderRadius: '4px'
+              backgroundColor: 'rgba(99, 102, 241, 0.1)',
+              border: '1px solid rgba(99, 102, 241, 0.25)',
+              padding: '2px 7px',
+              borderRadius: '3px'
             }}>
-              <Zap size={13} />
+              <Zap size={12} />
               <span>FOCUS NOW · TOP RECOMMENDATION</span>
             </div>
 
             <span style={{
-              fontSize: '0.68rem',
+              fontSize: '0.6875rem',
               fontWeight: 700,
-              padding: '2px 7px',
-              borderRadius: '4px',
-              backgroundColor: 'rgba(239, 68, 68, 0.15)',
+              padding: '2px 6px',
+              borderRadius: '3px',
+              backgroundColor: 'rgba(239, 68, 68, 0.12)',
               color: '#fca5a5',
-              border: '1px solid rgba(239, 68, 68, 0.3)'
+              border: '1px solid rgba(239, 68, 68, 0.25)'
             }}>
               {focusNowTask.priority}
             </span>
@@ -532,17 +522,17 @@ export default function CommandCenter({
             <div style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '0.5rem',
-              backgroundColor: '#0c101a',
+              gap: '6px',
+              backgroundColor: '#090d16',
               border: '1px solid #10b981',
-              padding: '3px 9px',
-              borderRadius: '6px',
+              padding: '2px 8px',
+              borderRadius: '4px',
               color: '#86efac',
-              fontSize: '0.785rem',
+              fontSize: '0.75rem',
               fontWeight: 700,
               fontFamily: 'var(--font-mono)'
             }}>
-              <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#10b981', animation: 'pulse 1.5s infinite' }} />
+              <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#10b981' }} />
               <span>Active Focus: {formatTimer(focusTimeLeft)}</span>
             </div>
           )}
@@ -553,41 +543,41 @@ export default function CommandCenter({
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'flex-start',
-          gap: '1.25rem',
+          gap: '16px',
           flexWrap: 'wrap'
         }}>
           <div style={{ flex: 1, minWidth: '280px' }}>
             <h2 style={{
-              fontSize: '1.35rem',
-              fontWeight: 800,
+              fontSize: '1.05rem',
+              fontWeight: 700,
               color: '#f8fafc',
-              margin: '0 0 0.5rem',
-              lineHeight: 1.3,
+              margin: '0 0 6px',
+              lineHeight: 1.35,
               letterSpacing: '-0.01em'
             }}>
               {focusNowTask.title}
             </h2>
 
             {/* Context Metadata Row */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', flexWrap: 'wrap', fontSize: '0.785rem', color: '#94a3b8' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap', fontSize: '0.75rem', color: '#94a3b8' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                 <span style={{ color: '#64748b' }}>Project:</span>
-                <span style={{ color: '#f1f5f9', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                  <div style={{ width: '7px', height: '7px', borderRadius: '50%', backgroundColor: focusNowTask.projectColor }} />
+                <span style={{ color: '#f1f5f9', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '5px' }}>
+                  <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: focusNowTask.projectColor }} />
                   {focusNowTask.project}
                 </span>
               </div>
 
               <span>·</span>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                <Clock size={13} color="#f59e0b" />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <Clock size={12} color="#f59e0b" />
                 <span style={{ color: '#cbd5e1' }}>{focusNowTask.deadline}</span>
               </div>
 
               <span>·</span>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                 <span style={{ color: '#64748b' }}>Estimated:</span>
                 <span style={{ color: '#818cf8', fontWeight: 700, fontFamily: 'var(--font-mono)' }}>{focusNowTask.estimatedTime}</span>
               </div>
@@ -595,19 +585,19 @@ export default function CommandCenter({
 
             {/* Why It Matters Callout */}
             <div style={{
-              marginTop: '0.85rem',
-              padding: '0.65rem 0.85rem',
-              backgroundColor: '#0c101a',
-              borderRadius: '6px',
-              border: '1px solid #1f2b42',
+              marginTop: '10px',
+              padding: '8px 12px',
+              backgroundColor: '#090d16',
+              borderRadius: '4px',
+              border: '1px solid #1a2336',
               display: 'flex',
               alignItems: 'flex-start',
-              gap: '0.5rem',
-              fontSize: '0.785rem',
+              gap: '6px',
+              fontSize: '0.75rem',
               color: '#cbd5e1',
-              lineHeight: 1.4
+              lineHeight: 1.45
             }}>
-              <Sparkles size={15} color="#818cf8" style={{ flexShrink: 0, marginTop: '2px' }} />
+              <Sparkles size={13} color="#818cf8" style={{ flexShrink: 0, marginTop: '2px' }} />
               <div>
                 <span style={{ color: '#818cf8', fontWeight: 700 }}>Why it matters: </span>
                 {focusNowTask.whyItMatters}
@@ -616,26 +606,25 @@ export default function CommandCenter({
           </div>
 
           {/* Action Cockpit Buttons */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
             <button
               onClick={toggleFocusSession}
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: '0.45rem',
-                backgroundColor: isFocusActive ? '#f59e0b' : '#6366f1',
+                gap: '6px',
+                backgroundColor: isFocusActive ? '#d97706' : '#6366f1',
                 color: '#ffffff',
-                border: 'none',
-                borderRadius: '6px',
-                padding: '0.65rem 1.15rem',
-                fontSize: '0.825rem',
-                fontWeight: 700,
-                cursor: 'pointer',
-                transition: 'all 0.15s ease',
-                boxShadow: isFocusActive ? '0 0 16px rgba(245, 158, 11, 0.4)' : '0 2px 10px rgba(99, 102, 241, 0.3)'
+                border: `1px solid ${isFocusActive ? '#b45309' : '#4f46e5'}`,
+                borderRadius: '4px',
+                height: '32px',
+                padding: '0 14px',
+                fontSize: '0.8125rem',
+                fontWeight: 600,
+                cursor: 'pointer'
               }}
             >
-              {isFocusActive ? <Pause size={15} /> : <Play size={15} />}
+              {isFocusActive ? <Pause size={13} /> : <Play size={13} />}
               <span>{isFocusActive ? 'Pause Session' : 'Start Focus (45m)'}</span>
             </button>
 
@@ -651,18 +640,19 @@ export default function CommandCenter({
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: '0.4rem',
-                backgroundColor: '#161f33',
+                gap: '5px',
+                backgroundColor: '#131b2e',
                 color: '#e2e8f0',
-                border: '1px solid #222f47',
-                borderRadius: '6px',
-                padding: '0.65rem 0.95rem',
-                fontSize: '0.825rem',
+                border: '1px solid #1a2336',
+                borderRadius: '4px',
+                height: '32px',
+                padding: '0 12px',
+                fontSize: '0.8125rem',
                 fontWeight: 600,
                 cursor: 'pointer'
               }}
             >
-              <ExternalLink size={14} />
+              <ExternalLink size={13} />
               <span>Open Task</span>
             </button>
 
@@ -671,19 +661,20 @@ export default function CommandCenter({
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: '0.35rem',
+                gap: '4px',
                 backgroundColor: 'transparent',
                 color: '#94a3b8',
-                border: '1px solid #1f2b42',
-                borderRadius: '6px',
-                padding: '0.65rem 0.85rem',
-                fontSize: '0.825rem',
-                fontWeight: 600,
+                border: '1px solid #1a2336',
+                borderRadius: '4px',
+                height: '32px',
+                padding: '0 10px',
+                fontSize: '0.8125rem',
+                fontWeight: 500,
                 cursor: 'pointer'
               }}
               title="Postpone recommendation"
             >
-              <Clock size={14} />
+              <Clock size={13} />
               <span>Snooze</span>
             </button>
           </div>
@@ -698,50 +689,50 @@ export default function CommandCenter({
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'minmax(0, 1.45fr) minmax(0, 1fr)',
-        gap: '1.25rem',
+        gap: '12px',
         alignItems: 'start'
       }} className="workspace-main-grid">
 
         {/* LEFT COLUMN: UP NEXT TIMELINE & PROJECT PULSE */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
 
           {/* 1. UP NEXT - Chronological Timeline of Upcoming Work */}
           <div style={{
-            backgroundColor: '#111726',
-            borderRadius: '8px',
-            border: '1px solid #1f2b42',
-            padding: '1.15rem',
+            backgroundColor: '#0e1422',
+            borderRadius: '6px',
+            border: '1px solid #1a2336',
+            padding: '14px',
             display: 'flex',
             flexDirection: 'column',
-            gap: '0.85rem'
+            gap: '10px'
           }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.55rem' }}>
-                <Clock size={16} color="#818cf8" />
-                <h3 style={{ fontSize: '0.925rem', fontWeight: 700, color: '#f8fafc', margin: 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <Clock size={15} color="#818cf8" />
+                <h3 style={{ fontSize: '0.875rem', fontWeight: 700, color: '#f8fafc', margin: 0 }}>
                   UP NEXT
                 </h3>
-                <span style={{ fontSize: '0.7rem', color: '#64748b' }}>
+                <span style={{ fontSize: '0.6875rem', color: '#64748b' }}>
                   Execution Timeline Today
                 </span>
               </div>
 
               <span style={{
-                fontSize: '0.68rem',
-                fontWeight: 700,
+                fontSize: '0.6875rem',
+                fontWeight: 600,
                 color: '#818cf8',
-                backgroundColor: '#0c101a',
-                border: '1px solid #1f2b42',
-                padding: '2px 7px',
-                borderRadius: '4px'
+                backgroundColor: '#090d16',
+                border: '1px solid #1a2336',
+                padding: '2px 6px',
+                borderRadius: '3px'
               }}>
                 4 Blocks Scheduled
               </span>
             </div>
 
-            {/* Timeline Stream with Connecting Vertical Rail */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.55rem', position: 'relative' }}>
-              {upNextTimeline.map((item, idx) => {
+            {/* Timeline Stream */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              {upNextTimeline.map((item) => {
                 const isActive = item.status === 'ACTIVE_NOW';
                 return (
                   <div
@@ -751,39 +742,38 @@ export default function CommandCenter({
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'space-between',
-                      padding: '0.75rem 0.95rem',
-                      backgroundColor: isActive ? 'rgba(99, 102, 241, 0.08)' : '#161f33',
-                      borderRadius: '6px',
-                      border: isActive ? '1px solid rgba(99, 102, 241, 0.4)' : '1px solid #222f47',
+                      padding: '8px 12px',
+                      backgroundColor: isActive ? '#131b2e' : '#0c101a',
+                      borderRadius: '4px',
+                      border: isActive ? '1px solid rgba(99, 102, 241, 0.4)' : '1px solid #1a2336',
                       cursor: 'pointer',
-                      transition: 'all 0.15s ease'
+                      transition: 'border-color 0.12s ease'
                     }}
                   >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', minWidth: 0, flex: 1 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0, flex: 1 }}>
                       {/* Time Block Stamp */}
                       <div style={{
                         fontSize: '0.72rem',
-                        fontWeight: 700,
+                        fontWeight: 600,
                         color: isActive ? '#818cf8' : '#94a3b8',
                         fontFamily: 'var(--font-mono)',
-                        minWidth: '95px'
+                        minWidth: '90px'
                       }}>
                         {item.timeRange}
                       </div>
 
-                      {/* Status indicator dot */}
+                      {/* Status indicator dot (No glowing halo) */}
                       <div style={{
-                        width: '8px',
-                        height: '8px',
+                        width: '6px',
+                        height: '6px',
                         borderRadius: '50%',
                         backgroundColor: isActive ? '#10b981' : '#6366f1',
-                        flexShrink: 0,
-                        boxShadow: isActive ? '0 0 8px #10b981' : 'none'
+                        flexShrink: 0
                       }} />
 
                       <div style={{ minWidth: 0, flex: 1 }}>
                         <div style={{
-                          fontSize: '0.825rem',
+                          fontSize: '0.8125rem',
                           fontWeight: 600,
                           color: isActive ? '#f8fafc' : '#e2e8f0',
                           overflow: 'hidden',
@@ -792,7 +782,7 @@ export default function CommandCenter({
                         }}>
                           {item.title}
                         </div>
-                        <div style={{ fontSize: '0.68rem', color: '#64748b', display: 'flex', alignItems: 'center', gap: '0.45rem', marginTop: '2px' }}>
+                        <div style={{ fontSize: '0.6875rem', color: '#64748b', display: 'flex', alignItems: 'center', gap: '5px', marginTop: '1px' }}>
                           <span>{item.project}</span>
                           {item.participants && (
                             <>
@@ -804,15 +794,15 @@ export default function CommandCenter({
                       </div>
                     </div>
 
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexShrink: 0 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
                       <span style={{
-                        fontSize: '0.65rem',
-                        fontWeight: 700,
-                        padding: '2px 6px',
-                        borderRadius: '4px',
-                        backgroundColor: '#0c101a',
+                        fontSize: '0.625rem',
+                        fontWeight: 600,
+                        padding: '1px 5px',
+                        borderRadius: '3px',
+                        backgroundColor: '#090d16',
                         color: isActive ? '#818cf8' : '#94a3b8',
-                        border: '1px solid #1f2b42'
+                        border: '1px solid #1a2336'
                       }}>
                         {item.tag}
                       </span>
@@ -825,22 +815,22 @@ export default function CommandCenter({
 
           {/* 2. PROJECT PULSE - Visual Project Health Indicators */}
           <div style={{
-            backgroundColor: '#111726',
-            borderRadius: '8px',
-            border: '1px solid #1f2b42',
-            padding: '1.15rem',
+            backgroundColor: '#0e1422',
+            borderRadius: '6px',
+            border: '1px solid #1a2336',
+            padding: '14px',
             display: 'flex',
             flexDirection: 'column',
-            gap: '0.85rem'
+            gap: '10px'
           }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.55rem' }}>
-                <Activity size={16} color="#10b981" />
-                <h3 style={{ fontSize: '0.925rem', fontWeight: 700, color: '#f8fafc', margin: 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <Activity size={15} color="#10b981" />
+                <h3 style={{ fontSize: '0.875rem', fontWeight: 700, color: '#f8fafc', margin: 0 }}>
                   PROJECT PULSE
                 </h3>
-                <span style={{ fontSize: '0.7rem', color: '#64748b' }}>
-                  Health based on progress, blockers & team activity
+                <span style={{ fontSize: '0.6875rem', color: '#64748b' }}>
+                  Progress, blockers & team velocity
                 </span>
               </div>
 
@@ -855,16 +845,16 @@ export default function CommandCenter({
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '0.25rem'
+                  gap: '2px'
                 }}
               >
                 <span>View All</span>
-                <ChevronRight size={13} />
+                <ChevronRight size={12} />
               </button>
             </div>
 
             {/* Project Health Cards Grid */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               {projectPulseList.map((proj) => {
                 const isAtRisk = proj.healthStatus === 'AT_RISK';
                 return (
@@ -872,52 +862,52 @@ export default function CommandCenter({
                     key={proj.id}
                     onClick={() => { playClickSound(); onNavigate?.('kanban'); }}
                     style={{
-                      padding: '0.85rem 1rem',
-                      backgroundColor: '#161f33',
-                      borderRadius: '6px',
-                      border: isAtRisk ? '1px solid rgba(245, 158, 11, 0.35)' : '1px solid #222f47',
+                      padding: '10px 12px',
+                      backgroundColor: '#0c101a',
+                      borderRadius: '4px',
+                      border: isAtRisk ? '1px solid rgba(245, 158, 11, 0.3)' : '1px solid #1a2336',
                       cursor: 'pointer',
-                      transition: 'border-color 0.15s ease'
+                      transition: 'border-color 0.12s ease'
                     }}
                   >
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.45rem' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: proj.color }} />
-                        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#f1f5f9' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: proj.color }} />
+                        <span style={{ fontSize: '0.8125rem', fontWeight: 600, color: '#f1f5f9' }}>
                           {proj.name}
                         </span>
                       </div>
 
                       {/* Health Status Pill */}
                       <span style={{
-                        fontSize: '0.65rem',
+                        fontSize: '0.625rem',
                         fontWeight: 700,
                         textTransform: 'uppercase',
                         letterSpacing: '0.04em',
-                        padding: '2px 6px',
-                        borderRadius: '4px',
-                        backgroundColor: isAtRisk ? 'rgba(245, 158, 11, 0.15)' : 'rgba(16, 185, 129, 0.15)',
+                        padding: '2px 5px',
+                        borderRadius: '3px',
+                        backgroundColor: isAtRisk ? 'rgba(245, 158, 11, 0.12)' : 'rgba(16, 185, 129, 0.12)',
                         color: isAtRisk ? '#fcd34d' : '#86efac',
-                        border: isAtRisk ? '1px solid rgba(245, 158, 11, 0.3)' : '1px solid rgba(16, 185, 129, 0.3)'
+                        border: isAtRisk ? '1px solid rgba(245, 158, 11, 0.25)' : '1px solid rgba(16, 185, 129, 0.25)'
                       }}>
                         {isAtRisk ? '▲ At Risk (1 Blocker)' : '● Healthy'}
                       </span>
                     </div>
 
-                    {/* Progress Bar */}
+                    {/* Clean Progress Bar (No Glow) */}
                     <div style={{
                       width: '100%',
-                      height: '5px',
-                      backgroundColor: '#0c101a',
-                      borderRadius: '3px',
+                      height: '4px',
+                      backgroundColor: '#131b2e',
+                      borderRadius: '2px',
                       overflow: 'hidden',
-                      margin: '0.5rem 0'
+                      margin: '6px 0'
                     }}>
                       <div style={{
                         width: `${proj.progress}%`,
                         height: '100%',
                         backgroundColor: isAtRisk ? '#f59e0b' : proj.color,
-                        borderRadius: '3px',
+                        borderRadius: '2px',
                         transition: 'width 0.3s ease'
                       }} />
                     </div>
@@ -927,10 +917,10 @@ export default function CommandCenter({
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'space-between',
-                      fontSize: '0.7rem',
+                      fontSize: '0.6875rem',
                       color: '#64748b',
                       flexWrap: 'wrap',
-                      gap: '0.5rem'
+                      gap: '4px'
                     }}>
                       <span>{proj.completedCount}/{proj.totalCount} tasks ({proj.progress}%)</span>
                       <span>·</span>
@@ -947,28 +937,28 @@ export default function CommandCenter({
         </div>
 
         {/* RIGHT COLUMN: ATTENTION REQUIRED + FLOW SCORE */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
 
           {/* 3. ATTENTION REQUIRED: Critical Exceptions Engine */}
           <div style={{
-            backgroundColor: '#111726',
-            borderRadius: '8px',
-            border: '1px solid #1f2b42',
-            padding: '1.15rem',
+            backgroundColor: '#0e1422',
+            borderRadius: '6px',
+            border: '1px solid #1a2336',
+            padding: '14px',
             display: 'flex',
             flexDirection: 'column',
-            gap: '0.85rem'
+            gap: '10px'
           }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.55rem' }}>
-                <ShieldAlert size={16} color="#ef4444" />
-                <h3 style={{ fontSize: '0.925rem', fontWeight: 700, color: '#f8fafc', margin: 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <ShieldAlert size={15} color="#ef4444" />
+                <h3 style={{ fontSize: '0.875rem', fontWeight: 700, color: '#f8fafc', margin: 0 }}>
                   ATTENTION REQUIRED
                 </h3>
                 <span style={{
-                  fontSize: '0.65rem',
+                  fontSize: '0.625rem',
                   fontWeight: 700,
-                  backgroundColor: 'rgba(239, 68, 68, 0.15)',
+                  backgroundColor: 'rgba(239, 68, 68, 0.12)',
                   color: '#fca5a5',
                   padding: '1px 5px',
                   borderRadius: '3px'
@@ -978,14 +968,14 @@ export default function CommandCenter({
               </div>
 
               {/* Exception Category Filters */}
-              <div style={{ display: 'flex', backgroundColor: '#0c101a', padding: '2px', borderRadius: '4px', border: '1px solid #1f2b42' }}>
+              <div style={{ display: 'flex', backgroundColor: '#090d16', padding: '2px', borderRadius: '4px', border: '1px solid #1a2336' }}>
                 {['ALL', 'BLOCKED', 'OVERDUE'].map((f) => (
                   <button
                     key={f}
                     onClick={() => { playClickSound(); setAttentionFilter(f); }}
                     style={{
                       padding: '2px 6px',
-                      fontSize: '0.65rem',
+                      fontSize: '0.625rem',
                       fontWeight: 700,
                       borderRadius: '3px',
                       border: 'none',
@@ -1001,37 +991,37 @@ export default function CommandCenter({
             </div>
 
             {/* Exceptions Items List */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.55rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
               {filteredAttention.map((item) => {
                 const isCritical = item.severity === 'CRITICAL';
                 return (
                   <div
                     key={item.id}
                     style={{
-                      padding: '0.75rem 0.85rem',
-                      backgroundColor: '#161f33',
-                      borderRadius: '6px',
-                      border: isCritical ? '1px solid rgba(239, 68, 68, 0.35)' : '1px solid #222f47',
+                      padding: '8px 10px',
+                      backgroundColor: '#0c101a',
+                      borderRadius: '4px',
+                      border: isCritical ? '1px solid rgba(239, 68, 68, 0.3)' : '1px solid #1a2336',
                       display: 'flex',
                       flexDirection: 'column',
-                      gap: '0.4rem'
+                      gap: '4px'
                     }}
                   >
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '4px' }}>
                       <span style={{
-                        fontSize: '0.65rem',
-                        fontWeight: 800,
+                        fontSize: '0.625rem',
+                        fontWeight: 700,
                         textTransform: 'uppercase',
                         color: item.type === 'BLOCKED' ? '#f87171' : item.type === 'OVERDUE' ? '#fb923c' : '#38bdf8'
                       }}>
                         {item.type}
                       </span>
-                      <span style={{ fontSize: '0.68rem', color: '#64748b' }}>
+                      <span style={{ fontSize: '0.6875rem', color: '#64748b' }}>
                         {item.timeDelta}
                       </span>
                     </div>
 
-                    <div style={{ fontSize: '0.8rem', fontWeight: 600, color: '#f1f5f9', lineHeight: 1.3 }}>
+                    <div style={{ fontSize: '0.785rem', fontWeight: 600, color: '#f1f5f9', lineHeight: 1.35 }}>
                       {item.title}
                     </div>
 
@@ -1040,19 +1030,19 @@ export default function CommandCenter({
                     </div>
 
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '2px' }}>
-                      <span style={{ fontSize: '0.68rem', color: '#64748b' }}>
+                      <span style={{ fontSize: '0.6875rem', color: '#64748b' }}>
                         {item.project}
                       </span>
 
                       <button
                         onClick={() => handleResolveAttentionItem(item)}
                         style={{
-                          background: '#0c101a',
-                          border: '1px solid #1f2b42',
+                          background: '#131b2e',
+                          border: '1px solid #1a2336',
                           color: '#818cf8',
-                          borderRadius: '4px',
-                          padding: '2px 8px',
-                          fontSize: '0.7rem',
+                          borderRadius: '3px',
+                          padding: '2px 7px',
+                          fontSize: '0.6875rem',
                           fontWeight: 600,
                           cursor: 'pointer'
                         }}
@@ -1066,25 +1056,25 @@ export default function CommandCenter({
             </div>
           </div>
 
-          {/* 4. FLOW SCORE: Tasteful Productivity Visualization */}
+          {/* 4. FLOW SCORE: Operational Productivity Index */}
           <div style={{
-            backgroundColor: '#111726',
-            borderRadius: '8px',
-            border: '1px solid #1f2b42',
-            padding: '1.15rem',
+            backgroundColor: '#0e1422',
+            borderRadius: '6px',
+            border: '1px solid #1a2336',
+            padding: '14px',
             display: 'flex',
             flexDirection: 'column',
-            gap: '0.85rem'
+            gap: '10px'
           }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.55rem' }}>
-                <TrendingUp size={16} color="#38bdf8" />
-                <h3 style={{ fontSize: '0.925rem', fontWeight: 700, color: '#f8fafc', margin: 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <TrendingUp size={15} color="#38bdf8" />
+                <h3 style={{ fontSize: '0.875rem', fontWeight: 700, color: '#f8fafc', margin: 0 }}>
                   FLOW SCORE
                 </h3>
               </div>
 
-              <span style={{ fontSize: '0.68rem', color: '#10b981', fontWeight: 700 }}>
+              <span style={{ fontSize: '0.6875rem', color: '#10b981', fontWeight: 700 }}>
                 High Flow State
               </span>
             </div>
@@ -1093,25 +1083,25 @@ export default function CommandCenter({
             <div style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '1rem',
-              padding: '0.85rem 1rem',
-              backgroundColor: '#0c101a',
-              borderRadius: '6px',
-              border: '1px solid #1f2b42'
+              gap: '12px',
+              padding: '8px 12px',
+              backgroundColor: '#090d16',
+              borderRadius: '4px',
+              border: '1px solid #1a2336'
             }}>
               <div style={{
-                width: '54px',
-                height: '54px',
+                width: '44px',
+                height: '44px',
                 borderRadius: '50%',
-                border: '3px solid #6366f1',
+                border: '2px solid #6366f1',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 flexShrink: 0
               }}>
                 <span style={{
-                  fontSize: '1.35rem',
-                  fontWeight: 900,
+                  fontSize: '1.15rem',
+                  fontWeight: 800,
                   color: '#f8fafc',
                   fontFamily: 'var(--font-mono)'
                 }}>
@@ -1120,27 +1110,27 @@ export default function CommandCenter({
               </div>
 
               <div>
-                <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#f8fafc' }}>
+                <div style={{ fontSize: '0.8125rem', fontWeight: 600, color: '#f8fafc' }}>
                   {flowScoreData.statusText}
                 </div>
-                <div style={{ fontSize: '0.72rem', color: '#64748b', marginTop: '2px' }}>
+                <div style={{ fontSize: '0.6875rem', color: '#64748b', marginTop: '1px' }}>
                   {flowScoreData.subText}
                 </div>
               </div>
             </div>
 
-            {/* 4 Core Scientific Breakdown Bars */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+            {/* 4 Core Breakdown Bars (Solid Flat Colors) */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
               {flowScoreData.metrics.map((m, idx) => (
                 <div key={idx}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.72rem', marginBottom: '3px' }}>
-                    <span style={{ color: '#cbd5e1', fontWeight: 600 }}>{m.label}</span>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.6875rem', marginBottom: '2px' }}>
+                    <span style={{ color: '#cbd5e1', fontWeight: 500 }}>{m.label}</span>
                     <span style={{ color: '#94a3b8', fontFamily: 'var(--font-mono)' }}>{m.value}</span>
                   </div>
                   <div style={{
                     width: '100%',
-                    height: '4px',
-                    backgroundColor: '#0c101a',
+                    height: '3px',
+                    backgroundColor: '#131b2e',
                     borderRadius: '2px',
                     overflow: 'hidden'
                   }}>
@@ -1149,15 +1139,14 @@ export default function CommandCenter({
                       height: '100%',
                       backgroundColor: m.tone,
                       borderRadius: '2px',
-                      transition: 'width 0.4s ease'
+                      transition: 'width 0.3s ease'
                     }} />
                   </div>
                 </div>
               ))}
             </div>
 
-            {/* Non-gamified subtle explanation */}
-            <p style={{ fontSize: '0.68rem', color: '#64748b', margin: '4px 0 0', lineHeight: 1.4 }}>
+            <p style={{ fontSize: '0.6875rem', color: '#64748b', margin: '2px 0 0', lineHeight: 1.4 }}>
               Flow Score aggregates time-on-task, completion ratio, and low friction context switching across current sprint.
             </p>
           </div>

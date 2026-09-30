@@ -268,15 +268,14 @@ export default function ProjectWorkspaceView({
         position: 'relative',
         overflow: 'hidden'
       }}>
-        {/* Subtle decorative glow accent matching project color */}
+        {/* Crisp solid color indicator line */}
         <div style={{
           position: 'absolute',
           top: 0,
           left: 0,
           right: 0,
           height: '2px',
-          backgroundColor: project.colorCode || '#6366f1',
-          boxShadow: `0 0 12px ${project.colorCode || '#6366f1'}`
+          backgroundColor: project.colorCode || '#6366f1'
         }} />
 
         <div style={{
@@ -452,15 +451,16 @@ export default function ProjectWorkspaceView({
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase', color: '#64748b' }}>
               <span>Sprint Progress</span>
-              <span style={{ color: '#86efac' }}>{progressPercent}%</span>
+              <span style={{ color: '#86efac', fontFamily: 'var(--font-mono)' }}>{progressPercent}%</span>
             </div>
-            <div style={{ height: '6px', backgroundColor: '#0c101a', borderRadius: '3px', overflow: 'hidden', marginTop: '6px' }}>
+            <div style={{ height: '4px', backgroundColor: '#090d16', borderRadius: '2px', overflow: 'hidden', marginTop: '6px', border: '1px solid #1a2336' }}>
               <div
                 style={{
                   height: '100%',
                   width: `${progressPercent}%`,
                   backgroundColor: '#10b981',
-                  boxShadow: '0 0 8px rgba(16, 185, 129, 0.4)'
+                  borderRadius: '2px',
+                  transition: 'width 0.3s ease'
                 }}
               />
             </div>
@@ -481,103 +481,103 @@ export default function ProjectWorkspaceView({
           </span>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '0.85rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '12px' }}>
           
           {/* Dimension 1: TIME (Are we on schedule?) */}
           <div style={{
-            padding: '1rem',
-            backgroundColor: '#111726',
-            borderRadius: '8px',
-            border: '1px solid #1f2b42',
+            padding: '12px 14px',
+            backgroundColor: '#0e1422',
+            borderRadius: '6px',
+            border: '1px solid #1a2336',
             display: 'flex',
             flexDirection: 'column',
-            gap: '0.55rem'
+            gap: '8px'
           }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-                <Clock size={16} color="#38bdf8" />
-                <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#f8fafc' }}>TIME DIMENSION</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <Clock size={14} color="#38bdf8" />
+                <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#f8fafc' }}>TIME DIMENSION</span>
               </div>
-              <span style={{ fontSize: '0.65rem', fontWeight: 800, color: '#38bdf8', backgroundColor: 'rgba(56, 189, 248, 0.15)', padding: '2px 6px', borderRadius: '3px' }}>
+              <span style={{ fontSize: '0.625rem', fontWeight: 700, color: '#38bdf8', backgroundColor: 'rgba(56, 189, 248, 0.12)', border: '1px solid rgba(56, 189, 248, 0.25)', padding: '1px 6px', borderRadius: '3px' }}>
                 ON SCHEDULE
               </span>
             </div>
 
-            <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#f8fafc', letterSpacing: '-0.02em' }}>
+            <div style={{ fontSize: '1rem', fontWeight: 700, color: '#f8fafc', letterSpacing: '-0.01em' }}>
               4 Days Left in Sprint
             </div>
 
-            <p style={{ fontSize: '0.75rem', color: '#94a3b8', margin: 0, lineHeight: 1.4 }}>
+            <p style={{ fontSize: '0.75rem', color: '#94a3b8', margin: 0, lineHeight: 1.45 }}>
               Current team review velocity is <strong style={{ color: '#f8fafc' }}>1.1x baseline pace</strong>. 92% statistical confidence of landing Oct 15 cutoff without crunch.
             </p>
 
-            <div style={{ fontSize: '0.68rem', color: '#64748b', borderTop: '1px solid #1a2336', paddingTop: '0.45rem', marginTop: '2px' }}>
+            <div style={{ fontSize: '0.6875rem', color: '#64748b', borderTop: '1px solid #141c2c', paddingTop: '6px', marginTop: '2px' }}>
               Trajectory: Staging deployment window locked for Oct 03 18:00 UTC
             </div>
           </div>
 
           {/* Dimension 2: WORK (How much work is completed?) */}
           <div style={{
-            padding: '1rem',
-            backgroundColor: '#111726',
-            borderRadius: '8px',
-            border: '1px solid #1f2b42',
+            padding: '12px 14px',
+            backgroundColor: '#0e1422',
+            borderRadius: '6px',
+            border: '1px solid #1a2336',
             display: 'flex',
             flexDirection: 'column',
-            gap: '0.55rem'
+            gap: '8px'
           }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-                <CheckCircle2 size={16} color="#10b981" />
-                <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#f8fafc' }}>WORK DIMENSION</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <CheckCircle2 size={14} color="#10b981" />
+                <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#f8fafc' }}>WORK DIMENSION</span>
               </div>
-              <span style={{ fontSize: '0.65rem', fontWeight: 800, color: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.15)', padding: '2px 6px', borderRadius: '3px' }}>
+              <span style={{ fontSize: '0.625rem', fontWeight: 700, color: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.12)', border: '1px solid rgba(16, 185, 129, 0.25)', padding: '1px 6px', borderRadius: '3px' }}>
                 64% RESOLVED
               </span>
             </div>
 
-            <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#f8fafc', letterSpacing: '-0.02em' }}>
+            <div style={{ fontSize: '1rem', fontWeight: 700, color: '#f8fafc', letterSpacing: '-0.01em' }}>
               14 of 22 Deliverables Landed
             </div>
 
-            <p style={{ fontSize: '0.75rem', color: '#94a3b8', margin: 0, lineHeight: 1.4 }}>
+            <p style={{ fontSize: '0.75rem', color: '#94a3b8', margin: 0, lineHeight: 1.45 }}>
               <strong style={{ color: '#f8fafc' }}>18.5 hours</strong> of estimated runway remaining. Active breakdown: 3 in progress, 1 in review, 4 in backlog.
             </p>
 
-            <div style={{ fontSize: '0.68rem', color: '#64748b', borderTop: '1px solid #1a2336', paddingTop: '0.45rem', marginTop: '2px' }}>
+            <div style={{ fontSize: '0.6875rem', color: '#64748b', borderTop: '1px solid #141c2c', paddingTop: '6px', marginTop: '2px' }}>
               Velocity: +12% sprint throughput compared to prior cycle
             </div>
           </div>
 
           {/* Dimension 3: RISK (What could delay the project?) */}
           <div style={{
-            padding: '1rem',
-            backgroundColor: '#111726',
-            borderRadius: '8px',
-            border: '1px solid #1f2b42',
+            padding: '12px 14px',
+            backgroundColor: '#0e1422',
+            borderRadius: '6px',
+            border: '1px solid #1a2336',
             display: 'flex',
             flexDirection: 'column',
-            gap: '0.55rem'
+            gap: '8px'
           }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-                <AlertTriangle size={16} color="#f59e0b" />
-                <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#f8fafc' }}>RISK DIMENSION</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <AlertTriangle size={14} color="#f59e0b" />
+                <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#f8fafc' }}>RISK DIMENSION</span>
               </div>
-              <span style={{ fontSize: '0.65rem', fontWeight: 800, color: '#fcd34d', backgroundColor: 'rgba(245, 158, 11, 0.15)', padding: '2px 6px', borderRadius: '3px' }}>
+              <span style={{ fontSize: '0.625rem', fontWeight: 700, color: '#fcd34d', backgroundColor: 'rgba(245, 158, 11, 0.12)', border: '1px solid rgba(245, 158, 11, 0.25)', padding: '1px 6px', borderRadius: '3px' }}>
                 1 ACTIVE BLOCKER
               </span>
             </div>
 
-            <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#f8fafc', letterSpacing: '-0.02em' }}>
+            <div style={{ fontSize: '1rem', fontWeight: 700, color: '#f8fafc', letterSpacing: '-0.01em' }}>
               DB Connection Saturation
             </div>
 
-            <p style={{ fontSize: '0.75rem', color: '#94a3b8', margin: 0, lineHeight: 1.4 }}>
+            <p style={{ fontSize: '0.75rem', color: '#94a3b8', margin: 0, lineHeight: 1.45 }}>
               Staging stress test identified potential HikariCP connection starvation during burst sync. Mitigation assigned to Marcus Vance.
             </p>
 
-            <div style={{ fontSize: '0.68rem', color: '#64748b', borderTop: '1px solid #1a2336', paddingTop: '0.45rem', marginTop: '2px' }}>
+            <div style={{ fontSize: '0.6875rem', color: '#64748b', borderTop: '1px solid #141c2c', paddingTop: '6px', marginTop: '2px' }}>
               Downstream exposure: 1 task waiting on connection pool PR sign-off
             </div>
           </div>
@@ -588,33 +588,33 @@ export default function ProjectWorkspaceView({
       {/* =========================================================================
           3. OPERATIONAL SPLIT: CURRENT FOCUS + BLOCKED DELIVERABLES
           ========================================================================= */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '12px' }}>
         
         {/* CURRENT FOCUS (What the team is working on right now) */}
         <div style={{
-          backgroundColor: '#111726',
-          borderRadius: '8px',
-          border: '1px solid #1f2b42',
-          padding: '1rem',
+          backgroundColor: '#0e1422',
+          borderRadius: '6px',
+          border: '1px solid #1a2336',
+          padding: '14px',
           display: 'flex',
           flexDirection: 'column',
-          gap: '0.75rem'
+          gap: '10px'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-              <Zap size={15} color="#818cf8" />
-              <span style={{ fontSize: '0.785rem', fontWeight: 800, color: '#f8fafc' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <Zap size={14} color="#818cf8" />
+              <span style={{ fontSize: '0.785rem', fontWeight: 700, color: '#f8fafc' }}>
                 CURRENT FOCUS
               </span>
             </div>
-            <span style={{ fontSize: '0.68rem', color: '#10b981', fontWeight: 700 }}>
+            <span style={{ fontSize: '0.6875rem', color: '#10b981', fontWeight: 600 }}>
               ● Live Engineering
             </span>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.55rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
             {inProgressTasks.length === 0 ? (
-              <div style={{ padding: '1.5rem', textAlign: 'center', color: '#64748b', fontSize: '0.75rem' }}>
+              <div style={{ padding: '16px', textAlign: 'center', color: '#64748b', fontSize: '0.75rem' }}>
                 No active in-progress items. Promote items from backlog.
               </div>
             ) : (
@@ -623,13 +623,13 @@ export default function ProjectWorkspaceView({
                   key={t.id}
                   onClick={() => onOpenTaskDetail?.(t)}
                   style={{
-                    padding: '0.65rem 0.85rem',
+                    padding: '8px 12px',
                     backgroundColor: '#0c101a',
-                    borderRadius: '6px',
+                    borderRadius: '4px',
                     border: '1px solid #1a2336',
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: '0.35rem',
+                    gap: '4px',
                     cursor: 'pointer',
                     transition: 'border-color 0.12s'
                   }}
@@ -637,15 +637,15 @@ export default function ProjectWorkspaceView({
                   onMouseLeave={(e) => (e.currentTarget.style.borderColor = '#1a2336')}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <span style={{ fontSize: '0.785rem', fontWeight: 700, color: '#f8fafc' }}>
+                    <span style={{ fontSize: '0.785rem', fontWeight: 600, color: '#f8fafc' }}>
                       TASK-{t.id}: {t.title}
                     </span>
-                    <span style={{ fontSize: '0.68rem', color: '#818cf8', fontFamily: 'var(--font-mono)' }}>
+                    <span style={{ fontSize: '0.6875rem', color: '#818cf8', fontFamily: 'var(--font-mono)' }}>
                       {t.estimatedTime || '45m'}
                     </span>
                   </div>
 
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.7rem', color: '#64748b' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.6875rem', color: '#64748b' }}>
                     <span>Assignee: {t.assignee || 'Alex Rivera'}</span>
                     <span style={{ color: '#38bdf8', fontWeight: 600 }}>In Review Window</span>
                   </div>
@@ -657,46 +657,46 @@ export default function ProjectWorkspaceView({
 
         {/* BLOCKED (Tasks preventing progress) */}
         <div style={{
-          backgroundColor: '#111726',
-          borderRadius: '8px',
-          border: '1px solid #1f2b42',
-          padding: '1rem',
+          backgroundColor: '#0e1422',
+          borderRadius: '6px',
+          border: '1px solid #1a2336',
+          padding: '14px',
           display: 'flex',
           flexDirection: 'column',
-          gap: '0.75rem'
+          gap: '10px'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-              <AlertTriangle size={15} color="#ef4444" />
-              <span style={{ fontSize: '0.785rem', fontWeight: 800, color: '#f8fafc' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <AlertTriangle size={14} color="#ef4444" />
+              <span style={{ fontSize: '0.785rem', fontWeight: 700, color: '#f8fafc' }}>
                 BLOCKED DELIVERABLES
               </span>
             </div>
-            <span style={{ fontSize: '0.68rem', color: '#fca5a5', fontWeight: 700 }}>
+            <span style={{ fontSize: '0.6875rem', color: '#fca5a5', fontWeight: 600 }}>
               Needs Intervention
             </span>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.55rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
             {blockedTasks.map((t) => (
               <div
                 key={t.id}
                 style={{
-                  padding: '0.65rem 0.85rem',
+                  padding: '8px 12px',
                   backgroundColor: '#0c101a',
-                  borderRadius: '6px',
+                  borderRadius: '4px',
                   border: '1px solid rgba(239, 68, 68, 0.25)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
-                  gap: '0.75rem'
+                  gap: '10px'
                 }}
               >
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: '0.785rem', fontWeight: 700, color: '#f8fafc', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <div style={{ fontSize: '0.785rem', fontWeight: 600, color: '#f8fafc', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     TASK-{t.id}: {t.title}
                   </div>
-                  <div style={{ fontSize: '0.68rem', color: '#fca5a5', marginTop: '2px' }}>
+                  <div style={{ fontSize: '0.6875rem', color: '#fca5a5', marginTop: '1px' }}>
                     Blocked by PR #108 approval & schema lock
                   </div>
                 </div>
@@ -704,13 +704,13 @@ export default function ProjectWorkspaceView({
                 <button
                   onClick={() => handleResolveBlocked(t)}
                   style={{
-                    padding: '0.35rem 0.65rem',
-                    fontSize: '0.7rem',
-                    fontWeight: 700,
-                    backgroundColor: 'rgba(16, 185, 129, 0.15)',
-                    border: '1px solid rgba(16, 185, 129, 0.35)',
+                    padding: '2px 8px',
+                    fontSize: '0.6875rem',
+                    fontWeight: 600,
+                    backgroundColor: 'rgba(16, 185, 129, 0.12)',
+                    border: '1px solid rgba(16, 185, 129, 0.3)',
                     color: '#86efac',
-                    borderRadius: '4px',
+                    borderRadius: '3px',
                     cursor: 'pointer',
                     whiteSpace: 'nowrap'
                   }}
@@ -728,20 +728,20 @@ export default function ProjectWorkspaceView({
           4. PROJECT TIMELINE & MILESTONES (Interactive roadmap)
           ========================================================================= */}
       <div style={{
-        backgroundColor: '#111726',
-        borderRadius: '8px',
-        border: '1px solid #1f2b42',
-        padding: '1.25rem',
+        backgroundColor: '#0e1422',
+        borderRadius: '6px',
+        border: '1px solid #1a2336',
+        padding: '14px',
         display: 'flex',
         flexDirection: 'column',
-        gap: '0.85rem'
+        gap: '10px'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div>
-            <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#f8fafc' }}>
+            <span style={{ fontSize: '0.785rem', fontWeight: 700, color: '#f8fafc' }}>
               PROJECT TIMELINE & MILESTONES
             </span>
-            <p style={{ fontSize: '0.72rem', color: '#64748b', margin: '2px 0 0' }}>
+            <p style={{ fontSize: '0.6875rem', color: '#64748b', margin: '1px 0 0' }}>
               Sequential release candidate progression and dependency trajectory.
             </p>
           </div>
@@ -751,13 +751,13 @@ export default function ProjectWorkspaceView({
               onNavigateView?.('timeline');
             }}
             style={{
-              padding: '0.35rem 0.65rem',
+              padding: '2px 8px',
               fontSize: '0.72rem',
-              fontWeight: 700,
+              fontWeight: 600,
               backgroundColor: '#0c101a',
-              border: '1px solid #1f2b42',
+              border: '1px solid #1a2336',
               color: '#818cf8',
-              borderRadius: '4px',
+              borderRadius: '3px',
               cursor: 'pointer'
             }}
           >
@@ -765,31 +765,31 @@ export default function ProjectWorkspaceView({
           </button>
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
           {milestones.map((ms, idx) => (
             <div
               key={ms.id}
               style={{
-                padding: '0.75rem 1rem',
+                padding: '8px 12px',
                 backgroundColor: '#0c101a',
-                borderRadius: '6px',
+                borderRadius: '4px',
                 border: '1px solid #1a2336',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
                 flexWrap: 'wrap',
-                gap: '0.75rem'
+                gap: '8px'
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', flex: 1, minWidth: '220px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1, minWidth: '220px' }}>
                 <span style={{
-                  width: '22px',
-                  height: '22px',
+                  width: '20px',
+                  height: '20px',
                   borderRadius: '50%',
-                  backgroundColor: ms.status === 'COMPLETED' ? 'rgba(16, 185, 129, 0.2)' : ms.status === 'IN_PROGRESS' ? 'rgba(56, 189, 248, 0.2)' : '#161f31',
+                  backgroundColor: ms.status === 'COMPLETED' ? 'rgba(16, 185, 129, 0.15)' : ms.status === 'IN_PROGRESS' ? 'rgba(56, 189, 248, 0.15)' : '#161f31',
                   color: ms.status === 'COMPLETED' ? '#10b981' : ms.status === 'IN_PROGRESS' ? '#38bdf8' : '#64748b',
-                  fontSize: '0.68rem',
-                  fontWeight: 800,
+                  fontSize: '0.625rem',
+                  fontWeight: 700,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center'
@@ -798,22 +798,22 @@ export default function ProjectWorkspaceView({
                 </span>
 
                 <div>
-                  <div style={{ fontSize: '0.785rem', fontWeight: 700, color: '#f8fafc' }}>
+                  <div style={{ fontSize: '0.785rem', fontWeight: 600, color: '#f8fafc' }}>
                     {ms.title}
                   </div>
-                  <div style={{ fontSize: '0.68rem', color: '#64748b', marginTop: '2px' }}>
+                  <div style={{ fontSize: '0.6875rem', color: '#64748b', marginTop: '1px' }}>
                     Lead: {ms.lead} · Due: {ms.deadline} · {ms.tasksCount} deliverables
                   </div>
                 </div>
               </div>
 
               {/* Progress bar */}
-              <div style={{ width: '120px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.65rem', color: '#64748b', marginBottom: '2px' }}>
+              <div style={{ width: '100px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.625rem', color: '#64748b', marginBottom: '2px' }}>
                   <span>{ms.status.replace('_', ' ')}</span>
-                  <span style={{ fontWeight: 700, color: ms.progress === 100 ? '#10b981' : '#cbd5e1' }}>{ms.progress}%</span>
+                  <span style={{ fontWeight: 600, color: ms.progress === 100 ? '#10b981' : '#cbd5e1', fontFamily: 'var(--font-mono)' }}>{ms.progress}%</span>
                 </div>
-                <div style={{ height: '4px', backgroundColor: '#161f31', borderRadius: '2px', overflow: 'hidden' }}>
+                <div style={{ height: '3px', backgroundColor: '#161f31', borderRadius: '2px', overflow: 'hidden' }}>
                   <div
                     style={{
                       height: '100%',
@@ -831,70 +831,70 @@ export default function ProjectWorkspaceView({
       {/* =========================================================================
           5. LOWER SECTION: TEAM WORKLOAD + PROJECT DOCUMENTS + LIVE ACTIVITY
           ========================================================================= */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '12px' }}>
         
         {/* TEAM & WORKLOAD */}
         <div style={{
-          backgroundColor: '#111726',
-          borderRadius: '8px',
-          border: '1px solid #1f2b42',
-          padding: '1rem',
+          backgroundColor: '#0e1422',
+          borderRadius: '6px',
+          border: '1px solid #1a2336',
+          padding: '14px',
           display: 'flex',
           flexDirection: 'column',
-          gap: '0.75rem'
+          gap: '10px'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-              <Users size={15} color="#818cf8" />
-              <span style={{ fontSize: '0.785rem', fontWeight: 800, color: '#f8fafc' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <Users size={14} color="#818cf8" />
+              <span style={{ fontSize: '0.785rem', fontWeight: 700, color: '#f8fafc' }}>
                 TEAM ALLOCATION & WORKLOAD
               </span>
             </div>
-            <span style={{ fontSize: '0.68rem', color: '#64748b' }}>
+            <span style={{ fontSize: '0.6875rem', color: '#64748b' }}>
               Balanced
             </span>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.55rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
             {teamWorkload.map((member) => (
               <div
                 key={member.id}
                 style={{
-                  padding: '0.65rem',
+                  padding: '8px 10px',
                   backgroundColor: '#0c101a',
-                  borderRadius: '6px',
+                  borderRadius: '4px',
                   border: '1px solid #1a2336',
                   display: 'flex',
                   flexDirection: 'column',
-                  gap: '0.35rem'
+                  gap: '4px'
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                     <img
                       src={member.avatar}
                       alt={member.name}
-                      style={{ width: '22px', height: '22px', borderRadius: '50%', objectFit: 'cover' }}
+                      style={{ width: '20px', height: '20px', borderRadius: '50%', objectFit: 'cover' }}
                     />
                     <div>
-                      <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#f8fafc' }}>{member.name}</div>
-                      <div style={{ fontSize: '0.65rem', color: '#64748b' }}>{member.role}</div>
+                      <div style={{ fontSize: '0.75rem', fontWeight: 600, color: '#f8fafc' }}>{member.name}</div>
+                      <div style={{ fontSize: '0.625rem', color: '#64748b' }}>{member.role}</div>
                     </div>
                   </div>
 
                   <span style={{
-                    fontSize: '0.65rem',
-                    fontWeight: 700,
-                    padding: '2px 6px',
+                    fontSize: '0.625rem',
+                    fontWeight: 600,
+                    padding: '1px 5px',
                     borderRadius: '3px',
-                    backgroundColor: member.capacityPercent > 90 ? 'rgba(239, 68, 68, 0.15)' : 'rgba(99, 102, 241, 0.15)',
+                    backgroundColor: member.capacityPercent > 90 ? 'rgba(239, 68, 68, 0.12)' : 'rgba(99, 102, 241, 0.12)',
                     color: member.capacityPercent > 90 ? '#fca5a5' : '#818cf8'
                   }}>
                     {member.capacityPercent}% capacity
                   </span>
                 </div>
 
-                <div style={{ fontSize: '0.68rem', color: '#94a3b8', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div style={{ fontSize: '0.6875rem', color: '#94a3b8', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <span>{member.activeTasksCount} active tasks · {member.runwayHours} runway</span>
                 </div>
               </div>
@@ -904,61 +904,61 @@ export default function ProjectWorkspaceView({
 
         {/* PROJECT DOCUMENTS */}
         <div style={{
-          backgroundColor: '#111726',
-          borderRadius: '8px',
-          border: '1px solid #1f2b42',
-          padding: '1rem',
+          backgroundColor: '#0e1422',
+          borderRadius: '6px',
+          border: '1px solid #1a2336',
+          padding: '14px',
           display: 'flex',
           flexDirection: 'column',
-          gap: '0.75rem'
+          gap: '10px'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-              <FileText size={15} color="#818cf8" />
-              <span style={{ fontSize: '0.785rem', fontWeight: 800, color: '#f8fafc' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <FileText size={14} color="#818cf8" />
+              <span style={{ fontSize: '0.785rem', fontWeight: 700, color: '#f8fafc' }}>
                 PROJECT DOCUMENTS & SPECS
               </span>
             </div>
             <button
               onClick={() => onAddToast?.('Document uploader launched', 'info')}
-              style={{ background: 'none', border: 'none', color: '#818cf8', cursor: 'pointer', fontSize: '0.68rem', fontWeight: 700 }}
+              style={{ background: 'none', border: 'none', color: '#818cf8', cursor: 'pointer', fontSize: '0.6875rem', fontWeight: 600 }}
             >
               + Add Doc
             </button>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.55rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
             {projectDocs.map((doc) => (
               <div
                 key={doc.id}
                 style={{
-                  padding: '0.65rem 0.85rem',
+                  padding: '8px 10px',
                   backgroundColor: '#0c101a',
-                  borderRadius: '6px',
+                  borderRadius: '4px',
                   border: '1px solid #1a2336',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between'
                 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.55rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <div style={{
-                    width: '26px',
-                    height: '26px',
-                    borderRadius: '4px',
-                    backgroundColor: 'rgba(99, 102, 241, 0.15)',
+                    width: '24px',
+                    height: '24px',
+                    borderRadius: '3px',
+                    backgroundColor: 'rgba(99, 102, 241, 0.1)',
                     color: '#818cf8',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    fontSize: '0.65rem',
-                    fontWeight: 800
+                    fontSize: '0.625rem',
+                    fontWeight: 700
                   }}>
                     {doc.type}
                   </div>
                   <div>
-                    <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#f8fafc' }}>{doc.title}</div>
-                    <div style={{ fontSize: '0.65rem', color: '#64748b' }}>
+                    <div style={{ fontSize: '0.75rem', fontWeight: 600, color: '#f8fafc' }}>{doc.title}</div>
+                    <div style={{ fontSize: '0.625rem', color: '#64748b' }}>
                       {doc.size} · Updated {doc.updatedAt}
                     </div>
                   </div>
@@ -969,7 +969,7 @@ export default function ProjectWorkspaceView({
                   style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', padding: '3px' }}
                   title="Download document"
                 >
-                  <Download size={14} />
+                  <Download size={13} />
                 </button>
               </div>
             ))}
@@ -978,29 +978,29 @@ export default function ProjectWorkspaceView({
 
         {/* LIVE RECENT ACTIVITY */}
         <div style={{
-          backgroundColor: '#111726',
-          borderRadius: '8px',
-          border: '1px solid #1f2b42',
-          padding: '1rem',
+          backgroundColor: '#0e1422',
+          borderRadius: '6px',
+          border: '1px solid #1a2336',
+          padding: '14px',
           display: 'flex',
           flexDirection: 'column',
-          gap: '0.75rem'
+          gap: '10px'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-              <Activity size={15} color="#818cf8" />
-              <span style={{ fontSize: '0.785rem', fontWeight: 800, color: '#f8fafc' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <Activity size={14} color="#818cf8" />
+              <span style={{ fontSize: '0.785rem', fontWeight: 700, color: '#f8fafc' }}>
                 LIVE RECENT ACTIVITY
               </span>
             </div>
-            <span style={{ fontSize: '0.65rem', color: '#10b981' }}>
+            <span style={{ fontSize: '0.625rem', color: '#10b981' }}>
               Sync active
             </span>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             {recentActivities.map((act) => (
-              <div key={act.id} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.55rem', fontSize: '0.72rem' }}>
+              <div key={act.id} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', fontSize: '0.72rem' }}>
                 <span style={{
                   width: '6px',
                   height: '6px',
@@ -1010,9 +1010,9 @@ export default function ProjectWorkspaceView({
                   flexShrink: 0
                 }} />
                 <div style={{ flex: 1 }}>
-                  <span style={{ fontWeight: 700, color: '#f8fafc' }}>{act.user} </span>
+                  <span style={{ fontWeight: 600, color: '#f8fafc' }}>{act.user} </span>
                   <span style={{ color: '#cbd5e1' }}>{act.action}</span>
-                  <div style={{ fontSize: '0.65rem', color: '#64748b', marginTop: '2px' }}>{act.time}</div>
+                  <div style={{ fontSize: '0.625rem', color: '#64748b', marginTop: '1px' }}>{act.time}</div>
                 </div>
               </div>
             ))}

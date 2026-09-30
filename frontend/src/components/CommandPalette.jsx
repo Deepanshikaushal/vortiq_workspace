@@ -272,15 +272,15 @@ export default function CommandPalette({
         onClick={(e) => e.stopPropagation()}
         style={{
           width: '100%',
-          maxWidth: '620px',
-          backgroundColor: '#111726',
+          maxWidth: '600px',
+          backgroundColor: '#0e1422',
           border: '1px solid #1f2b42',
-          borderRadius: '10px',
-          boxShadow: '0 20px 50px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(99, 102, 241, 0.15)',
+          borderRadius: '6px',
+          boxShadow: '0 16px 40px rgba(0, 0, 0, 0.75)',
           overflow: 'hidden',
           display: 'flex',
           flexDirection: 'column',
-          animation: 'cmdPaletteAppear 0.15s cubic-bezier(0.16, 1, 0.3, 1)'
+          animation: 'cmdPaletteAppear 0.12s cubic-bezier(0.16, 1, 0.3, 1)'
         }}
       >
         {/* Search Input Box */}

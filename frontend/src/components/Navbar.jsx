@@ -1,36 +1,25 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
   Search,
+  Plus,
+  Bell,
+  Menu,
+  ChevronRight,
+  ChevronDown,
+  User,
+  Settings,
+  LogOut,
   Moon,
   Sun,
-  Kanban,
-  Table,
-  X,
-  User,
-  LogIn,
-  LogOut,
-  Settings,
-  Briefcase,
-  Menu,
-  ChevronDown,
-  Home,
-  Users,
+  Keyboard,
   Shield,
-  Download,
-  HelpCircle,
-  SlidersHorizontal,
+  FileText,
+  Folder,
+  CheckCircle2,
   Sparkles,
-  Maximize2,
-  Minimize2,
-  Plus,
-  PanelLeftClose,
-  PanelLeftOpen,
-  MessageSquare,
-  AlertTriangle,
-  Bell
+  Command,
+  Activity
 } from 'lucide-react';
-import ApiStatusBadge from './ApiStatusBadge';
-import VortiqLogo from './VortiqLogo';
 
 export default function Navbar({
   activeView,
@@ -53,586 +42,487 @@ export default function Navbar({
   onOpenAiModal,
   onOpenNotifications,
   unreadNotifsCount = 2,
-  inconvenienceCount = 0,
   onLogout,
   onToggleMobileMenu,
-  onGoHome,
-  onExportCSV,
   onOpenShortcutsModal,
   isSidebarCollapsed,
-  onToggleSidebarCollapse
+  onToggleSidebarCollapse,
+  onOpenCommandPalette
 }) {
-  const [userMenuOpen, setUserMenuOpen] = useState(false);
-  const [optionsMenuOpen, setOptionsMenuOpen] = useState(false);
-  const [workspaceMenuOpen, setWorkspaceMenuOpen] = useState(false);
-  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [createMenuOpen, setCreateMenuOpen] = useState(false);
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
 
-  const userMenuRef = useRef(null);
-  const optionsMenuRef = useRef(null);
-  const workspaceMenuRef = useRef(null);
+  const createMenuRef = useRef(null);
+  const profileMenuRef = useRef(null);
 
   useEffect(() => {
     function handleClickOutside(event) {
-      if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
-        setUserMenuOpen(false);
+      if (createMenuRef.current && !createMenuRef.current.contains(event.target)) {
+        setCreateMenuOpen(false);
       }
-      if (optionsMenuRef.current && !optionsMenuRef.current.contains(event.target)) {
-        setOptionsMenuOpen(false);
-      }
-      if (workspaceMenuRef.current && !workspaceMenuRef.current.contains(event.target)) {
-        setWorkspaceMenuOpen(false);
+      if (profileMenuRef.current && !profileMenuRef.current.contains(event.target)) {
+        setProfileMenuOpen(false);
       }
     }
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const toggleFullscreen = () => {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().then(() => setIsFullscreen(true)).catch(() => {});
-    } else {
-      if (document.exitFullscreen) {
-        document.exitFullscreen().then(() => setIsFullscreen(false)).catch(() => {});
-      }
-    }
+  const viewTitles = {
+    focus: "Today's Focus",
+    'my-tasks': 'My Tasks',
+    kanban: 'Tasks Board',
+    table: 'Tasks Matrix',
+    tasks: 'Tasks',
+    calendar: 'Calendar & Roadmap',
+    notes: 'Workspace Notes',
+    files: 'Files & Vault',
+    team: 'Team Directory',
+    lounge: 'Team Lounge',
+    analytics: 'Sprint & Velocity Analytics',
+    automations: 'Automations & Rules',
+    'backend-console': 'System Console',
+    inbox: 'Inbox'
   };
 
-  useEffect(() => {
-    const handleFsChange = () => {
-      setIsFullscreen(!!document.fullscreenElement);
-    };
-    document.addEventListener('fullscreenchange', handleFsChange);
-    return () => document.removeEventListener('fullscreenchange', handleFsChange);
-  }, []);
+  const currentViewTitle = viewTitles[activeView] || "Today's Focus";
 
   return (
-    <header className="glass-panel navbar-header" style={{ borderRadius: '0', borderLeft: 'none', borderRight: 'none', borderTop: 'none', position: 'sticky', top: 0, zIndex: 50 }}>
-      <div className="navbar-inner">
-        
-        {/* Left Side: Hamburger / Sidebar Toggle & Logo */}
-        <div className="navbar-left">
-          
-          {/* Mobile Menu Button */}
-          <button
-            className="btn btn-secondary btn-icon mobile-only"
-            onClick={onToggleMobileMenu}
-            title="Toggle Navigation Menu"
-            style={{ padding: '0.45rem', minHeight: '38px', minWidth: '38px' }}
+    <header style={{
+      height: '52px',
+      backgroundColor: '#0c101a',
+      borderBottom: '1px solid #1a2336',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      padding: '0 1.25rem',
+      position: 'sticky',
+      top: 0,
+      zIndex: 40,
+      gap: '0.75rem'
+    }}>
+      {/* Left: Mobile Toggle & Breadcrumbs */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', minWidth: 0 }}>
+        {/* Mobile menu trigger */}
+        <button
+          className="mobile-only"
+          onClick={onToggleMobileMenu}
+          style={{
+            background: 'none',
+            border: 'none',
+            color: '#94a3b8',
+            cursor: 'pointer',
+            padding: '4px',
+            display: 'flex',
+            alignItems: 'center'
+          }}
+          title="Toggle Navigation Menu"
+        >
+          <Menu size={18} />
+        </button>
+
+        {/* Breadcrumb Hierarchy */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.35rem',
+          fontSize: '0.785rem',
+          color: '#64748b',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap'
+        }}>
+          <span
+            onClick={() => setActiveView?.('focus')}
+            style={{
+              color: '#94a3b8',
+              fontWeight: 600,
+              cursor: 'pointer',
+              transition: 'color 0.12s'
+            }}
           >
-            <Menu size={18} />
+            {activeWorkspace?.name || 'Flowvia Studio'}
+          </span>
+          <ChevronRight size={12} color="#475569" style={{ flexShrink: 0 }} />
+          <span style={{ color: '#f1f5f9', fontWeight: 700 }}>
+            {currentViewTitle}
+          </span>
+        </div>
+      </div>
+
+      {/* Center: Global Search Bar (Triggers Command Palette) */}
+      <div
+        onClick={onOpenCommandPalette}
+        style={{
+          flex: '0 1 420px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          backgroundColor: '#111726',
+          border: '1px solid #1f2b42',
+          borderRadius: '6px',
+          padding: '0.35rem 0.75rem',
+          cursor: 'pointer',
+          transition: 'all 0.15s ease'
+        }}
+        className="nav-search-trigger"
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', minWidth: 0 }}>
+          <Search size={14} color="#64748b" />
+          <span style={{
+            fontSize: '0.785rem',
+            color: '#64748b',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap'
+          }}>
+            Search tasks, docs, commands...
+          </span>
+        </div>
+
+        <kbd style={{
+          fontSize: '0.65rem',
+          color: '#94a3b8',
+          backgroundColor: '#161f33',
+          border: '1px solid #24324f',
+          padding: '1px 5px',
+          borderRadius: '3px',
+          fontFamily: 'var(--font-mono)'
+        }}>
+          ⌘K
+        </kbd>
+      </div>
+
+      {/* Right: Workspace Status, Quick Create, Notifications, Profile */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+        
+        {/* Workspace Live Status Indicator */}
+        <div
+          className="desktop-only"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.4rem',
+            backgroundColor: '#111726',
+            border: '1px solid #1f2b42',
+            padding: '0.25rem 0.6rem',
+            borderRadius: '12px'
+          }}
+          title={isConnected ? 'Connected to Flowvia Sync Engine' : 'Sync Engine Offline'}
+        >
+          <div style={{
+            width: '6px',
+            height: '6px',
+            borderRadius: '50%',
+            backgroundColor: isConnected ? '#10b981' : '#f59e0b',
+            boxShadow: isConnected ? '0 0 8px rgba(16, 185, 129, 0.6)' : 'none'
+          }} />
+          <span style={{ fontSize: '0.68rem', color: '#94a3b8', fontWeight: 600 }}>
+            {isConnected ? 'All systems nominal' : 'Connecting...'}
+          </span>
+        </div>
+
+        {/* Quick Create Button with Popover */}
+        <div style={{ position: 'relative' }} ref={createMenuRef}>
+          <button
+            onClick={() => setCreateMenuOpen(!createMenuOpen)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.35rem',
+              backgroundColor: '#6366f1',
+              color: '#ffffff',
+              border: 'none',
+              borderRadius: '5px',
+              padding: '0.35rem 0.75rem',
+              fontSize: '0.75rem',
+              fontWeight: 600,
+              cursor: 'pointer',
+              transition: 'background-color 0.12s ease'
+            }}
+          >
+            <Plus size={13} />
+            <span>New</span>
+            <ChevronDown size={11} />
           </button>
 
-          {/* Desktop Sidebar Toggle Button */}
-          {onToggleSidebarCollapse && (
-            <button
-              className="btn btn-secondary btn-icon desktop-only"
-              onClick={onToggleSidebarCollapse}
-              title={isSidebarCollapsed ? "Expand Sidebar" : "Collapse Sidebar (Full Width Mode)"}
-              style={{ padding: '0.45rem', minHeight: '36px', minWidth: '36px' }}
-            >
-              {isSidebarCollapsed ? <PanelLeftOpen size={17} style={{ color: '#ff859b' }} /> : <PanelLeftClose size={17} />}
-            </button>
-          )}
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', cursor: 'pointer' }} onClick={onGoHome} title="Go to Home Landing Page">
-            <VortiqLogo size={22} />
-            <span style={{ fontFamily: 'var(--font-display)', fontWeight: '800', fontSize: '1rem', background: 'linear-gradient(135deg, #6366f1, #a855f7)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Flowvia</span>
-          </div>
-
-          {/* Workspace Quick Switcher Pill (Desktop) */}
-          {activeWorkspace && (
-            <div style={{ position: 'relative' }} ref={workspaceMenuRef} className="desktop-only">
+          {createMenuOpen && (
+            <div style={{
+              position: 'absolute',
+              top: '100%',
+              right: 0,
+              marginTop: '6px',
+              zIndex: 100,
+              backgroundColor: '#111726',
+              borderRadius: '6px',
+              border: '1px solid #1f2b42',
+              boxShadow: '0 12px 30px rgba(0,0,0,0.6)',
+              padding: '4px',
+              minWidth: '150px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '2px'
+            }}>
               <button
-                onClick={() => setWorkspaceMenuOpen(!workspaceMenuOpen)}
+                onClick={() => {
+                  setCreateMenuOpen(false);
+                  onOpenCreateModal?.();
+                }}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '0.45rem',
-                  padding: '0.35rem 0.75rem',
-                  borderRadius: '8px',
-                  background: 'var(--bg-tertiary)',
-                  border: '1px solid var(--border-color)',
-                  color: 'var(--text-main)',
+                  justifyContent: 'space-between',
+                  padding: '0.4rem 0.6rem',
+                  background: 'none',
+                  border: 'none',
+                  color: '#f8fafc',
+                  fontSize: '0.75rem',
                   cursor: 'pointer',
-                  fontSize: '0.825rem',
-                  fontWeight: 600
+                  borderRadius: '4px',
+                  textAlign: 'left'
                 }}
-                title="Switch or manage active workspace"
               >
-                <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: activeWorkspace.colorCode || '#64748b', boxShadow: `0 0 6px ${activeWorkspace.colorCode || '#64748b'}` }} />
-                <span style={{ fontSize: '0.825rem', fontWeight: '700', maxWidth: '140px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  {activeWorkspace.name}
-                </span>
-                <ChevronDown size={14} style={{ color: 'var(--text-muted)' }} />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+                  <CheckCircle2 size={13} color="#818cf8" />
+                  <span>New Task</span>
+                </div>
+                <kbd style={{ fontSize: '0.62rem', color: '#64748b' }}>N</kbd>
               </button>
 
-              {workspaceMenuOpen && (
-                <div style={{
-                  position: 'absolute',
-                  top: 'calc(100% + 6px)',
-                  left: 0,
-                  width: '230px',
-                  background: 'var(--bg-glass)',
-                  backdropFilter: 'blur(20px)',
-                  border: '1px solid var(--border-color)',
-                  borderRadius: 'var(--radius-md)',
-                  boxShadow: 'var(--shadow-card)',
-                  padding: '0.5rem',
-                  zIndex: 100,
+              <button
+                onClick={() => {
+                  setCreateMenuOpen(false);
+                  onOpenWorkspaceModal?.();
+                }}
+                style={{
                   display: 'flex',
-                  flexDirection: 'column',
-                  gap: '0.25rem'
-                }}>
-                  <div style={{ padding: '0.35rem 0.5rem', fontSize: '0.7rem', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                    Switch Workspace
-                  </div>
-                  {workspaces.map((ws) => (
-                    <button
-                      key={ws.id}
-                      onClick={() => {
-                        onSelectWorkspace(ws);
-                        setWorkspaceMenuOpen(false);
-                      }}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        width: '100%',
-                        padding: '0.45rem 0.6rem',
-                        borderRadius: 'var(--radius-sm)',
-                        background: activeWorkspace?.id === ws.id ? 'var(--bg-tertiary)' : 'transparent',
-                        border: 'none',
-                        color: 'var(--text-main)',
-                        fontSize: '0.8125rem',
-                        fontWeight: activeWorkspace?.id === ws.id ? '700' : '500',
-                        cursor: 'pointer',
-                        textAlign: 'left'
-                      }}
-                    >
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', overflow: 'hidden' }}>
-                        <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: ws.colorCode || '#64748b' }} />
-                      <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{ws.name}</span>
-                      </div>
-                    </button>
-                  ))}
-
-                  <div style={{ height: '1px', background: 'var(--border-color)', margin: '0.35rem 0' }} />
-
-                  <button
-                    onClick={() => {
-                      setWorkspaceMenuOpen(false);
-                      if (onOpenWorkspaceModal) onOpenWorkspaceModal();
-                    }}
-                    className="btn btn-primary"
-                    style={{ width: '100%', fontSize: '0.8rem', padding: '0.4rem', justifyContent: 'center' }}
-                  >
-                    <Plus size={14} /> + New Workspace
-                  </button>
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '0.4rem 0.6rem',
+                  background: 'none',
+                  border: 'none',
+                  color: '#cbd5e1',
+                  fontSize: '0.75rem',
+                  cursor: 'pointer',
+                  borderRadius: '4px',
+                  textAlign: 'left'
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+                  <Folder size={13} color="#38bdf8" />
+                  <span>New Project</span>
                 </div>
-              )}
+                <kbd style={{ fontSize: '0.62rem', color: '#64748b' }}>P</kbd>
+              </button>
+
+              <button
+                onClick={() => {
+                  setCreateMenuOpen(false);
+                  setActiveView?.('notes');
+                }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  padding: '0.4rem 0.6rem',
+                  background: 'none',
+                  border: 'none',
+                  color: '#cbd5e1',
+                  fontSize: '0.75rem',
+                  cursor: 'pointer',
+                  borderRadius: '4px',
+                  textAlign: 'left',
+                  gap: '0.45rem'
+                }}
+              >
+                <FileText size={13} color="#a855f7" />
+                <span>Create Note</span>
+              </button>
             </div>
           )}
         </div>
 
-        {/* Center: Search Bar */}
-        <div className="navbar-search" style={{ position: 'relative' }}>
-          <Search size={15} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
-          <input
-            type="text"
-            className="form-input"
-            placeholder="Search tasks (Ctrl+K)..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            style={{ width: '100%', paddingLeft: '2.3rem', paddingRight: searchQuery ? '2.2rem' : '4.2rem', height: '36px', fontSize: '0.85rem' }}
-          />
-          {searchQuery ? (
-            <button
-              onClick={() => setSearchQuery('')}
-              style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}
-            >
-              <X size={14} />
-            </button>
-          ) : (
-            <span className="desktop-only" style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', fontSize: '0.65rem', fontWeight: '700', color: 'var(--text-dim)', background: 'var(--bg-secondary)', padding: '0.12rem 0.35rem', borderRadius: '4px', border: '1px solid var(--border-color)', pointerEvents: 'none' }}>
-              Ctrl K
-            </span>
+        {/* Notifications Button */}
+        <button
+          onClick={onOpenNotifications}
+          style={{
+            position: 'relative',
+            background: 'transparent',
+            border: '1px solid #1f2b42',
+            borderRadius: '6px',
+            backgroundColor: '#111726',
+            color: '#94a3b8',
+            padding: '0.4rem',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
+          title="Notifications"
+        >
+          <Bell size={15} />
+          {unreadNotifsCount > 0 && (
+            <span style={{
+              position: 'absolute',
+              top: '-3px',
+              right: '-3px',
+              width: '8px',
+              height: '8px',
+              borderRadius: '50%',
+              backgroundColor: '#6366f1'
+            }} />
           )}
-        </div>
+        </button>
 
-        {/* Right Tools: Fullscreen, Create, Views, Theme, User */}
-        <div className="navbar-tools">
-          
-          {/* Team Messaging & Inconvenience Channel Button */}
-          {onOpenChatModal && (
-            <button
-              className="btn btn-secondary"
-              onClick={() => onOpenChatModal()}
-              style={{
-                padding: '0.4rem 0.75rem',
-                fontSize: '0.825rem',
-                gap: '0.4rem',
-                height: '36px',
-                position: 'relative',
-                border: inconvenienceCount > 0 ? '1px solid rgba(245, 158, 11, 0.5)' : '1px solid var(--border-color)',
-                background: inconvenienceCount > 0 ? 'rgba(245, 158, 11, 0.12)' : 'var(--bg-secondary)'
-              }}
-              title="Open Team & Inconvenience Messages"
-            >
-              {inconvenienceCount > 0 ? (
-                <AlertTriangle size={15} style={{ color: '#f59e0b' }} />
-              ) : (
-                <MessageSquare size={15} style={{ color: 'var(--primary-glow)' }} />
-              )}
-              <span className="desktop-only">{inconvenienceCount > 0 ? 'Issues & Chat' : 'Team Chat'}</span>
-              {inconvenienceCount > 0 && (
-                <span style={{
-                  padding: '0.1rem 0.35rem',
-                  borderRadius: '9999px',
-                  background: '#f59e0b',
-                  color: '#000',
-                  fontSize: '0.65rem',
-                  fontWeight: 900
-                }}>
-                  {inconvenienceCount}
-                </span>
-              )}
-            </button>
-          )}
+        {/* Theme Toggle (Dark/Light) */}
+        <button
+          onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+          style={{
+            background: 'transparent',
+            border: '1px solid #1f2b42',
+            borderRadius: '6px',
+            backgroundColor: '#111726',
+            color: '#94a3b8',
+            padding: '0.4rem',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
+          title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode (D)`}
+        >
+          {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
+        </button>
 
-          {/* VortiQ AI Copilot Button */}
-          {onOpenAiModal && (
-            <button
-              className="btn btn-secondary"
-              onClick={onOpenAiModal}
-              style={{
-                padding: '0.4rem 0.85rem',
-                fontSize: '0.825rem',
-                gap: '0.35rem',
-                height: '36px',
-                border: '1px solid var(--border-color)',
-                background: 'var(--bg-tertiary)',
-                color: 'var(--text-main)',
-                fontWeight: 600
-              }}
-              title="Open Flowvia AI Copilot & Sprint Architect"
-            >
-              <Sparkles size={15} style={{ color: '#94a3b8' }} />
-              <span className="desktop-only">AI Copilot</span>
-            </button>
-          )}
-          
-          {/* Quick Create Task Button */}
-          {onOpenCreateModal && (
-            <button
-              className="btn btn-primary"
-              onClick={onOpenCreateModal}
-              style={{ padding: '0.4rem 0.85rem', fontSize: '0.825rem', gap: '0.35rem', height: '36px' }}
-              title="Create new task (N)"
-            >
-              <Plus size={15} />
-              <span className="desktop-only">New Task</span>
-            </button>
-          )}
-
-          {/* View Mode Toggle */}
-          <div className="view-tabs desktop-only" style={{ padding: '0.2rem' }}>
-            <button
-              className={`tab-btn ${activeView === 'kanban' ? 'active' : ''}`}
-              onClick={() => setActiveView('kanban')}
-              style={{ padding: '0.35rem 0.75rem', fontSize: '0.8rem' }}
-              title="Kanban Board View (V)"
-            >
-              <Kanban size={15} />
-              <span className="desktop-only">Kanban</span>
-            </button>
-            <button
-              className={`tab-btn ${activeView === 'table' ? 'active' : ''}`}
-              onClick={() => setActiveView('table')}
-              style={{ padding: '0.35rem 0.75rem', fontSize: '0.8rem' }}
-              title="Task Matrix Table (V)"
-            >
-              <Table size={15} />
-              <span className="desktop-only">Matrix</span>
-            </button>
-            <button
-              className={`tab-btn ${activeView === 'members' ? 'active' : ''}`}
-              onClick={() => setActiveView('members')}
-              style={{ padding: '0.35rem 0.75rem', fontSize: '0.8rem' }}
-              title="Team Members Directory (V)"
-            >
-              <Users size={15} style={{ color: '#a5b4fc' }} />
-              <span className="desktop-only">Members</span>
-            </button>
-            <button
-              className={`tab-btn ${activeView === 'lounge' ? 'active' : ''}`}
-              onClick={() => setActiveView('lounge')}
-              style={{ padding: '0.35rem 0.75rem', fontSize: '0.8rem' }}
-              title="Team Lounge & Opinions Hub (V)"
-            >
-              <MessageSquare size={15} style={{ color: '#fde68a' }} />
-              <span className="desktop-only">Opinions</span>
-            </button>
+        {/* User Profile Popover */}
+        <div style={{ position: 'relative' }} ref={profileMenuRef}>
+          <div
+            onClick={() => setProfileMenuOpen(!profileMenuOpen)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.4rem',
+              cursor: 'pointer',
+              padding: '2px'
+            }}
+          >
+            <div style={{
+              width: '28px',
+              height: '28px',
+              borderRadius: '50%',
+              backgroundColor: '#6366f1',
+              color: '#ffffff',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '0.75rem',
+              fontWeight: 700
+            }}>
+              {(currentUser?.name || 'D')[0].toUpperCase()}
+            </div>
           </div>
 
-          {/* Notification Alert Trigger */}
-          {onOpenNotifications && (
-            <button
-              className="btn btn-secondary btn-icon"
-              onClick={onOpenNotifications}
-              title="Workspace Notifications"
-              style={{ position: 'relative', padding: '0.45rem', minHeight: '36px', minWidth: '36px' }}
-            >
-              <Bell size={16} style={{ color: '#c084fc' }} />
-              {unreadNotifsCount > 0 && (
-                <span style={{
-                  position: 'absolute',
-                  top: '-4px',
-                  right: '-4px',
-                  width: '18px',
-                  height: '18px',
-                  borderRadius: '50%',
-                  background: '#ef4444',
-                  color: '#fff',
-                  fontSize: '0.65rem',
-                  fontWeight: 900,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  boxShadow: '0 0 6px rgba(239, 68, 68, 0.6)'
-                }}>
-                  {unreadNotifsCount}
-                </span>
-              )}
-            </button>
-          )}
+          {profileMenuOpen && (
+            <div style={{
+              position: 'absolute',
+              top: '100%',
+              right: 0,
+              marginTop: '6px',
+              zIndex: 100,
+              backgroundColor: '#111726',
+              borderRadius: '6px',
+              border: '1px solid #1f2b42',
+              boxShadow: '0 12px 30px rgba(0,0,0,0.6)',
+              padding: '4px',
+              minWidth: '180px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '2px'
+            }}>
+              <div style={{ padding: '0.5rem 0.65rem', borderBottom: '1px solid #1c273c' }}>
+                <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#f8fafc' }}>
+                  {currentUser?.name || 'Deepanshi Kaushal'}
+                </div>
+                <div style={{ fontSize: '0.68rem', color: '#64748b' }}>
+                  {currentUser?.email || 'deepanshi@vortiq.com'}
+                </div>
+              </div>
 
-          {/* Full Screen Toggle Button */}
-          <button
-            className="btn btn-secondary btn-icon desktop-only"
-            onClick={toggleFullscreen}
-            title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen Mode"}
-            style={{ padding: '0.45rem', minHeight: '36px', minWidth: '36px' }}
-          >
-            {isFullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
-          </button>
-
-          {/* API Health Status */}
-          <ApiStatusBadge isConnected={isConnected} onRetry={onCheckApi} />
-
-
-          {/* Theme Toggle Button */}
-          <button
-            className="btn btn-secondary btn-icon"
-            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-            title="Toggle Light/Dark Mode (D)"
-            style={{ padding: '0.45rem', minHeight: '36px', minWidth: '36px' }}
-          >
-            {theme === 'dark' ? <Sun size={17} style={{ color: '#fbbf24' }} /> : <Moon size={17} style={{ color: '#f43f5e' }} />}
-          </button>
-
-          {/* User Account / Profile Menu */}
-          {currentUser ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              
-              {/* Prominent Role Badge */}
-              <div
-                className="desktop-only"
+              <button
+                onClick={() => {
+                  setProfileMenuOpen(false);
+                  onOpenProfileModal?.();
+                }}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '0.35rem',
-                  padding: '0.25rem 0.65rem',
-                  borderRadius: '20px',
-                  background: (currentUser?.role || '').toUpperCase().includes('ADMIN')
-                    ? 'rgba(99, 102, 241, 0.18)'
-                    : (currentUser?.role || '').toUpperCase().includes('OWNER')
-                    ? 'rgba(236, 72, 153, 0.18)'
-                    : 'rgba(16, 185, 129, 0.18)',
-                  border: (currentUser?.role || '').toUpperCase().includes('ADMIN')
-                    ? '1px solid rgba(99, 102, 241, 0.45)'
-                    : (currentUser?.role || '').toUpperCase().includes('OWNER')
-                    ? '1px solid rgba(236, 72, 153, 0.45)'
-                    : '1px solid rgba(16, 185, 129, 0.45)',
-                  color: (currentUser?.role || '').toUpperCase().includes('ADMIN')
-                    ? '#a5b4fc'
-                    : (currentUser?.role || '').toUpperCase().includes('OWNER')
-                    ? '#f472b6'
-                    : '#6ee7b7',
-                  fontSize: '0.725rem',
-                  fontWeight: 800,
-                  letterSpacing: '0.04em',
-                  textTransform: 'uppercase',
-                  height: '32px'
+                  gap: '0.5rem',
+                  padding: '0.45rem 0.65rem',
+                  background: 'none',
+                  border: 'none',
+                  color: '#cbd5e1',
+                  fontSize: '0.75rem',
+                  cursor: 'pointer',
+                  borderRadius: '4px',
+                  textAlign: 'left'
                 }}
               >
-                <span>{(currentUser?.role || '').toUpperCase().includes('ADMIN') ? '⚡' : (currentUser?.role || '').toUpperCase().includes('OWNER') ? '👑' : '👤'}</span>
-                <span>{(currentUser?.role || '').toUpperCase().includes('ADMIN') ? 'Backend Admin' : (currentUser?.role || '').toUpperCase().includes('OWNER') ? 'Owner' : 'Member'}</span>
-              </div>
+                <Settings size={13} />
+                <span>Profile & Preferences</span>
+              </button>
 
-              <div style={{ position: 'relative' }} ref={userMenuRef}>
+              <button
+                onClick={() => {
+                  setProfileMenuOpen(false);
+                  onOpenShortcutsModal?.();
+                }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  padding: '0.45rem 0.65rem',
+                  background: 'none',
+                  border: 'none',
+                  color: '#cbd5e1',
+                  fontSize: '0.75rem',
+                  cursor: 'pointer',
+                  borderRadius: '4px',
+                  textAlign: 'left'
+                }}
+              >
+                <Keyboard size={13} />
+                <span>Keyboard Shortcuts (?)</span>
+              </button>
+
+              <div style={{ borderTop: '1px solid #1c273c', marginTop: '2px', paddingTop: '2px' }}>
                 <button
-                  onClick={() => setUserMenuOpen(!userMenuOpen)}
+                  onClick={() => {
+                    setProfileMenuOpen(false);
+                    onLogout?.();
+                  }}
                   style={{
                     display: 'flex',
                     alignItems: 'center',
                     gap: '0.5rem',
-                    padding: '0.2rem 0.65rem 0.2rem 0.3rem',
-                    borderRadius: '24px',
-                    background: 'var(--bg-secondary)',
-                    border: '1px solid var(--border-purple)',
-                    color: 'var(--text-main)',
+                    padding: '0.45rem 0.65rem',
+                    background: 'none',
+                    border: 'none',
+                    color: '#f87171',
+                    fontSize: '0.75rem',
                     cursor: 'pointer',
-                    height: '36px'
+                    borderRadius: '4px',
+                    textAlign: 'left',
+                    width: '100%'
                   }}
                 >
-                  {currentUser.avatarUrl ? (
-                    <img
-                      src={currentUser.avatarUrl}
-                      alt={currentUser.name || currentUser.username}
-                      style={{ width: '28px', height: '28px', borderRadius: '50%', objectFit: 'cover' }}
-                    />
-                  ) : (
-                    <div style={{
-                      width: '26px',
-                      height: '26px',
-                      borderRadius: '50%',
-                      background: 'linear-gradient(135deg, #334155, #1e293b)',
-                      border: '1px solid var(--border-color)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontWeight: 'bold',
-                      fontSize: '0.75rem',
-                      color: '#f8fafc'
-                    }}>
-                      {(currentUser.name || currentUser.username || currentUser.email || 'U').charAt(0).toUpperCase()}
-                    </div>
-                  )}
-                  <span className="desktop-only" style={{ fontSize: '0.825rem', fontWeight: 700, maxWidth: '100px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                    {currentUser.name || currentUser.username}
-                  </span>
+                  <LogOut size={13} />
+                  <span>Sign out</span>
                 </button>
-
-                {userMenuOpen && (
-                  <div style={{
-                    position: 'absolute',
-                    right: 0,
-                    top: '120%',
-                    width: '240px',
-                    background: 'var(--bg-glass)',
-                    backdropFilter: 'blur(24px)',
-                    border: '1px solid var(--border-purple)',
-                    borderRadius: '14px',
-                    boxShadow: '0 15px 35px rgba(0,0,0,0.5), 0 0 25px rgba(168, 85, 247, 0.25)',
-                    padding: '0.55rem',
-                    zIndex: 100
-                  }}>
-                    <div style={{ padding: '0.5rem 0.75rem', borderBottom: '1px solid var(--border-color)', marginBottom: '0.35rem' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', marginBottom: '0.2rem' }}>
-                        <div style={{ fontSize: '0.88rem', fontWeight: 700 }}>{currentUser.name || currentUser.username}</div>
-                        <span style={{
-                          padding: '0.1rem 0.45rem',
-                          borderRadius: '4px',
-                          fontSize: '0.65rem',
-                          fontWeight: 800,
-                          background: (currentUser?.role || '').toUpperCase().includes('ADMIN')
-                            ? 'rgba(99, 102, 241, 0.25)'
-                            : (currentUser?.role || '').toUpperCase().includes('OWNER')
-                            ? 'rgba(236, 72, 153, 0.25)'
-                            : 'rgba(16, 185, 129, 0.25)',
-                          color: (currentUser?.role || '').toUpperCase().includes('ADMIN')
-                            ? '#a5b4fc'
-                            : (currentUser?.role || '').toUpperCase().includes('OWNER')
-                            ? '#f472b6'
-                            : '#6ee7b7'
-                        }}>
-                          {(currentUser?.role || '').toUpperCase().includes('ADMIN') ? 'ADMIN' : (currentUser?.role || '').toUpperCase().includes('OWNER') ? 'OWNER' : 'MEMBER'}
-                        </span>
-                      </div>
-                      <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis' }}>{currentUser.email}</div>
-                      {currentUser.department && (
-                        <div style={{ fontSize: '0.7rem', color: 'var(--text-dim)', marginTop: '0.2rem' }}>{currentUser.department}</div>
-                      )}
-                    </div>
-
-                  <button
-                    onClick={() => { setUserMenuOpen(false); onOpenProfileModal(); }}
-                    className="btn btn-ghost"
-                    style={{ width: '100%', justifyContent: 'flex-start', fontSize: '0.85rem', padding: '0.5rem 0.75rem' }}
-                  >
-                    <Settings size={15} /> Profile & Security
-                  </button>
-
-                  <button
-                    onClick={() => { setUserMenuOpen(false); onOpenWorkspaceModal(); }}
-                    className="btn btn-ghost"
-                    style={{ width: '100%', justifyContent: 'flex-start', fontSize: '0.85rem', padding: '0.5rem 0.75rem' }}
-                  >
-                    <Briefcase size={15} /> Workspaces & Team
-                  </button>
-
-                  <div style={{ height: '1px', background: 'var(--border-color)', margin: '0.35rem 0' }} />
-
-                  <button
-                    onClick={() => { setUserMenuOpen(false); onLogout(); }}
-                    className="btn btn-ghost"
-                    style={{ width: '100%', justifyContent: 'flex-start', fontSize: '0.85rem', padding: '0.5rem 0.75rem', color: '#ff007f' }}
-                  >
-                    <LogOut size={15} /> Sign Out
-                  </button>
-                </div>
-              )}
+              </div>
             </div>
-            </div>
-          ) : (
-            <button className="btn btn-gradient" onClick={onOpenAuthModal} style={{ padding: '0.4rem 1rem', fontSize: '0.85rem', height: '36px' }}>
-              <LogIn size={15} /> Sign In
-            </button>
           )}
-
         </div>
 
       </div>
-
-      {/* Mobile Dedicated View Switcher Bar */}
-      {(activeView === 'kanban' || activeView === 'table' || activeView === 'members' || activeView === 'lounge') && (
-        <div className="mobile-only" style={{ padding: '0 0.75rem 0.5rem', width: '100%' }}>
-          <div className="view-tabs" style={{ width: '100%', display: 'flex', gap: '0.25rem', padding: '0.2rem' }}>
-            <button
-              className={`tab-btn ${activeView === 'kanban' ? 'active' : ''}`}
-              onClick={() => setActiveView('kanban')}
-              style={{ flex: 1, justifyContent: 'center', padding: '0.45rem 0.2rem', fontSize: '0.785rem' }}
-            >
-              <Kanban size={14} />
-              <span>Kanban</span>
-            </button>
-            <button
-              className={`tab-btn ${activeView === 'table' ? 'active' : ''}`}
-              onClick={() => setActiveView('table')}
-              style={{ flex: 1, justifyContent: 'center', padding: '0.45rem 0.2rem', fontSize: '0.785rem' }}
-            >
-              <Table size={14} />
-              <span>Matrix</span>
-            </button>
-            <button
-              className={`tab-btn ${activeView === 'members' ? 'active' : ''}`}
-              onClick={() => setActiveView('members')}
-              style={{ flex: 1, justifyContent: 'center', padding: '0.45rem 0.2rem', fontSize: '0.785rem' }}
-            >
-              <Users size={14} />
-              <span>Team</span>
-            </button>
-            <button
-              className={`tab-btn ${activeView === 'lounge' ? 'active' : ''}`}
-              onClick={() => setActiveView('lounge')}
-              style={{ flex: 1, justifyContent: 'center', padding: '0.45rem 0.2rem', fontSize: '0.785rem' }}
-            >
-              <MessageSquare size={14} />
-              <span>Lounge</span>
-            </button>
-          </div>
-        </div>
-      )}
     </header>
   );
 }

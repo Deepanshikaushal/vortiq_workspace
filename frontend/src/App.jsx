@@ -1,7 +1,13 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import HomePage from './components/HomePage';
 import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
+import WorkspaceDashboard from './components/WorkspaceDashboard';
+import CommandPalette from './components/CommandPalette';
+import CalendarView from './components/CalendarView';
+import NotesView from './components/NotesView';
+import AutomationsView from './components/AutomationsView';
+import InboxView from './components/InboxView';
+import DocumentVaultView from './components/DocumentVaultView';
 import MetricsOverview from './components/MetricsOverview';
 import KanbanBoard from './components/KanbanBoard';
 import TaskTable from './components/TaskTable';
@@ -39,7 +45,7 @@ import {
 } from './services/api';
 
 const DEMO_PROJECTS = [
-  { id: 1, name: 'Core Platform', description: 'Main web application', colorCode: '#06b6d4', workspaceId: 1 },
+  { id: 1, name: 'Core Platform', description: 'Main web application', colorCode: '#6366f1', workspaceId: 1 },
   { id: 2, name: 'Mobile Companion', description: 'iOS & Android app', colorCode: '#10b981', workspaceId: 1 },
   { id: 3, name: 'Cloud Infrastructure', description: 'K8s & deployment pipeline', colorCode: '#f59e0b', workspaceId: 1 }
 ];
@@ -49,8 +55,7 @@ const DEMO_WORKSPACES = [
 ];
 
 export default function App() {
-  const [pageView, setPageView] = useState('app'); // 'home' | 'app'
-  const [activeView, setActiveView] = useState('kanban');
+  const [activeView, setActiveView] = useState('focus'); // 'focus' | 'inbox' | 'my-tasks' | 'tasks' | 'kanban' | 'table' | 'calendar' | 'notes' | 'files' | 'team' | 'lounge' | 'analytics' | 'automations' | 'backend-console'
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [priorityFilter, setPriorityFilter] = useState('');
@@ -60,14 +65,13 @@ export default function App() {
   const [theme, setTheme] = useState('dark');
 
   const [currentUser, setCurrentUser] = useState(null);
-  const [taskScopeFilter, setTaskScopeFilter] = useState('AUTO'); // 'AUTO' (role-based) | 'ASSIGNED_TO_ME' | 'ALL_TASKS'
+  const [taskScopeFilter, setTaskScopeFilter] = useState('AUTO');
 
   const userRole = (currentUser?.role || 'ROLE_MEMBER').toUpperCase();
   const isAdmin = userRole.includes('ADMIN');
   const isOwner = userRole.includes('OWNER');
   const isMember = !isAdmin && !isOwner;
 
-  // Determine if we should scope to assigned tasks
   const isScopingToMyTasks = taskScopeFilter === 'ASSIGNED_TO_ME' || (taskScopeFilter === 'AUTO' && isMember);
   const [workspaces, setWorkspaces] = useState(DEMO_WORKSPACES);
   const [activeWorkspace, setActiveWorkspace] = useState(DEMO_WORKSPACES[0]);
@@ -84,6 +88,9 @@ export default function App() {
   // Sidebar & Layout Controls
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  // Command Palette State
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
 
   // Modal Control States
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -125,31 +132,24 @@ export default function App() {
     const handleKeyDown = (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault();
-        const input = document.querySelector('input[placeholder*="Search"]');
-        if (input) input.focus();
+        setIsCommandPaletteOpen((prev) => !prev);
+      } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'b') {
+        e.preventDefault();
+        setIsSidebarCollapsed((prev) => !prev);
       } else if (e.key === '?' && !['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) {
         e.preventDefault();
-        setIsShortcutsModalOpen(prev => !prev);
+        setIsShortcutsModalOpen((prev) => !prev);
       } else if (e.key.toLowerCase() === 'n' && !['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) {
         e.preventDefault();
         setTaskToEdit(null);
         setTaskInitialStatus('TODO');
         setIsModalOpen(true);
-      } else if (e.key.toLowerCase() === 'm' && !['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) {
+      } else if (e.key.toLowerCase() === 'p' && !['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) {
         e.preventDefault();
-        handleOpenChat(null, 'INCONVENIENCE');
-      } else if (e.key.toLowerCase() === 'w' && !['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) {
-        e.preventDefault();
-        setIsWorkspaceModalOpen(prev => !prev);
-      } else if (e.key.toLowerCase() === 'v' && !['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) {
-        e.preventDefault();
-        setActiveView(prev => (prev === 'kanban' ? 'table' : prev === 'table' ? 'lounge' : 'kanban'));
+        setIsWorkspaceModalOpen(true);
       } else if (e.key.toLowerCase() === 'd' && !['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) {
         e.preventDefault();
-        setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
-      } else if (e.key.toLowerCase() === 'b' && (e.ctrlKey || e.metaKey)) {
-        e.preventDefault();
-        setIsSidebarCollapsed(prev => !prev);
+        setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
       }
     };
     window.addEventListener('keydown', handleKeyDown);
@@ -163,7 +163,7 @@ export default function App() {
       return;
     }
     const headers = ['ID', 'Title', 'Status', 'Priority', 'Category', 'Assignee', 'Due Date'];
-    const rows = tasks.map(t => [
+    const rows = tasks.map((t) => [
       t.id,
       `"${(t.title || '').replace(/"/g, '""')}"`,
       t.status,
@@ -172,7 +172,7 @@ export default function App() {
       `"${(t.assignee || '').replace(/"/g, '""')}"`,
       t.dueDate || ''
     ]);
-    const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+    const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
     link.setAttribute('href', encodedUri);
@@ -199,7 +199,6 @@ export default function App() {
           department: 'Engineering Lead'
         });
       }
-      setPageView('app');
     }
     initUser();
   }, []);
@@ -213,21 +212,21 @@ export default function App() {
       let wsList = await fetchWorkspaces();
       if (Array.isArray(wsList) && wsList.length > 0) {
         setWorkspaces(wsList);
-        if (!activeWorkspace || !wsList.some(w => w?.id === activeWorkspace?.id)) {
+        if (!activeWorkspace || !wsList.some((w) => w?.id === activeWorkspace?.id)) {
           setActiveWorkspace(wsList[0]);
         }
       }
 
       const wsId = activeWorkspace?.id || 1;
       if (wsId) {
-        fetchWorkspaceMembers(wsId).then(data => {
+        fetchWorkspaceMembers(wsId).then((data) => {
           setWorkspaceMembers(Array.isArray(data) ? data : []);
         }).catch(() => {});
 
-        fetchMessages(wsId).then(msgs => {
+        fetchMessages(wsId).then((msgs) => {
           const safeMsgs = Array.isArray(msgs) ? msgs : [];
           setMessages(safeMsgs);
-          const incCount = safeMsgs.filter(m => m?.messageType === 'INCONVENIENCE' || m?.messageType === 'URGENT').length;
+          const incCount = safeMsgs.filter((m) => m?.messageType === 'INCONVENIENCE' || m?.messageType === 'URGENT').length;
           setInconvenienceCount(incCount);
         }).catch(() => {});
       }
@@ -261,28 +260,23 @@ export default function App() {
   // Auth Handlers
   const handleAuthSuccess = (user) => {
     setCurrentUser(user);
-    setPageView('app');
     const uRole = (user?.role || '').toUpperCase();
     if (uRole.includes('ADMIN')) {
       setActiveView('backend-console');
       setTaskScopeFilter('ALL_TASKS');
-    } else if (uRole.includes('MEMBER') || uRole.includes('USER')) {
-      setActiveView('kanban');
-      setTaskScopeFilter('ASSIGNED_TO_ME');
     } else {
-      setActiveView('kanban');
-      setTaskScopeFilter('ALL_TASKS');
+      setActiveView('focus');
+      setTaskScopeFilter('AUTO');
     }
-    addToast(`Signed in successfully as ${user.name || user.username} (${uRole.replace('ROLE_', '')})!`, 'success');
+    addToast(`Signed in as ${user.name || user.username}!`, 'success');
     loadData();
   };
 
   const handleLogout = () => {
     logout();
     setCurrentUser(null);
-    setPageView('home');
-    addToast('Signed out successfully', 'info');
-    loadData();
+    setIsAuthModalOpen(true);
+    addToast('Signed out of Flowvia', 'info');
   };
 
   // Task & Project Actions
@@ -300,28 +294,6 @@ export default function App() {
   const handleOpenChat = (task = null, type = 'INCONVENIENCE') => {
     setChatInitialTask(task);
     setChatInitialType(type);
-    setIsChatModalOpen(true);
-  };
-
-  const handleOpenCreateWithAssignee = (assigneeName) => {
-    setTaskToEdit({
-      title: '',
-      description: '',
-      status: 'TODO',
-      priority: 'MEDIUM',
-      category: 'Engineering & Development',
-      assignee: assigneeName,
-      dueDate: new Date().toISOString().split('T')[0]
-    });
-    setIsModalOpen(true);
-  };
-
-  const handleOpenChatWithMember = (member) => {
-    setChatInitialTask({
-      title: `Team sync with ${member.name || member.username} (${member.department || 'Workspace'})`,
-      assignee: member.name || member.username
-    });
-    setChatInitialType('GENERAL');
     setIsChatModalOpen(true);
   };
 
@@ -351,7 +323,7 @@ export default function App() {
       const newProj = await createProject({
         name: projectName,
         workspaceId: activeWorkspace ? activeWorkspace.id : 1,
-        colorCode: '#64748b'
+        colorCode: '#6366f1'
       });
       addToast(`Created project "${projectName}"!`, 'success');
       await loadData();
@@ -434,14 +406,14 @@ export default function App() {
 
   const scopedTasks = useMemo(() => {
     if (!Array.isArray(tasks)) return [];
-    if (!isScopingToMyTasks) return tasks;
+    if (!isScopingToMyTasks && activeView !== 'my-tasks') return tasks;
 
     const myName = (currentUser?.name || '').trim().toLowerCase();
     const myUsername = (currentUser?.username || '').trim().toLowerCase();
     const myEmail = (currentUser?.email || '').trim().toLowerCase();
     const myId = currentUser?.id;
 
-    return tasks.filter(t => {
+    return tasks.filter((t) => {
       if (myId && t.assignedToId && String(t.assignedToId) === String(myId)) return true;
       if (t.assignee) {
         const a = t.assignee.trim().toLowerCase();
@@ -451,7 +423,7 @@ export default function App() {
       }
       return false;
     });
-  }, [tasks, isScopingToMyTasks, currentUser]);
+  }, [tasks, isScopingToMyTasks, activeView, currentUser]);
 
   const sortedTasks = useMemo(() => {
     let list = [...scopedTasks];
@@ -467,325 +439,336 @@ export default function App() {
   }, [scopedTasks, sortBy]);
 
   const displayStats = useMemo(() => {
-    if (!isScopingToMyTasks) return stats;
+    if (!isScopingToMyTasks && activeView !== 'my-tasks') return stats;
     const total = scopedTasks.length;
-    const todo = scopedTasks.filter(t => t.status === 'TODO').length;
-    const inProgress = scopedTasks.filter(t => t.status === 'IN_PROGRESS').length;
-    const inReview = scopedTasks.filter(t => t.status === 'IN_REVIEW').length;
-    const completed = scopedTasks.filter(t => t.status === 'COMPLETED').length;
+    const todo = scopedTasks.filter((t) => t.status === 'TODO').length;
+    const inProgress = scopedTasks.filter((t) => t.status === 'IN_PROGRESS').length;
+    const inReview = scopedTasks.filter((t) => t.status === 'IN_REVIEW').length;
+    const completed = scopedTasks.filter((t) => t.status === 'COMPLETED').length;
     const completionRate = total > 0 ? Math.round((completed / total) * 100) : 0;
     return { total, todo, inProgress, inReview, completed, completionRate };
-  }, [scopedTasks, isScopingToMyTasks, stats]);
+  }, [scopedTasks, isScopingToMyTasks, activeView, stats]);
 
   return (
     <div className="vortiq-layout">
       {/* Toast Alert System */}
       <Toast toasts={toasts} onDismiss={handleDismissToast} />
 
-      {/* Conditionally Render Home Landing Page or Main Workspace Dashboard */}
-      {pageView === 'home' ? (
-        <HomePage
-          onOpenAuth={(mode = 'login') => {
-            setAuthInitialMode(mode);
-            setIsAuthModalOpen(true);
-          }}
-          onOpenSignUp={() => {
-            setAuthInitialMode('register');
-            setIsAuthModalOpen(true);
-          }}
-          onEnterApp={() => setPageView('app')}
+      {/* Global Command Palette (Ctrl+K) */}
+      <CommandPalette
+        isOpen={isCommandPaletteOpen}
+        onClose={() => setIsCommandPaletteOpen(false)}
+        tasks={tasks}
+        projects={projects}
+        onNavigate={(view) => setActiveView(view)}
+        onOpenCreateTask={() => handleOpenCreate('TODO')}
+        onOpenCreateProject={() => setIsWorkspaceModalOpen(true)}
+        onStartFocus={() => setActiveView('focus')}
+        onOpenProfile={() => setIsProfileModalOpen(true)}
+        onToggleTheme={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+      />
+
+      {/* Left Sidebar Navigation */}
+      <Sidebar
+        activeView={activeView}
+        setActiveView={(view) => {
+          setActiveView(view);
+          setIsMobileMenuOpen(false);
+        }}
+        projects={projects}
+        selectedProject={selectedProject}
+        setSelectedProject={(pId) => {
+          setSelectedProject(pId);
+          setIsMobileMenuOpen(false);
+        }}
+        workspaces={workspaces}
+        activeWorkspace={activeWorkspace}
+        onSelectWorkspace={(ws) => {
+          setActiveWorkspace(ws);
+          setSelectedProject('');
+          setIsMobileMenuOpen(false);
+        }}
+        onOpenWorkspaceModal={() => {
+          setIsWorkspaceModalOpen(true);
+          setIsMobileMenuOpen(false);
+        }}
+        onOpenProfileModal={() => {
+          setIsProfileModalOpen(true);
+          setIsMobileMenuOpen(false);
+        }}
+        onOpenAuthModal={() => {
+          setAuthInitialMode('login');
+          setIsAuthModalOpen(true);
+          setIsMobileMenuOpen(false);
+        }}
+        onOpenCreateModal={() => {
+          handleOpenCreate('TODO');
+          setIsMobileMenuOpen(false);
+        }}
+        onCreateProject={handleCreateProject}
+        onOpenChatModal={() => {
+          handleOpenChat(null, 'INCONVENIENCE');
+          setIsMobileMenuOpen(false);
+        }}
+        inconvenienceCount={inconvenienceCount}
+        currentUser={currentUser}
+        isMobileMenuOpen={isMobileMenuOpen}
+        onCloseMobileMenu={() => setIsMobileMenuOpen(false)}
+        onExportCSV={handleExportCSV}
+        onOpenShortcutsModal={() => setIsShortcutsModalOpen(true)}
+        isSidebarCollapsed={isSidebarCollapsed}
+        onToggleSidebarCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+        taskCount={tasks.length}
+        myTaskCount={scopedTasks.length}
+        onOpenAiModal={() => setIsAiModalOpen(true)}
+      />
+
+      {/* Main Content Area */}
+      <div className={`content-wrapper ${isSidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
+        
+        {/* Top Navbar Header */}
+        <Navbar
+          activeView={activeView}
+          setActiveView={setActiveView}
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          theme={theme}
+          setTheme={setTheme}
+          isConnected={isConnected}
+          onCheckApi={loadData}
           currentUser={currentUser}
+          workspaces={workspaces}
+          activeWorkspace={activeWorkspace}
+          onSelectWorkspace={(ws) => {
+            setActiveWorkspace(ws);
+            setSelectedProject('');
+          }}
+          onOpenAuthModal={() => {
+            setAuthInitialMode('login');
+            setIsAuthModalOpen(true);
+          }}
+          onOpenProfileModal={() => setIsProfileModalOpen(true)}
+          onOpenWorkspaceModal={() => setIsWorkspaceModalOpen(true)}
+          onOpenCreateModal={() => handleOpenCreate('TODO')}
+          onOpenChatModal={() => handleOpenChat(null, 'INCONVENIENCE')}
+          onOpenAiModal={() => setIsAiModalOpen(true)}
+          onOpenNotifications={() => setIsNotificationsOpen(true)}
+          onLogout={handleLogout}
+          onToggleMobileMenu={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          onExportCSV={handleExportCSV}
+          onOpenShortcutsModal={() => setIsShortcutsModalOpen(true)}
+          isSidebarCollapsed={isSidebarCollapsed}
+          onToggleSidebarCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+          onOpenCommandPalette={() => setIsCommandPaletteOpen(true)}
         />
-      ) : (
-        <>
-          {/* Left Sidebar Navigation */}
-          <Sidebar
-            activeView={activeView}
-            setActiveView={(view) => {
-              setActiveView(view);
-              setIsMobileMenuOpen(false);
-            }}
-            projects={projects}
-            selectedProject={selectedProject}
-            setSelectedProject={(pId) => {
-              setSelectedProject(pId);
-              setIsMobileMenuOpen(false);
-            }}
-            workspaces={workspaces}
-            activeWorkspace={activeWorkspace}
-            onSelectWorkspace={(ws) => {
-              setActiveWorkspace(ws);
-              setSelectedProject('');
-              setIsMobileMenuOpen(false);
-            }}
-            onOpenWorkspaceModal={() => {
-              setIsWorkspaceModalOpen(true);
-              setIsMobileMenuOpen(false);
-            }}
-            onOpenProfileModal={() => {
-              setIsProfileModalOpen(true);
-              setIsMobileMenuOpen(false);
-            }}
-            onOpenAuthModal={() => {
-              setAuthInitialMode('login');
-              setIsAuthModalOpen(true);
-              setIsMobileMenuOpen(false);
-            }}
-            onOpenCreateModal={() => {
-              handleOpenCreate('TODO');
-              setIsMobileMenuOpen(false);
-            }}
-            onCreateProject={handleCreateProject}
-            onOpenChatModal={() => {
-              handleOpenChat(null, 'INCONVENIENCE');
-              setIsMobileMenuOpen(false);
-            }}
-            inconvenienceCount={inconvenienceCount}
-            currentUser={currentUser}
-            isMobileMenuOpen={isMobileMenuOpen}
-            onCloseMobileMenu={() => setIsMobileMenuOpen(false)}
-            onGoHome={() => setPageView('home')}
-            onExportCSV={handleExportCSV}
-            onOpenShortcutsModal={() => setIsShortcutsModalOpen(true)}
-            isSidebarCollapsed={isSidebarCollapsed}
-            onToggleSidebarCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-          />
 
-          {/* Main Content Area (Full Screen Responsive Canvas) */}
-          <div className={`content-wrapper ${isSidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
-            
-            {/* Top Navbar Header */}
-            <Navbar
-              activeView={activeView}
-              setActiveView={setActiveView}
-              searchQuery={searchQuery}
-              setSearchQuery={setSearchQuery}
-              theme={theme}
-              setTheme={setTheme}
-              isConnected={isConnected}
-              onCheckApi={loadData}
+        {/* Page Inner Container */}
+        <main className="main-container">
+
+          {/* 1. Today's Focus / Personalized Workspace Dashboard */}
+          {activeView === 'focus' ? (
+            <WorkspaceDashboard
+              tasks={tasks}
+              projects={projects}
               currentUser={currentUser}
-              workspaces={workspaces}
               activeWorkspace={activeWorkspace}
-              onSelectWorkspace={(ws) => {
-                setActiveWorkspace(ws);
-                setSelectedProject('');
-              }}
-              onOpenAuthModal={() => {
-                setAuthInitialMode('login');
-                setIsAuthModalOpen(true);
-              }}
-              onOpenProfileModal={() => setIsProfileModalOpen(true)}
-              onOpenWorkspaceModal={() => setIsWorkspaceModalOpen(true)}
-              onOpenCreateModal={() => handleOpenCreate('TODO')}
-              onOpenChatModal={() => handleOpenChat(null, 'INCONVENIENCE')}
-              onOpenAiModal={() => setIsAiModalOpen(true)}
-              onOpenNotifications={() => setIsNotificationsOpen(true)}
-              inconvenienceCount={inconvenienceCount}
-              onLogout={handleLogout}
-              onToggleMobileMenu={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              onGoHome={() => setPageView('home')}
-              onExportCSV={handleExportCSV}
-              onOpenShortcutsModal={() => setIsShortcutsModalOpen(true)}
-              isSidebarCollapsed={isSidebarCollapsed}
-              onToggleSidebarCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+              onOpenCreateTask={() => handleOpenCreate('TODO')}
+              onOpenCreateProject={() => setIsWorkspaceModalOpen(true)}
+              onOpenEditTask={handleOpenEdit}
+              onStatusChange={handleStatusChange}
+              onDeleteTask={handleDeleteTask}
+              onNavigate={(v) => setActiveView(v)}
+              onAddToast={addToast}
             />
-
-            {/* Page Inner Container (100% Full Viewport Width) */}
-            <main className="main-container">
-              
+          ) : activeView === 'inbox' ? (
+            <InboxView
+              onNavigateTask={() => setActiveView('kanban')}
+              onAddToast={addToast}
+            />
+          ) : activeView === 'calendar' ? (
+            <CalendarView
+              tasks={tasks}
+              onOpenCreateTask={() => handleOpenCreate('TODO')}
+              onOpenEditTask={handleOpenEdit}
+            />
+          ) : activeView === 'notes' ? (
+            <NotesView onAddToast={addToast} />
+          ) : activeView === 'automations' ? (
+            <AutomationsView onAddToast={addToast} />
+          ) : activeView === 'files' ? (
+            <DocumentVaultView currentUser={currentUser} />
+          ) : activeView === 'team' ? (
+            <MembersDirectory
+              activeWorkspace={activeWorkspace}
+              tasks={tasks}
+              currentUser={currentUser}
+              onOpenCreateTaskWithAssignee={(assignee) => {
+                setTaskToEdit({
+                  title: '',
+                  description: '',
+                  status: 'TODO',
+                  priority: 'MEDIUM',
+                  category: 'Engineering',
+                  assignee,
+                  dueDate: new Date().toISOString().split('T')[0]
+                });
+                setIsModalOpen(true);
+              }}
+              onOpenChatWithMember={(member) => {
+                setChatInitialTask({
+                  title: `Sync with ${member.name || member.username}`,
+                  assignee: member.name || member.username
+                });
+                setChatInitialType('GENERAL');
+                setIsChatModalOpen(true);
+              }}
+              addToast={addToast}
+            />
+          ) : activeView === 'lounge' ? (
+            <TeamLounge
+              activeWorkspace={activeWorkspace}
+              currentUser={currentUser}
+              onAddToast={addToast}
+            />
+          ) : activeView === 'backend-console' ? (
+            <RoleGuard
+              currentUser={currentUser}
+              allowedRoles={['ROLE_ADMIN']}
+              moduleName="Backend System Console"
+              onBackToAssigned={() => setActiveView('focus')}
+            >
+              <BackendConsoleView currentUser={currentUser} />
+            </RoleGuard>
+          ) : activeView === 'analytics' || activeView === 'ai-analytics' ? (
+            <RoleGuard
+              currentUser={currentUser}
+              allowedRoles={['ROLE_ADMIN', 'ROLE_OWNER']}
+              moduleName="AI Velocity & Risk Hub"
+              onBackToAssigned={() => setActiveView('focus')}
+            >
+              <AiAnalyticsDashboard currentUser={currentUser} />
+            </RoleGuard>
+          ) : (
+            /* Tasks View (Kanban / Table / My-Tasks) */
+            <>
               {/* Metrics Overview Top Bar */}
-              <MetricsOverview stats={displayStats} currentUser={currentUser} isMyTasksOnly={isScopingToMyTasks} />
+              <MetricsOverview stats={displayStats} currentUser={currentUser} isMyTasksOnly={activeView === 'my-tasks' || isScopingToMyTasks} />
 
-              {/* Quick Filter Control Toolbar (Only for Kanban & Matrix views) */}
-              {activeView !== 'lounge' && activeView !== 'backend-console' && (
-                <div className="glass-panel filter-toolbar" style={{ padding: '0.85rem 1.25rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem', width: '100%' }}>
-                  <div className="filter-toolbar-inner" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
-                    
-                    {/* Role & Assigned Scope Segmented Toggle */}
-                    <div className="filter-scope-toggle" style={{
-                      display: 'flex',
-                      background: 'rgba(15, 23, 42, 0.65)',
-                      borderRadius: '8px',
-                      padding: '2px',
-                      border: '1px solid var(--border-color)',
-                      marginRight: '0.25rem'
-                    }}>
-                      <button
-                        type="button"
-                        onClick={() => setTaskScopeFilter('ASSIGNED_TO_ME')}
-                        style={{
-                          padding: '0.35rem 0.65rem',
-                          borderRadius: '6px',
-                          border: 'none',
-                          fontSize: '0.785rem',
-                          fontWeight: 700,
-                          cursor: 'pointer',
-                          background: isScopingToMyTasks ? (isAdmin ? '#6366f1' : isOwner ? '#ec4899' : '#10b981') : 'transparent',
-                          color: isScopingToMyTasks ? '#fff' : 'var(--text-muted)',
-                          transition: 'all 0.2s',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '0.35rem'
-                        }}
-                        title="Show only tasks assigned to you"
-                      >
-                        <span>👤</span>
-                        <span>My Work ({tasks.filter(t => (currentUser?.id && t.assignedToId === currentUser.id) || (t.assignee && (t.assignee.toLowerCase() === (currentUser?.name || '').toLowerCase() || t.assignee.toLowerCase() === (currentUser?.username || '').toLowerCase()))).length})</span>
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => setTaskScopeFilter('ALL_TASKS')}
-                        style={{
-                          padding: '0.35rem 0.65rem',
-                          borderRadius: '6px',
-                          border: 'none',
-                          fontSize: '0.785rem',
-                          fontWeight: 700,
-                          cursor: 'pointer',
-                          background: !isScopingToMyTasks ? 'var(--bg-tertiary)' : 'transparent',
-                          color: !isScopingToMyTasks ? '#fff' : 'var(--text-muted)',
-                          transition: 'all 0.2s',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '0.35rem'
-                        }}
-                        title="Show all tasks across the workspace"
-                      >
-                        <span>🏢</span>
-                        <span>All Tasks ({tasks.length})</span>
-                      </button>
-                    </div>
-
-                    <div className="filter-dropdowns-group">
-                      <select
-                        className="form-select"
-                        style={{ padding: '0.4rem 0.75rem', fontSize: '0.8125rem' }}
-                        value={statusFilter}
-                        onChange={(e) => setStatusFilter(e.target.value)}
-                      >
-                        <option value="">All Statuses</option>
-                        <option value="TODO">To Do</option>
-                        <option value="IN_PROGRESS">In Progress</option>
-                        <option value="IN_REVIEW">In Review</option>
-                        <option value="COMPLETED">Completed</option>
-                      </select>
-
-                      <select
-                        className="form-select"
-                        style={{ padding: '0.4rem 0.75rem', fontSize: '0.8125rem' }}
-                        value={priorityFilter}
-                        onChange={(e) => setPriorityFilter(e.target.value)}
-                      >
-                        <option value="">All Priorities</option>
-                        <option value="LOW">Low</option>
-                        <option value="MEDIUM">Medium</option>
-                        <option value="HIGH">High</option>
-                        <option value="URGENT">Urgent</option>
-                      </select>
-
-                      <select
-                        className="form-select"
-                        style={{ padding: '0.4rem 0.75rem', fontSize: '0.8125rem' }}
-                        value={categoryFilter}
-                        onChange={(e) => setCategoryFilter(e.target.value)}
-                      >
-                        <option value="">All Categories</option>
-                        <option value="Frontend">Frontend</option>
-                        <option value="Backend">Backend</option>
-                        <option value="DevOps">DevOps</option>
-                        <option value="Design">Design</option>
-                        <option value="Database">Database</option>
-                        <option value="Security">Security</option>
-                        <option value="Mobile">Mobile</option>
-                      </select>
-
-                      <select
-                        className="form-select"
-                        style={{ padding: '0.4rem 0.75rem', fontSize: '0.8125rem' }}
-                        value={selectedProject}
-                        onChange={(e) => setSelectedProject(e.target.value)}
-                      >
-                        <option value="">All Projects</option>
-                        {projects.map((p) => (
-                          <option key={p.id} value={p.id}>{p.name}</option>
-                        ))}
-                      </select>
-
-                      <select
-                        className="form-select"
-                        style={{ padding: '0.4rem 0.75rem', fontSize: '0.8125rem' }}
-                        value={sortBy}
-                        onChange={(e) => setSortBy(e.target.value)}
-                      >
-                        <option value="default">Sort: Default</option>
-                        <option value="dueDate">Sort: Due Date</option>
-                        <option value="priority">Sort: Priority</option>
-                        <option value="title">Sort: Title (A-Z)</option>
-                      </select>
-                    </div>
-
-                    <div className="filter-actions-group">
-                      <button
-                        className="btn btn-secondary"
-                        style={{ padding: '0.4rem 0.75rem', fontSize: '0.785rem', gap: '0.35rem' }}
-                        onClick={handleExportCSV}
-                        title="Export tasks to CSV file"
-                      >
-                        <Download size={14} />
-                        <span>Export CSV</span>
-                      </button>
-
-                      {(statusFilter || priorityFilter || categoryFilter || selectedProject || searchQuery || sortBy !== 'default') && (
-                        <button
-                          className="btn btn-secondary"
-                          style={{ padding: '0.4rem 0.75rem', fontSize: '0.785rem' }}
-                          onClick={() => {
-                            setStatusFilter('');
-                            setPriorityFilter('');
-                            setCategoryFilter('');
-                            setSelectedProject('');
-                            setSearchQuery('');
-                            setSortBy('default');
-                          }}
-                        >
-                          Clear Filters
-                        </button>
-                      )}
-                    </div>
-                  </div>
-
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                    <div style={{ fontSize: '0.8125rem', color: 'var(--text-dim)', fontWeight: '700' }}>
-                      Showing {sortedTasks.length} {sortedTasks.length === 1 ? 'task' : 'tasks'}
-                    </div>
-
+              {/* View Toggle & Filter Toolbar */}
+              <div style={{
+                backgroundColor: '#111726',
+                border: '1px solid #1f2b42',
+                borderRadius: '8px',
+                padding: '0.75rem 1rem',
+                marginBottom: '1.25rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexWrap: 'wrap',
+                gap: '0.75rem'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                  {/* View Segmented Toggle (Kanban / Table) */}
+                  <div style={{
+                    display: 'flex',
+                    backgroundColor: '#0c101a',
+                    padding: '2px',
+                    borderRadius: '6px',
+                    border: '1px solid #1f2b42'
+                  }}>
                     <button
-                      className="btn btn-secondary"
-                      style={{ padding: '0.4rem 0.75rem', fontSize: '0.785rem', gap: '0.35rem' }}
-                      onClick={handleExportCSV}
-                      title="Export tasks to CSV file"
+                      onClick={() => setActiveView(activeView === 'my-tasks' ? 'my-tasks' : 'kanban')}
+                      style={{
+                        padding: '0.35rem 0.65rem',
+                        fontSize: '0.75rem',
+                        fontWeight: 600,
+                        borderRadius: '4px',
+                        border: 'none',
+                        cursor: 'pointer',
+                        backgroundColor: activeView !== 'table' ? '#6366f1' : 'transparent',
+                        color: activeView !== 'table' ? '#ffffff' : '#94a3b8'
+                      }}
                     >
-                      <Download size={14} />
-                      <span>Export CSV</span>
+                      Kanban
+                    </button>
+                    <button
+                      onClick={() => setActiveView('table')}
+                      style={{
+                        padding: '0.35rem 0.65rem',
+                        fontSize: '0.75rem',
+                        fontWeight: 600,
+                        borderRadius: '4px',
+                        border: 'none',
+                        cursor: 'pointer',
+                        backgroundColor: activeView === 'table' ? '#6366f1' : 'transparent',
+                        color: activeView === 'table' ? '#ffffff' : '#94a3b8'
+                      }}
+                    >
+                      Table
                     </button>
                   </div>
-                </div>
-              )}
 
-              {/* View Components (Kanban / Matrix / Members / Team Lounge / ERP / AI Hub) */}
-              {activeView === 'kanban' ? (
-                <KanbanBoard
-                  tasks={sortedTasks}
-                  onStatusChange={handleStatusChange}
-                  onEdit={handleOpenEdit}
-                  onDelete={handleDeleteTask}
-                  onOpenCreate={handleOpenCreate}
-                  onReportInconvenience={(task) => handleOpenChat(task, 'INCONVENIENCE')}
-                  workspaceMembers={workspaceMembers}
-                />
-              ) : activeView === 'table' ? (
+                  <select
+                    className="form-select"
+                    style={{ padding: '0.35rem 0.65rem', fontSize: '0.785rem', width: 'auto' }}
+                    value={statusFilter}
+                    onChange={(e) => setStatusFilter(e.target.value)}
+                  >
+                    <option value="">All Statuses</option>
+                    <option value="TODO">To Do</option>
+                    <option value="IN_PROGRESS">In Progress</option>
+                    <option value="IN_REVIEW">In Review</option>
+                    <option value="COMPLETED">Completed</option>
+                  </select>
+
+                  <select
+                    className="form-select"
+                    style={{ padding: '0.35rem 0.65rem', fontSize: '0.785rem', width: 'auto' }}
+                    value={priorityFilter}
+                    onChange={(e) => setPriorityFilter(e.target.value)}
+                  >
+                    <option value="">All Priorities</option>
+                    <option value="LOW">Low</option>
+                    <option value="MEDIUM">Medium</option>
+                    <option value="HIGH">High</option>
+                    <option value="URGENT">Urgent</option>
+                  </select>
+
+                  <select
+                    className="form-select"
+                    style={{ padding: '0.35rem 0.65rem', fontSize: '0.785rem', width: 'auto' }}
+                    value={selectedProject}
+                    onChange={(e) => setSelectedProject(e.target.value)}
+                  >
+                    <option value="">All Projects</option>
+                    {projects.map((p) => (
+                      <option key={p.id} value={p.id}>{p.name}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <button
+                    className="btn btn-secondary"
+                    style={{ padding: '0.35rem 0.65rem', fontSize: '0.75rem', gap: '0.35rem' }}
+                    onClick={handleExportCSV}
+                    title="Export tasks to CSV file"
+                  >
+                    <Download size={13} />
+                    <span>Export CSV</span>
+                  </button>
+                  <button
+                    className="btn btn-primary"
+                    style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', gap: '0.35rem' }}
+                    onClick={() => handleOpenCreate('TODO')}
+                  >
+                    <Plus size={13} />
+                    <span>Add Task</span>
+                  </button>
+                </div>
+              </div>
+
+              {activeView === 'table' ? (
                 <TaskTable
                   tasks={sortedTasks}
                   onStatusChange={handleStatusChange}
@@ -794,39 +777,6 @@ export default function App() {
                   onReportInconvenience={(task) => handleOpenChat(task, 'INCONVENIENCE')}
                   workspaceMembers={workspaceMembers}
                 />
-              ) : activeView === 'members' ? (
-                <MembersDirectory
-                  activeWorkspace={activeWorkspace}
-                  tasks={tasks}
-                  currentUser={currentUser}
-                  onOpenCreateTaskWithAssignee={handleOpenCreateWithAssignee}
-                  onOpenChatWithMember={handleOpenChatWithMember}
-                  addToast={addToast}
-                />
-              ) : activeView === 'lounge' ? (
-                <TeamLounge
-                  activeWorkspace={activeWorkspace}
-                  currentUser={currentUser}
-                  onAddToast={addToast}
-                />
-              ) : activeView === 'backend-console' ? (
-                <RoleGuard
-                  currentUser={currentUser}
-                  allowedRoles={['ROLE_ADMIN']}
-                  moduleName="Backend System Console"
-                  onBackToAssigned={() => setActiveView('kanban')}
-                >
-                  <BackendConsoleView currentUser={currentUser} />
-                </RoleGuard>
-              ) : activeView === 'ai-analytics' ? (
-                <RoleGuard
-                  currentUser={currentUser}
-                  allowedRoles={['ROLE_ADMIN', 'ROLE_OWNER']}
-                  moduleName="AI Velocity & Risk Hub"
-                  onBackToAssigned={() => setActiveView('kanban')}
-                >
-                  <AiAnalyticsDashboard currentUser={currentUser} />
-                </RoleGuard>
               ) : (
                 <KanbanBoard
                   tasks={sortedTasks}
@@ -838,33 +788,33 @@ export default function App() {
                   workspaceMembers={workspaceMembers}
                 />
               )}
+            </>
+          )}
 
-            </main>
-          </div>
+        </main>
+      </div>
 
-          {/* Mobile Floating Action Button */}
-          <button
-            className="btn btn-primary mobile-only"
-            onClick={() => handleOpenCreate('TODO')}
-            style={{
-              position: 'fixed',
-              bottom: '1.75rem',
-              right: '1.5rem',
-              width: '48px',
-              height: '48px',
-              borderRadius: '50%',
-              zIndex: 80,
-              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.4)',
-              padding: 0,
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}
-            title="Create Task"
-          >
-            <Plus size={20} />
-          </button>
-        </>
-      )}
+      {/* Floating Action Button for Mobile */}
+      <button
+        className="btn btn-primary mobile-only"
+        onClick={() => handleOpenCreate('TODO')}
+        style={{
+          position: 'fixed',
+          bottom: '1.5rem',
+          right: '1.5rem',
+          width: '46px',
+          height: '46px',
+          borderRadius: '50%',
+          zIndex: 80,
+          boxShadow: '0 4px 16px rgba(0, 0, 0, 0.4)',
+          padding: 0,
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+        title="Create Task"
+      >
+        <Plus size={20} />
+      </button>
 
       {/* VortiQ AI Neural Assistant Modal */}
       <AiAssistantModal
@@ -952,7 +902,7 @@ export default function App() {
         activeProject={projects.find((p) => String(p.id) === String(selectedProject)) || projects[0]}
         tasks={tasks}
         currentUser={currentUser}
-        pageView={pageView}
+        pageView="app"
         onAddTask={(taskData) => handleSaveTask(taskData)}
         onAddTasksBatch={handleAddTasksBatch}
         onSetStatusFilter={setStatusFilter}
@@ -960,7 +910,7 @@ export default function App() {
         onSetSearchQuery={setSearchQuery}
         onSetTheme={setTheme}
         onNavigateView={setActiveView}
-        onEnterApp={() => setPageView('app')}
+        onEnterApp={() => setActiveView('focus')}
         addToast={addToast}
       />
 
@@ -973,4 +923,3 @@ export default function App() {
     </div>
   );
 }
-

@@ -1,35 +1,39 @@
 import React, { useState } from 'react';
 import {
-  Home,
-  Kanban,
-  Table,
-  Plus,
-  ShieldCheck,
-  Briefcase,
+  Inbox,
+  CheckSquare,
+  Folder,
+  Layers,
+  Calendar,
+  FileText,
+  Paperclip,
   Users,
+  BarChart2,
+  Cpu,
+  Sparkles,
   Settings,
-  X,
-  Lock,
-  Download,
-  HelpCircle,
-  SlidersHorizontal,
-  ChevronLeft,
+  ChevronDown,
   ChevronRight,
-  FolderPlus,
+  Plus,
+  PanelLeftClose,
+  PanelLeftOpen,
+  Keyboard,
+  LogOut,
+  User,
+  Shield,
   Check,
-  MessageSquare,
-  AlertTriangle,
-  Server
+  Zap,
+  LayoutGrid
 } from 'lucide-react';
-import VortiqLogo from './VortiqLogo';
+import FlowviaLogo from './FlowviaLogo';
 
 export default function Sidebar({
   activeView,
   setActiveView,
-  projects,
+  projects = [],
   selectedProject,
   setSelectedProject,
-  workspaces,
+  workspaces = [],
   activeWorkspace,
   onSelectWorkspace,
   onOpenWorkspaceModal,
@@ -46,15 +50,15 @@ export default function Sidebar({
   onExportCSV,
   onOpenShortcutsModal,
   isSidebarCollapsed,
-  onToggleSidebarCollapse
+  onToggleSidebarCollapse,
+  taskCount = 0,
+  myTaskCount = 0,
+  onOpenAiModal
 }) {
+  const [isWorkspaceMenuOpen, setIsWorkspaceMenuOpen] = useState(false);
+  const [isProjectsExpanded, setIsProjectsExpanded] = useState(true);
   const [isAddingProject, setIsAddingProject] = useState(false);
   const [newProjectName, setNewProjectName] = useState('');
-
-  const userRole = (currentUser?.role || 'ROLE_MEMBER').toUpperCase();
-  const isAdmin = userRole.includes('ADMIN');
-  const isOwner = userRole.includes('OWNER');
-  const isMember = !isAdmin && !isOwner;
 
   const handleCreateProjectSubmit = (e) => {
     e.preventDefault();
@@ -66,424 +70,553 @@ export default function Sidebar({
     setIsAddingProject(false);
   };
 
+  const navItems = [
+    { id: 'inbox', label: 'Inbox', icon: Inbox, badge: '4', badgeColor: '#6366f1' },
+    { id: 'focus', label: "Today's Focus", icon: Zap },
+    { id: 'my-tasks', label: 'My Tasks', icon: CheckSquare, badge: myTaskCount > 0 ? String(myTaskCount) : null },
+    { id: 'tasks', label: 'Tasks', icon: Layers, badge: taskCount > 0 ? String(taskCount) : null },
+    { id: 'calendar', label: 'Calendar', icon: Calendar },
+    { id: 'notes', label: 'Notes', icon: FileText },
+    { id: 'files', label: 'Files', icon: Paperclip },
+    { id: 'team', label: 'Team', icon: Users },
+    { id: 'analytics', label: 'Analytics', icon: BarChart2 },
+    { id: 'automations', label: 'Automations', icon: Cpu },
+    { id: 'ai-assistant', label: 'AI Assistant', icon: Sparkles, highlight: true }
+  ];
+
+  const handleNavClick = (id) => {
+    if (id === 'ai-assistant') {
+      if (onOpenAiModal) onOpenAiModal();
+      else setActiveView('ai-analytics');
+    } else {
+      setActiveView(id);
+    }
+    if (onCloseMobileMenu) onCloseMobileMenu();
+  };
+
   return (
     <>
-      {/* Mobile Overlay Backdrop */}
+      {/* Mobile Drawer Backdrop */}
       <div
         className={`sidebar-backdrop ${isMobileMenuOpen ? 'active' : ''}`}
         onClick={onCloseMobileMenu}
       />
 
-      <aside className={`sidebar-container ${isMobileMenuOpen ? 'mobile-open' : ''} ${isSidebarCollapsed ? 'collapsed' : ''}`}>
-        
-        {/* Brand Header with Quantum VortiQ Logo & Mobile Close Button */}
-        <div style={{ paddingBottom: '1.15rem', marginBottom: '1.15rem', borderBottom: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer' }} onClick={() => { if (onGoHome) onGoHome(); onCloseMobileMenu(); }}>
-            <div style={{
-              width: '38px',
-              height: '38px',
-              borderRadius: '8px',
-              background: 'rgba(100, 116, 139, 0.15)',
-              border: '1px solid var(--border-color)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}>
-              <VortiqLogo size={26} />
-            </div>
-            <div>
-              <h1 style={{
-                fontFamily: 'var(--font-display)',
-                fontSize: '1.2rem',
-                fontWeight: '800',
-                letterSpacing: '-0.02em',
-                color: 'var(--text-main)',
-                lineHeight: 1.2
-              }}>
-                Flowvia Studio
-              </h1>
-              <p style={{ fontSize: '0.65rem', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-                Workspace Platform
-              </p>
-            </div>
-          </div>
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-            {/* Desktop Sidebar Collapse Button */}
-            {onToggleSidebarCollapse && (
-              <button
-                className="btn btn-secondary btn-icon desktop-only"
-                onClick={onToggleSidebarCollapse}
-                style={{ padding: '0.35rem', borderRadius: '6px' }}
-                title="Collapse sidebar (Full Screen)"
-              >
-                <ChevronLeft size={16} />
-              </button>
-            )}
-
-            {/* Close button visible only on mobile drawer */}
-            <button
-              className="btn btn-ghost btn-icon mobile-only"
-              onClick={onCloseMobileMenu}
-              style={{ padding: '0.4rem' }}
-              title="Close Drawer"
-            >
-              <X size={20} />
-            </button>
-          </div>
-        </div>
-
-        {/* Role Identity Badge */}
-        <div style={{
-          padding: '0.6rem 0.75rem',
-          borderRadius: '10px',
-          marginBottom: '1rem',
+      <aside
+        className={`flowvia-sidebar ${isMobileMenuOpen ? 'mobile-open' : ''} ${isSidebarCollapsed ? 'collapsed' : ''}`}
+        style={{
+          width: isSidebarCollapsed ? '64px' : '240px',
+          minWidth: isSidebarCollapsed ? '64px' : '240px',
+          backgroundColor: '#0c101a',
+          borderRight: '1px solid #1a2336',
           display: 'flex',
-          alignItems: 'center',
-          gap: '0.6rem',
-          background: isAdmin
-            ? 'linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(147, 51, 234, 0.12))'
-            : isOwner
-            ? 'linear-gradient(135deg, rgba(236, 72, 153, 0.2), rgba(168, 85, 247, 0.12))'
-            : 'linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.12))',
-          border: isAdmin
-            ? '1px solid rgba(99, 102, 241, 0.4)'
-            : isOwner
-            ? '1px solid rgba(236, 72, 153, 0.4)'
-            : '1px solid rgba(16, 185, 129, 0.4)',
-          boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
+          flexDirection: 'column',
+          height: '100vh',
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          zIndex: 90,
+          transition: 'width 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+          userSelect: 'none',
+          overflow: 'hidden'
+        }}
+      >
+        {/* Top Header: Flowvia Logo & Workspace Switcher */}
+        <div style={{
+          padding: isSidebarCollapsed ? '0.75rem 0.5rem' : '0.85rem 0.85rem',
+          borderBottom: '1px solid #1a2336',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '0.65rem'
         }}>
+          {/* Logo & Brand Header */}
           <div style={{
-            width: '28px',
-            height: '28px',
-            borderRadius: '6px',
-            background: isAdmin ? '#6366f1' : isOwner ? '#ec4899' : '#10b981',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center',
-            color: '#fff',
-            fontSize: '0.85rem',
-            fontWeight: 800,
-            flexShrink: 0
+            justifyContent: isSidebarCollapsed ? 'center' : 'space-between',
+            gap: '0.5rem'
           }}>
-            {isAdmin ? '⚡' : isOwner ? '👑' : '👤'}
-          </div>
-          <div style={{ overflow: 'hidden' }}>
-            <div style={{
-              fontSize: '0.78rem',
-              fontWeight: 800,
-              letterSpacing: '0.04em',
-              textTransform: 'uppercase',
-              color: isAdmin ? '#a5b4fc' : isOwner ? '#f472b6' : '#6ee7b7'
-            }}>
-              {isAdmin ? 'Backend Admin' : isOwner ? 'Workspace Owner' : 'Team Member'}
-            </div>
-            <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-              {isAdmin ? 'Full System & DB Scope' : isOwner ? 'Executive Org Scope' : 'Assigned Workload Scope'}
-            </div>
-          </div>
-        </div>
-
-        {/* Workspace Selector */}
-        <div style={{ marginBottom: '1.15rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.4rem', paddingLeft: '0.2rem' }}>
-            <span style={{ fontSize: '0.7rem', fontWeight: '800', color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-              Active Workspace
-            </span>
-            <button
-              onClick={() => { onOpenWorkspaceModal(); onCloseMobileMenu(); }}
-              style={{ background: 'none', border: 'none', color: '#ff859b', fontSize: '0.75rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.25rem' }}
-            >
-              <Plus size={12} /> New
-            </button>
-          </div>
-
-          <div className="glass-card" style={{ padding: '0.5rem 0.75rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', width: '100%' }}>
-              <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: activeWorkspace?.colorCode || '#64748b', flexShrink: 0, boxShadow: `0 0 6px ${activeWorkspace?.colorCode || '#64748b'}` }} />
-              <select
-                value={activeWorkspace ? activeWorkspace.id : ''}
-                onChange={(e) => {
-                  const wsId = Number(e.target.value);
-                  const ws = workspaces.find((w) => w.id === wsId);
-                  if (ws) onSelectWorkspace(ws);
-                  onCloseMobileMenu();
-                }}
-                style={{
-                  background: 'transparent',
-                  border: 'none',
-                  color: 'var(--text-main)',
-                  fontSize: '0.85rem',
-                  fontWeight: '700',
-                  outline: 'none',
-                  cursor: 'pointer',
-                  width: '100%'
-                }}
-              >
-                {workspaces.map((ws) => (
-                  <option key={ws.id} value={ws.id} style={{ background: '#22070a', color: '#fff' }}>
-                    {ws.name} ({ws.currentUserRole || 'MEMBER'})
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-        </div>
-
-        {/* Filter by Project Scope */}
-        <div style={{ marginBottom: '1.25rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.4rem', paddingLeft: '0.2rem' }}>
-            <span style={{ fontSize: '0.7rem', fontWeight: '800', color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-              Project Scope
-            </span>
-            <button
-              onClick={() => setIsAddingProject(!isAddingProject)}
-              style={{ background: 'none', border: 'none', color: '#38bdf8', fontSize: '0.75rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.25rem' }}
-              title="Add new project"
-            >
-              <Plus size={12} /> Project
-            </button>
-          </div>
-
-          {isAddingProject && (
-            <form onSubmit={handleCreateProjectSubmit} style={{ display: 'flex', gap: '0.35rem', marginBottom: '0.5rem' }}>
-              <input
-                type="text"
-                className="form-input"
-                placeholder="Project name..."
-                value={newProjectName}
-                onChange={(e) => setNewProjectName(e.target.value)}
-                style={{ padding: '0.35rem 0.6rem', fontSize: '0.8rem', height: '32px' }}
-                autoFocus
-              />
-              <button type="submit" className="btn btn-primary" style={{ padding: '0.35rem 0.6rem', height: '32px' }}>
-                <Check size={14} />
-              </button>
-            </form>
-          )}
-
-          <select
-            className="form-select"
-            value={selectedProject}
-            onChange={(e) => { setSelectedProject(e.target.value); onCloseMobileMenu(); }}
-            style={{ width: '100%', fontSize: '0.825rem', padding: '0.45rem 0.65rem' }}
-          >
-            <option value="">All Workspace Projects ({projects.length})</option>
-            {projects.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Primary Action Button */}
-        <button className="btn btn-gradient" onClick={() => { onOpenCreateModal(); onCloseMobileMenu(); }} style={{ width: '100%', marginBottom: '1.25rem', padding: '0.7rem', gap: '0.5rem' }}>
-          <Plus size={18} />
-          <span>Create Task</span>
-        </button>
-
-        {/* Main Navigation Options List */}
-        <nav style={{ flex: 1, overflowY: 'auto' }}>
-          
-          {/* BACKEND ADMIN CONSOLE SECTION (Exclusive to ROLE_ADMIN) */}
-          {isAdmin && (
-            <>
-              <div style={{ fontSize: '0.7rem', fontWeight: '800', color: '#818cf8', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.4rem', paddingLeft: '0.2rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                <Server size={12} style={{ color: '#818cf8' }} />
-                <span>Backend Management</span>
-              </div>
-
-              <div
-                className={`sidebar-link ${activeView === 'backend-console' ? 'active' : ''}`}
-                onClick={() => {
-                  setActiveView('backend-console');
-                  onCloseMobileMenu();
-                }}
-                style={{ background: activeView === 'backend-console' ? 'rgba(99, 102, 241, 0.25)' : 'transparent', borderLeft: activeView === 'backend-console' ? '3px solid #6366f1' : 'none' }}
-              >
-                <Server size={18} style={{ color: '#818cf8' }} />
-                <span style={{ fontWeight: 700 }}>Backend System Console</span>
-              </div>
-            </>
-          )}
-
-          <div style={{ fontSize: '0.7rem', fontWeight: '800', color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '0.06em', marginTop: isAdmin ? '0.8rem' : 0, marginBottom: '0.4rem', paddingLeft: '0.2rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-            <SlidersHorizontal size={12} style={{ color: 'var(--primary-glow)' }} />
-            <span>{isMember ? 'My Assigned Views' : 'Workspace Views'}</span>
-          </div>
-
-          <div
-            className={`sidebar-link ${activeView === 'kanban' ? 'active' : ''}`}
-            onClick={() => {
-              setActiveView('kanban');
-              onCloseMobileMenu();
-            }}
-          >
-            <Kanban size={18} style={{ color: '#38bdf8' }} />
-            <span>{isMember ? 'Kanban (My Workload)' : 'Kanban Board'}</span>
-          </div>
-
-          <div
-            className={`sidebar-link ${activeView === 'table' ? 'active' : ''}`}
-            onClick={() => {
-              setActiveView('table');
-              onCloseMobileMenu();
-            }}
-          >
-            <Table size={18} style={{ color: '#34d399' }} />
-            <span>{isMember ? 'Task Matrix (My Assigned)' : 'Task Matrix List'}</span>
-          </div>
-
-          {/* AI Analytics visible to Admin and Owner */}
-          {!isMember && (
             <div
-              className={`sidebar-link ${activeView === 'ai-analytics' ? 'active' : ''}`}
-              onClick={() => {
-                setActiveView('ai-analytics');
-                onCloseMobileMenu();
+              onClick={() => handleNavClick('focus')}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.6rem',
+                cursor: 'pointer'
               }}
             >
-              <Briefcase size={18} style={{ color: '#c084fc' }} />
-              <span>AI Velocity & Risk Hub</span>
-            </div>
-          )}
-
-          <div style={{ fontSize: '0.7rem', fontWeight: '800', color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '0.06em', marginTop: '1.25rem', marginBottom: '0.4rem', paddingLeft: '0.2rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-            <Users size={12} style={{ color: '#ec4899' }} />
-            <span>Collaboration</span>
-          </div>
-
-          <div
-            className={`sidebar-link ${activeView === 'members' ? 'active' : ''}`}
-            onClick={() => {
-              setActiveView('members');
-              onCloseMobileMenu();
-            }}
-          >
-            <Users size={18} style={{ color: '#818cf8' }} />
-            <span>Members Directory</span>
-          </div>
-
-          <div
-            className={`sidebar-link ${activeView === 'lounge' ? 'active' : ''}`}
-            onClick={() => {
-              setActiveView('lounge');
-              onCloseMobileMenu();
-            }}
-          >
-            <MessageSquare size={18} style={{ color: '#ec4899' }} />
-            <span>Opinions & Team Lounge</span>
-          </div>
-
-          {onOpenChatModal && (
-            <div
-              className="sidebar-link"
-              onClick={() => {
-                onOpenChatModal();
-                onCloseMobileMenu();
-              }}
-              style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                <AlertTriangle size={18} style={{ color: '#f59e0b' }} />
-                <span>Issue & Blocker Chat</span>
-              </div>
-              {inconvenienceCount > 0 && (
-                <span style={{
-                  padding: '0.1rem 0.4rem',
-                  borderRadius: '9999px',
-                  background: '#f59e0b',
-                  color: '#000',
-                  fontSize: '0.68rem',
-                  fontWeight: 900
-                }}>
-                  {inconvenienceCount}
-                </span>
+              <FlowviaLogo size={24} />
+              {!isSidebarCollapsed && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                  <span style={{
+                    fontSize: '0.95rem',
+                    fontWeight: 800,
+                    letterSpacing: '-0.02em',
+                    color: '#f8fafc',
+                    fontFamily: 'var(--font-display)'
+                  }}>
+                    Flowvia
+                  </span>
+                  <span style={{
+                    fontSize: '0.6rem',
+                    fontWeight: 700,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                    color: '#818cf8',
+                    backgroundColor: 'rgba(99, 102, 241, 0.15)',
+                    padding: '1px 5px',
+                    borderRadius: '3px',
+                    border: '1px solid rgba(99, 102, 241, 0.3)'
+                  }}>
+                    PRO
+                  </span>
+                </div>
               )}
             </div>
-          )}
 
-          <div style={{ fontSize: '0.7rem', fontWeight: '800', color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '0.06em', marginTop: '1.25rem', marginBottom: '0.4rem', paddingLeft: '0.2rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-            <Settings size={12} style={{ color: '#94a3b8' }} />
-            <span>Platform</span>
+            {/* Desktop Collapse Toggle */}
+            {!isSidebarCollapsed && onToggleSidebarCollapse && (
+              <button
+                onClick={onToggleSidebarCollapse}
+                className="desktop-only"
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: '#64748b',
+                  cursor: 'pointer',
+                  padding: '3px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  borderRadius: '4px'
+                }}
+                title="Collapse sidebar (Ctrl+B)"
+              >
+                <PanelLeftClose size={15} />
+              </button>
+            )}
           </div>
 
-          <div
-            className="sidebar-link"
-            onClick={() => {
-              if (onGoHome) onGoHome();
-              onCloseMobileMenu();
-            }}
-          >
-            <Home size={18} style={{ color: '#f43f5e' }} />
-            <span>Landing Page</span>
-          </div>
+          {/* Workspace Switcher */}
+          {!isSidebarCollapsed ? (
+            <div style={{ position: 'relative' }}>
+              <div
+                onClick={() => setIsWorkspaceMenuOpen(!isWorkspaceMenuOpen)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '0.4rem 0.55rem',
+                  backgroundColor: '#111726',
+                  borderRadius: '6px',
+                  border: '1px solid #1f2b42',
+                  cursor: 'pointer',
+                  transition: 'border-color 0.15s ease'
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', minWidth: 0 }}>
+                  <div style={{
+                    width: '8px',
+                    height: '8px',
+                    borderRadius: '2px',
+                    backgroundColor: activeWorkspace?.colorCode || '#6366f1',
+                    flexShrink: 0
+                  }} />
+                  <span style={{
+                    fontSize: '0.785rem',
+                    fontWeight: 600,
+                    color: '#e2e8f0',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap'
+                  }}>
+                    {activeWorkspace?.name || 'Flowvia Studio'}
+                  </span>
+                </div>
+                <ChevronDown size={13} color="#64748b" style={{ flexShrink: 0 }} />
+              </div>
 
-          <div className="sidebar-link" onClick={() => { onOpenWorkspaceModal(); onCloseMobileMenu(); }}>
-            <Users size={18} style={{ color: '#fbbf24' }} />
-            <span>Manage Workspaces</span>
-          </div>
-
-          {onOpenShortcutsModal && (
-            <div className="sidebar-link" onClick={() => { onOpenShortcutsModal(); onCloseMobileMenu(); }}>
-              <HelpCircle size={18} style={{ color: '#38bdf8' }} />
-              <span>Keyboard Shortcuts</span>
-            </div>
-          )}
-
-        </nav>
-
-        {/* User Profile Footer */}
-        {currentUser && (
-          <div
-            onClick={onOpenProfileModal}
-            style={{
-              paddingTop: '0.85rem',
-              marginTop: '0.5rem',
-              borderTop: '1px solid var(--border-color)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              cursor: 'pointer'
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-              {currentUser.avatarUrl ? (
-                <img
-                  src={currentUser.avatarUrl}
-                  alt={currentUser.name || currentUser.username}
-                  style={{ width: '34px', height: '34px', borderRadius: '50%', objectFit: 'cover' }}
-                />
-              ) : (
+              {/* Workspace Switcher Popover */}
+              {isWorkspaceMenuOpen && (
                 <div style={{
-                  width: '34px',
-                  height: '34px',
-                  borderRadius: '50%',
-                  background: 'linear-gradient(135deg, #334155, #1e293b)',
-                  border: '1px solid var(--border-color)',
+                  position: 'absolute',
+                  top: '100%',
+                  left: 0,
+                  right: 0,
+                  marginTop: '4px',
+                  zIndex: 100,
+                  backgroundColor: '#111726',
+                  borderRadius: '6px',
+                  border: '1px solid #1f2b42',
+                  boxShadow: '0 12px 30px rgba(0,0,0,0.6)',
+                  padding: '4px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '2px'
+                }}>
+                  <div style={{
+                    padding: '0.35rem 0.55rem',
+                    fontSize: '0.65rem',
+                    fontWeight: 700,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.04em',
+                    color: '#64748b'
+                  }}>
+                    Workspaces
+                  </div>
+                  {workspaces.map((ws) => (
+                    <div
+                      key={ws.id}
+                      onClick={() => {
+                        onSelectWorkspace?.(ws);
+                        setIsWorkspaceMenuOpen(false);
+                      }}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        padding: '0.4rem 0.55rem',
+                        borderRadius: '4px',
+                        backgroundColor: ws.id === activeWorkspace?.id ? 'rgba(99, 102, 241, 0.15)' : 'transparent',
+                        cursor: 'pointer',
+                        fontSize: '0.75rem',
+                        color: ws.id === activeWorkspace?.id ? '#f8fafc' : '#cbd5e1'
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+                        <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: ws.colorCode || '#6366f1' }} />
+                        <span>{ws.name}</span>
+                      </div>
+                      {ws.id === activeWorkspace?.id && <Check size={12} color="#818cf8" />}
+                    </div>
+                  ))}
+
+                  <div style={{ borderTop: '1px solid #1c273c', marginTop: '2px', paddingTop: '2px' }}>
+                    <button
+                      onClick={() => {
+                        onOpenWorkspaceModal?.();
+                        setIsWorkspaceMenuOpen(false);
+                      }}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.4rem',
+                        padding: '0.4rem 0.55rem',
+                        width: '100%',
+                        background: 'none',
+                        border: 'none',
+                        color: '#818cf8',
+                        fontSize: '0.72rem',
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        textAlign: 'left'
+                      }}
+                    >
+                      <Plus size={12} />
+                      <span>Create Workspace</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+              <div
+                onClick={onToggleSidebarCollapse}
+                style={{
+                  width: '28px',
+                  height: '28px',
+                  borderRadius: '5px',
+                  backgroundColor: '#111726',
+                  border: '1px solid #1f2b42',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  color: '#f8fafc',
-                  fontWeight: '700',
-                  fontSize: '0.85rem'
-                }}>
-                  {(currentUser.name || currentUser.username || 'U').charAt(0).toUpperCase()}
-                </div>
-              )}
-              <div>
-                <div style={{ fontSize: '0.85rem', fontWeight: '700', color: 'var(--text-main)', maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  {currentUser.name || currentUser.username}
-                </div>
-                <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>{currentUser.department || currentUser.role || 'Team Member'}</div>
+                  cursor: 'pointer',
+                  color: '#94a3b8'
+                }}
+                title="Expand sidebar"
+              >
+                <PanelLeftOpen size={14} />
               </div>
             </div>
-            
-            <ShieldCheck size={16} style={{ color: '#10b981' }} title="JWT Secured" />
-          </div>
-        )}
+          )}
+        </div>
 
+        {/* Middle Navigation Items List */}
+        <div style={{
+          flex: 1,
+          overflowY: 'auto',
+          overflowX: 'hidden',
+          padding: isSidebarCollapsed ? '0.5rem 0.4rem' : '0.5rem 0.65rem',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '2px'
+        }}>
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = activeView === item.id;
+            return (
+              <div
+                key={item.id}
+                onClick={() => handleNavClick(item.id)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: isSidebarCollapsed ? 'center' : 'space-between',
+                  padding: isSidebarCollapsed ? '0.55rem 0' : '0.45rem 0.65rem',
+                  borderRadius: '5px',
+                  backgroundColor: isActive ? 'rgba(99, 102, 241, 0.15)' : 'transparent',
+                  border: isActive ? '1px solid rgba(99, 102, 241, 0.35)' : '1px solid transparent',
+                  color: isActive ? '#f8fafc' : item.highlight ? '#818cf8' : '#94a3b8',
+                  cursor: 'pointer',
+                  transition: 'all 0.12s ease',
+                  position: 'relative'
+                }}
+                title={isSidebarCollapsed ? item.label : undefined}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', minWidth: 0 }}>
+                  <Icon size={15} color={isActive ? '#818cf8' : item.highlight ? '#818cf8' : 'currentColor'} style={{ flexShrink: 0 }} />
+                  {!isSidebarCollapsed && (
+                    <span style={{
+                      fontSize: '0.8rem',
+                      fontWeight: isActive ? 700 : 500,
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap'
+                    }}>
+                      {item.label}
+                    </span>
+                  )}
+                </div>
+
+                {!isSidebarCollapsed && item.badge && (
+                  <span style={{
+                    fontSize: '0.65rem',
+                    fontWeight: 700,
+                    padding: '1px 5px',
+                    borderRadius: '4px',
+                    backgroundColor: item.badgeColor ? `${item.badgeColor}22` : '#161f33',
+                    color: item.badgeColor || '#94a3b8',
+                    border: `1px solid ${item.badgeColor ? `${item.badgeColor}44` : '#222f47'}`
+                  }}>
+                    {item.badge}
+                  </span>
+                )}
+              </div>
+            );
+          })}
+
+          {/* Collapsible Projects Section */}
+          {!isSidebarCollapsed && (
+            <div style={{ marginTop: '0.65rem', paddingTop: '0.5rem', borderTop: '1px solid #161f33' }}>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '0.35rem 0.65rem',
+                cursor: 'pointer'
+              }}>
+                <div
+                  onClick={() => setIsProjectsExpanded(!isProjectsExpanded)}
+                  style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#64748b' }}
+                >
+                  {isProjectsExpanded ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
+                  <span style={{
+                    fontSize: '0.68rem',
+                    fontWeight: 700,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em'
+                  }}>
+                    Projects
+                  </span>
+                </div>
+
+                <button
+                  onClick={() => setIsAddingProject(!isAddingProject)}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: '#64748b',
+                    cursor: 'pointer',
+                    padding: '2px',
+                    display: 'flex',
+                    alignItems: 'center'
+                  }}
+                  title="Add project"
+                >
+                  <Plus size={13} />
+                </button>
+              </div>
+
+              {isAddingProject && (
+                <form onSubmit={handleCreateProjectSubmit} style={{ padding: '0.25rem 0.65rem', display: 'flex', gap: '4px' }}>
+                  <input
+                    type="text"
+                    value={newProjectName}
+                    onChange={(e) => setNewProjectName(e.target.value)}
+                    placeholder="Project name..."
+                    autoFocus
+                    style={{
+                      width: '100%',
+                      backgroundColor: '#111726',
+                      border: '1px solid #1f2b42',
+                      borderRadius: '4px',
+                      color: '#f8fafc',
+                      padding: '2px 6px',
+                      fontSize: '0.72rem',
+                      outline: 'none'
+                    }}
+                  />
+                  <button
+                    type="submit"
+                    style={{
+                      backgroundColor: '#6366f1',
+                      border: 'none',
+                      borderRadius: '4px',
+                      color: '#fff',
+                      padding: '2px 6px',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    <Check size={11} />
+                  </button>
+                </form>
+              )}
+
+              {isProjectsExpanded && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1px', paddingLeft: '0.35rem' }}>
+                  {projects.map((proj) => {
+                    const isSelected = String(selectedProject) === String(proj.id);
+                    return (
+                      <div
+                        key={proj.id}
+                        onClick={() => {
+                          setSelectedProject(isSelected ? '' : proj.id);
+                          setActiveView('tasks');
+                        }}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.5rem',
+                          padding: '0.35rem 0.65rem',
+                          borderRadius: '4px',
+                          backgroundColor: isSelected ? 'rgba(99, 102, 241, 0.15)' : 'transparent',
+                          color: isSelected ? '#f8fafc' : '#94a3b8',
+                          cursor: 'pointer',
+                          fontSize: '0.75rem',
+                          transition: 'all 0.12s ease'
+                        }}
+                      >
+                        <div style={{
+                          width: '6px',
+                          height: '6px',
+                          borderRadius: '50%',
+                          backgroundColor: proj.colorCode || '#6366f1'
+                        }} />
+                        <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                          {proj.name}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Bottom Section: Settings, Shortcuts & User Profile */}
+        <div style={{
+          padding: isSidebarCollapsed ? '0.65rem 0.4rem' : '0.65rem 0.75rem',
+          borderTop: '1px solid #1a2336',
+          backgroundColor: '#0a0e17',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '0.35rem'
+        }}>
+          {/* Settings Trigger */}
+          <div
+            onClick={() => onOpenProfileModal?.()}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: isSidebarCollapsed ? 'center' : 'flex-start',
+              gap: '0.65rem',
+              padding: '0.4rem 0.55rem',
+              borderRadius: '5px',
+              color: '#94a3b8',
+              cursor: 'pointer',
+              fontSize: '0.785rem'
+            }}
+            title="Settings & Preferences"
+          >
+            <Settings size={15} style={{ flexShrink: 0 }} />
+            {!isSidebarCollapsed && <span>Settings</span>}
+          </div>
+
+          {/* User Profile Tile */}
+          <div
+            onClick={() => onOpenProfileModal?.()}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: isSidebarCollapsed ? 'center' : 'space-between',
+              padding: '0.45rem 0.55rem',
+              borderRadius: '6px',
+              backgroundColor: '#111726',
+              border: '1px solid #1f2b42',
+              cursor: 'pointer'
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', minWidth: 0 }}>
+              <div style={{
+                width: '26px',
+                height: '26px',
+                borderRadius: '50%',
+                backgroundColor: '#6366f1',
+                color: '#ffffff',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '0.72rem',
+                fontWeight: 700,
+                flexShrink: 0
+              }}>
+                {(currentUser?.name || 'D')[0].toUpperCase()}
+              </div>
+
+              {!isSidebarCollapsed && (
+                <div style={{ minWidth: 0 }}>
+                  <div style={{
+                    fontSize: '0.75rem',
+                    fontWeight: 700,
+                    color: '#f8fafc',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap'
+                  }}>
+                    {currentUser?.name || 'Deepanshi Kaushal'}
+                  </div>
+                  <div style={{ fontSize: '0.65rem', color: '#64748b' }}>
+                    {currentUser?.role ? currentUser.role.replace('ROLE_', '') : 'Lead'}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {!isSidebarCollapsed && (
+              <span style={{
+                fontSize: '0.62rem',
+                color: '#10b981',
+                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                padding: '1px 4px',
+                borderRadius: '3px'
+              }}>
+                Online
+              </span>
+            )}
+          </div>
+        </div>
       </aside>
     </>
   );

@@ -305,7 +305,9 @@ const INITIAL_DEMO_TASKS = [
     activityHistory: [
       { id: 'act-2-1', user: 'Sarah Chen', action: 'completed task and merged PR #114', timestamp: 'Yesterday 17:45' }
     ],
-    dependencies: [],
+    dependencies: [
+      { id: 'dep-2-1', taskId: 3, taskTitle: 'Configure H2 Database Auto-schema & Indexes', type: 'BLOCKED_BY' }
+    ],
     relatedTasks: [1, 3],
     aiSuggestions: [
       { id: 'ai-2-1', title: 'Performance Tip', text: 'Connection pool metrics show HikariCP operating at 12% peak saturation.' }
@@ -359,7 +361,10 @@ const INITIAL_DEMO_TASKS = [
     activityHistory: [
       { id: 'act-4-1', user: 'Deepanshi Kaushal', action: 'created task', timestamp: 'Yesterday' }
     ],
-    dependencies: [],
+    dependencies: [
+      { id: 'dep-4-1', taskId: 1, taskTitle: 'Design Glassmorphic UI Components & Design Tokens', type: 'BLOCKED_BY' },
+      { id: 'dep-4-2', taskId: 2, taskTitle: 'Implement Spring Boot REST APIs & JWT Handshake', type: 'BLOCKED_BY' }
+    ],
     relatedTasks: [1],
     aiSuggestions: [
       { id: 'ai-4-1', title: 'Search Recommendation', text: 'Index task description and tags for comprehensive client-side matching.' }
@@ -399,7 +404,9 @@ const INITIAL_DEMO_TASKS = [
     activityHistory: [
       { id: 'act-5-1', user: 'Marcus Vance', action: 'moved task to IN_REVIEW', timestamp: '5 hours ago' }
     ],
-    dependencies: [],
+    dependencies: [
+      { id: 'dep-5-1', taskId: 8, taskTitle: 'Audit Backend API Latency & JVM Memory Caps', type: 'BLOCKED_BY' }
+    ],
     relatedTasks: [2],
     aiSuggestions: []
   },
@@ -426,7 +433,9 @@ const INITIAL_DEMO_TASKS = [
     activityHistory: [
       { id: 'act-6-1', user: 'Alex Rivera', action: 'assigned to self and started working', timestamp: 'Today 11:00' }
     ],
-    dependencies: [],
+    dependencies: [
+      { id: 'dep-6-1', taskId: 1, taskTitle: 'Design Glassmorphic UI Components & Design Tokens', type: 'BLOCKED_BY' }
+    ],
     relatedTasks: [1],
     aiSuggestions: []
   },
@@ -453,7 +462,9 @@ const INITIAL_DEMO_TASKS = [
     activityHistory: [
       { id: 'act-7-1', user: 'Sarah Chen', action: 'created task', timestamp: '3 days ago' }
     ],
-    dependencies: [],
+    dependencies: [
+      { id: 'dep-7-1', taskId: 1, taskTitle: 'Design Glassmorphic UI Components & Design Tokens', type: 'BLOCKED_BY' }
+    ],
     relatedTasks: [],
     aiSuggestions: []
   },
@@ -482,6 +493,66 @@ const INITIAL_DEMO_TASKS = [
     ],
     dependencies: [],
     relatedTasks: [5],
+    aiSuggestions: []
+  },
+  {
+    id: 9,
+    title: 'Automated E2E Cypress Integration & User Flow Suite',
+    description: 'Build end-to-end integration tests covering task lifecycle, drag-and-drop state transitions, and real-time syncing.',
+    status: 'TODO',
+    priority: 'HIGH',
+    category: 'QA',
+    assignee: 'Marcus Vance',
+    assignedToId: 100,
+    dueDate: '2026-10-05',
+    estimatedTime: '2h 30m',
+    projectId: 1,
+    workspaceId: 1,
+    tags: ['testing', 'cypress', 'qa', 'e2e'],
+    subtasks: [
+      { id: 'st-9-1', title: 'Write Cypress spec for Task Workspace navigation', completed: false },
+      { id: 'st-9-2', title: 'Verify Flow Map drag-and-drop dependency creation', completed: false }
+    ],
+    attachments: [],
+    comments: [],
+    activityHistory: [
+      { id: 'act-9-1', user: 'Marcus Vance', action: 'created task deliverable', timestamp: 'Yesterday' }
+    ],
+    dependencies: [
+      { id: 'dep-9-1', taskId: 1, taskTitle: 'Design Glassmorphic UI Components & Design Tokens', type: 'BLOCKED_BY' },
+      { id: 'dep-9-2', taskId: 4, taskTitle: 'Integrate Real-Time Status Filter & Fuzzy Search', type: 'BLOCKED_BY' }
+    ],
+    relatedTasks: [1, 4],
+    aiSuggestions: []
+  },
+  {
+    id: 10,
+    title: 'Production Staging Cutover & Load Testing Sign-off',
+    description: 'Execute final canary deployment, verify Prometheus metrics, and complete security compliance review.',
+    status: 'TODO',
+    priority: 'URGENT',
+    category: 'DevOps',
+    assignee: 'Sarah Chen',
+    assignedToId: 101,
+    dueDate: '2026-10-07',
+    estimatedTime: '3h 00m',
+    projectId: 3,
+    workspaceId: 1,
+    tags: ['production', 'release', 'compliance'],
+    subtasks: [
+      { id: 'st-10-1', title: 'Run stress test with 1,000 simulated concurrent users', completed: false },
+      { id: 'st-10-2', title: 'Review OAuth2 JWT token rotation logs', completed: false }
+    ],
+    attachments: [],
+    comments: [],
+    activityHistory: [
+      { id: 'act-10-1', user: 'Sarah Chen', action: 'created final release deliverable', timestamp: '2 days ago' }
+    ],
+    dependencies: [
+      { id: 'dep-10-1', taskId: 5, taskTitle: 'Setup Docker Multi-stage Pipeline & Automated CI/CD', type: 'BLOCKED_BY' },
+      { id: 'dep-10-2', taskId: 9, taskTitle: 'Automated E2E Cypress Integration & User Flow Suite', type: 'BLOCKED_BY' }
+    ],
+    relatedTasks: [5, 9],
     aiSuggestions: []
   }
 ];
@@ -538,7 +609,28 @@ export function getStoredTasks() {
       localStorage.setItem(TASKS_KEY, JSON.stringify(INITIAL_DEMO_TASKS));
       return INITIAL_DEMO_TASKS;
     }
-    return parsed.map(t => normalizeTask(t));
+    
+    // Ensure all demo tasks exist and merge default dependencies if missing
+    const hasAnyDeps = parsed.some(t => Array.isArray(t.dependencies) && t.dependencies.length > 0);
+    const demoMap = new Map(INITIAL_DEMO_TASKS.map(t => [t.id, t]));
+    
+    let merged = [...parsed];
+    INITIAL_DEMO_TASKS.forEach(dt => {
+      if (!merged.some(t => t.id === dt.id)) {
+        merged.push(dt);
+      }
+    });
+
+    return merged.map(t => {
+      const norm = normalizeTask(t);
+      if (!hasAnyDeps && demoMap.has(norm.id)) {
+        const demoT = demoMap.get(norm.id);
+        if (demoT.dependencies && demoT.dependencies.length > 0) {
+          norm.dependencies = [...demoT.dependencies];
+        }
+      }
+      return norm;
+    });
   } catch (e) {
     return INITIAL_DEMO_TASKS;
   }

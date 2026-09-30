@@ -340,6 +340,37 @@ body {
   }
 }
 
+/* Flow Map Signature Animations */
+@keyframes flowDash {
+  from {
+    stroke-dashoffset: 24;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes flowPulse {
+  0%, 100% {
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 1;
+    filter: drop-shadow(0 0 3px currentColor);
+  }
+}
+
+@keyframes bottleneckWarning {
+  0%, 100% {
+    border-color: rgba(239, 68, 68, 0.4);
+    box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.3);
+  }
+  50% {
+    border-color: rgba(239, 68, 68, 0.85);
+    box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.6);
+  }
+}
+
 /* Kanban Board Styling */
 .kanban-grid-fullscreen {
   display: grid;

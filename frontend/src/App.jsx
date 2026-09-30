@@ -12,6 +12,7 @@ import InboxView from './components/InboxView';
 import DocumentVaultView from './components/DocumentVaultView';
 import MetricsOverview from './components/MetricsOverview';
 import TaskWorkspace from './components/TaskWorkspace';
+import FlowMapView from './components/FlowMapView';
 import ProjectWorkspaceView from './components/ProjectWorkspaceView';
 import KanbanBoard from './components/KanbanBoard';
 import TaskTable from './components/TaskTable';
@@ -676,6 +677,19 @@ export default function App() {
             >
               <AiAnalyticsDashboard currentUser={currentUser} />
             </RoleGuard>
+          ) : activeView === 'flow-map' ? (
+            <FlowMapView
+              tasks={tasks}
+              projects={projects}
+              workspaceMembers={workspaceMembers}
+              currentUser={currentUser}
+              activeWorkspace={activeWorkspace}
+              onOpenTaskDetail={handleOpenEdit}
+              onUpdateTask={handleUpdateTaskDirect}
+              onStatusChange={handleStatusChange}
+              onCreateTask={handleSaveTask}
+              onAddToast={addToast}
+            />
           ) : activeView === 'project' ? (
             <ProjectWorkspaceView
               projectId={selectedProject || projects[0]?.id || 1}

@@ -27,8 +27,8 @@ import {
   Lock,
   Compass,
   ArrowUpRight,
-  HelpCircle,
-  MoreVertical
+  MoreVertical,
+  GitFork
 } from 'lucide-react';
 import {
   playClickSound,
@@ -364,6 +364,30 @@ export default function ProjectWorkspaceView({
             >
               <Layers size={13} />
               <span>Open Tasks View</span>
+            </button>
+
+            <button
+              onClick={() => {
+                playClickSound();
+                onNavigateView?.('flow-map');
+              }}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.35rem',
+                padding: '0.45rem 0.85rem',
+                fontSize: '0.75rem',
+                fontWeight: 600,
+                backgroundColor: '#131b2e',
+                border: '1px solid #263552',
+                color: '#a5b4fc',
+                borderRadius: '6px',
+                cursor: 'pointer'
+              }}
+              title="Open Flow Map dependency graph for this project"
+            >
+              <GitFork size={13} color="#818cf8" />
+              <span>Flow Map</span>
             </button>
 
             <button

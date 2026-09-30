@@ -23,6 +23,7 @@ import {
   Shield,
   Check,
   Zap,
+  GitFork,
   LayoutGrid
 } from 'lucide-react';
 import FlowviaLogo from './FlowviaLogo';
@@ -76,6 +77,7 @@ export default function Sidebar({
     { id: 'focus', label: 'Command Center', icon: Zap, highlight: false },
     { id: 'my-tasks', label: 'My Tasks', icon: CheckSquare, badge: myTaskCount > 0 ? String(myTaskCount) : null },
     { id: 'tasks', label: 'Tasks', icon: Layers, badge: taskCount > 0 ? String(taskCount) : null },
+    { id: 'flow-map', label: 'Flow Map', icon: GitFork, badge: 'Signature', badgeColor: '#818cf8', highlight: true },
     { id: 'calendar', label: 'Calendar', icon: Calendar },
     { id: 'notes', label: 'Notes', icon: FileText },
     { id: 'files', label: 'Files', icon: Paperclip },

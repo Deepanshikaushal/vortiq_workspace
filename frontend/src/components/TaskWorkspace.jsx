@@ -3,6 +3,7 @@ import {
   List,
   LayoutGrid,
   Calendar,
+  GitFork,
   Search,
   Filter,
   Plus,
@@ -16,6 +17,7 @@ import {
 import TaskListView from './TaskListView';
 import TaskKanbanView from './TaskKanbanView';
 import TaskTimelineView from './TaskTimelineView';
+import FlowMapView from './FlowMapView';
 import TaskDetailPanel from './TaskDetailPanel';
 import { playClickSound } from '../utils/audioEffects';
 
@@ -32,7 +34,7 @@ export default function TaskWorkspace({
   onAddToast,
   onExportCSV
 }) {
-  // 1. Current View State: 'list' | 'kanban' | 'timeline'
+  // 1. Current View State: 'list' | 'kanban' | 'timeline' | 'flowmap'
   const [viewMode, setViewMode] = useState('kanban');
 
   // 2. Selected Task for Detail Panel
@@ -47,7 +49,7 @@ export default function TaskWorkspace({
   const [assigneeFilter, setAssigneeFilter] = useState('');
   const [sortBy, setSortBy] = useState('default');
 
-  // Global Keyboard Shortcuts (1: List, 2: Kanban, 3: Timeline, N/C: New Task, Esc: Close)
+  // Global Keyboard Shortcuts (1: List, 2: Kanban, 3: Timeline, 4: Flow Map, N/C: New Task, Esc: Close)
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
@@ -64,6 +66,10 @@ export default function TaskWorkspace({
         e.preventDefault();
         playClickSound();
         setViewMode('timeline');
+      } else if (e.key === '4') {
+        e.preventDefault();
+        playClickSound();
+        setViewMode('flowmap');
       } else if ((e.key.toLowerCase() === 'n' || e.key.toLowerCase() === 'c') && !e.ctrlKey && !e.metaKey) {
         e.preventDefault();
         handleQuickCreate('TODO');
@@ -263,6 +269,31 @@ export default function TaskWorkspace({
               <span>Timeline</span>
               <kbd style={{ fontSize: '0.625rem', opacity: 0.6, marginLeft: '2px' }}>3</kbd>
             </button>
+
+            {/* 4. FLOW MAP VIEW */}
+            <button
+              onClick={() => { playClickSound(); setViewMode('flowmap'); }}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px',
+                height: '26px',
+                padding: '0 8px',
+                fontSize: '0.75rem',
+                fontWeight: 600,
+                borderRadius: '3px',
+                border: 'none',
+                cursor: 'pointer',
+                backgroundColor: viewMode === 'flowmap' ? '#6366f1' : 'transparent',
+                color: viewMode === 'flowmap' ? '#ffffff' : '#94a3b8',
+                transition: 'all 0.12s'
+              }}
+              title="Flow Map DAG Visualizer (Press 4)"
+            >
+              <GitFork size={13} />
+              <span>Flow Map</span>
+              <kbd style={{ fontSize: '0.625rem', opacity: 0.6, marginLeft: '2px' }}>4</kbd>
+            </button>
           </div>
 
           <span style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 500 }}>
@@ -439,7 +470,20 @@ export default function TaskWorkspace({
       </div>
 
       {/* Main Active View Presentation */}
-      {viewMode === 'list' ? (
+      {viewMode === 'flowmap' ? (
+        <FlowMapView
+          tasks={filteredTasks}
+          projects={projects}
+          workspaceMembers={workspaceMembers}
+          currentUser={currentUser}
+          activeWorkspace={activeWorkspace}
+          onOpenTaskDetail={handleOpenDetail}
+          onUpdateTask={onUpdateTask}
+          onStatusChange={onStatusChange}
+          onCreateTask={handleQuickCreate}
+          onAddToast={onAddToast}
+        />
+      ) : viewMode === 'list' ? (
         <TaskListView
           tasks={filteredTasks}
           projects={projects}

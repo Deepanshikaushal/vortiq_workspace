@@ -16,7 +16,8 @@ import {
   X,
   Clock,
   Layers,
-  Inbox
+  Inbox,
+  GitFork
 } from 'lucide-react';
 
 export default function CommandPalette({
@@ -121,6 +122,15 @@ export default function CommandPalette({
       category: 'Navigation',
       icon: Layers,
       action: () => { onClose(); onNavigate?.('kanban'); }
+    },
+    {
+      id: 'nav-flow-map',
+      title: 'Flow Map (DAG Workflow Engine)',
+      subtitle: 'Visual task dependency graph, bottlenecks, and milestones',
+      category: 'Navigation',
+      icon: GitFork,
+      shortcut: 'G',
+      action: () => { onClose(); onNavigate?.('flow-map'); }
     },
     {
       id: 'nav-table',

@@ -69,7 +69,8 @@ export default function Navbar({
   }, []);
 
   const viewTitles = {
-    focus: "Today's Focus",
+    focus: 'Command Center',
+    'command-center': 'Command Center',
     'my-tasks': 'My Tasks',
     kanban: 'Tasks Board',
     table: 'Tasks Matrix',
@@ -85,7 +86,7 @@ export default function Navbar({
     inbox: 'Inbox'
   };
 
-  const currentViewTitle = viewTitles[activeView] || "Today's Focus";
+  const currentViewTitle = viewTitles[activeView] || 'Command Center';
 
   return (
     <header style={{

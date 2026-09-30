@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
 import WorkspaceDashboard from './components/WorkspaceDashboard';
+import CommandCenter from './components/CommandCenter';
 import CommandPalette from './components/CommandPalette';
 import CalendarView from './components/CalendarView';
 import NotesView from './components/NotesView';
@@ -565,15 +566,14 @@ export default function App() {
         {/* Page Inner Container */}
         <main className="main-container">
 
-          {/* 1. Today's Focus / Personalized Workspace Dashboard */}
-          {activeView === 'focus' ? (
-            <WorkspaceDashboard
+          {/* 1. Command Center / Priority Intelligence Workspace */}
+          {activeView === 'focus' || activeView === 'command-center' ? (
+            <CommandCenter
               tasks={tasks}
               projects={projects}
               currentUser={currentUser}
               activeWorkspace={activeWorkspace}
               onOpenCreateTask={() => handleOpenCreate('TODO')}
-              onOpenCreateProject={() => setIsWorkspaceModalOpen(true)}
               onOpenEditTask={handleOpenEdit}
               onStatusChange={handleStatusChange}
               onDeleteTask={handleDeleteTask}

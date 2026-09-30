@@ -82,8 +82,8 @@ export default function CommandPalette({
     },
     {
       id: 'nav-focus',
-      title: "Today's Focus Dashboard",
-      subtitle: 'Personalized workspace dashboard',
+      title: 'Command Center',
+      subtitle: 'Priority intelligence & workspace flight deck',
       category: 'Navigation',
       icon: CheckCircle2,
       action: () => { onClose(); onNavigate?.('focus'); }

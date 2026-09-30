@@ -72,7 +72,7 @@ export default function Sidebar({
 
   const navItems = [
     { id: 'inbox', label: 'Inbox', icon: Inbox, badge: '4', badgeColor: '#6366f1' },
-    { id: 'focus', label: "Today's Focus", icon: Zap },
+    { id: 'focus', label: 'Command Center', icon: Zap, highlight: false },
     { id: 'my-tasks', label: 'My Tasks', icon: CheckSquare, badge: myTaskCount > 0 ? String(myTaskCount) : null },
     { id: 'tasks', label: 'Tasks', icon: Layers, badge: taskCount > 0 ? String(taskCount) : null },
     { id: 'calendar', label: 'Calendar', icon: Calendar },

@@ -12,6 +12,7 @@ import InboxView from './components/InboxView';
 import DocumentVaultView from './components/DocumentVaultView';
 import MetricsOverview from './components/MetricsOverview';
 import TaskWorkspace from './components/TaskWorkspace';
+import ProjectWorkspaceView from './components/ProjectWorkspaceView';
 import KanbanBoard from './components/KanbanBoard';
 import TaskTable from './components/TaskTable';
 import TaskModal from './components/TaskModal';
@@ -675,6 +676,19 @@ export default function App() {
             >
               <AiAnalyticsDashboard currentUser={currentUser} />
             </RoleGuard>
+          ) : activeView === 'project' ? (
+            <ProjectWorkspaceView
+              projectId={selectedProject || projects[0]?.id || 1}
+              projects={projects}
+              tasks={tasks}
+              workspaceMembers={workspaceMembers}
+              currentUser={currentUser}
+              onOpenTaskDetail={handleOpenEdit}
+              onOpenCreateTask={(colId) => handleOpenCreate(colId)}
+              onNavigateView={(v) => setActiveView(v)}
+              onAddToast={addToast}
+              onStatusChange={handleStatusChange}
+            />
           ) : (
             /* Tasks View (Kanban / Table / My-Tasks) */
             <>

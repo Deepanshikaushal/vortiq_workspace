@@ -84,6 +84,7 @@ export default function Navbar({
     analytics: 'Sprint & Velocity Analytics',
     automations: 'Automations & Rules',
     'backend-console': 'System Console',
+    project: 'Project Command Center',
     inbox: 'Inbox'
   };
 

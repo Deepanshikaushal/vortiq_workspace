@@ -493,8 +493,8 @@ export default function Sidebar({
                       <div
                         key={proj.id}
                         onClick={() => {
-                          setSelectedProject(isSelected ? '' : proj.id);
-                          setActiveView('tasks');
+                          setSelectedProject(proj.id);
+                          setActiveView('project');
                         }}
                         style={{
                           display: 'flex',

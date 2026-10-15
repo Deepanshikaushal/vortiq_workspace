@@ -95,6 +95,15 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.12</version>
+                <configuration>
+                    <includes>
+                        <include>com/vortiq/**</include>
+                    </includes>
+                    <excludes>
+                        <exclude>**/*MockitoMock*</exclude>
+                        <exclude>**/ByteBuddy*</exclude>
+                    </excludes>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>

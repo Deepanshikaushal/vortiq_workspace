@@ -1,5 +1,5 @@
 import React from 'react';
-import { Server, Wifi, WifiOff } from 'lucide-react';
+import { Server } from 'lucide-react';
 
 export default function ApiStatusBadge({ isConnected, onRetry }) {
   return (
